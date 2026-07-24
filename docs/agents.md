@@ -1,0 +1,42 @@
+# Trabalhando com agentes
+
+Este template foi feito para ser usado com agentes de código. Aqui está como orientá-los.
+
+## Prompts x arquivos persistentes
+
+- **Prompt**: o que você pede no momento, para uma tarefa específica ("crie um formulário de contato").
+- **Arquivos persistentes**: regras que valem sempre, gravadas no repositório:
+  - `AGENTS.md` (raiz) — regras gerais para qualquer agente.
+  - `CLAUDE.md` (raiz) — instruções específicas para o Claude Code.
+
+O agente lê os arquivos persistentes automaticamente. Use o prompt para a tarefa; deixe as regras fixas nos arquivos.
+
+## Skills disponíveis
+
+- **plan-feature** — planeja uma funcionalidade antes de escrever código.
+- **implement-feature** — implementa a funcionalidade seguindo o plano e a arquitetura.
+- **review-changes** — revisa as alterações feitas.
+- **generate-tests** — gera testes para o comportamento implementado.
+- **update-documentation** — atualiza a documentação após uma mudança.
+- **prepare-pull-request** — organiza commit e descrição do Pull Request.
+
+As skills canônicas ficam em `/skills`; as cópias em `.claude/skills` e `.agents/skills` são geradas por `npm run sync:skills`.
+
+## Como pedir planejamento
+
+> Use a skill plan-feature para planejar uma tela de cadastro de clientes com nome, e-mail e telefone.
+
+## Como pedir revisão
+
+> Use a skill review-changes para revisar o que foi alterado nesta branch.
+
+## Limites de autonomia
+
+O agente deve:
+
+- Não expandir o escopo além do que foi pedido.
+- Não instalar dependências sem justificar a necessidade.
+- Não expor segredos nem colocar credenciais no código.
+- Não mudar a arquitetura sem explicar o motivo e registrar a decisão em um ADR (`docs/decisions/`).
+
+Na dúvida, o agente deve perguntar antes de agir.
