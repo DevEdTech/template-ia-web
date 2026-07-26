@@ -48,6 +48,22 @@ npm run setup
 
 O `npm run setup` personaliza nome, descrição e organização do projeto, remove a feature de exemplo e sincroniza as skills dos agentes.
 
+## Prompts Iniciais Recomendados (Copie e Cole)
+
+Para ter o melhor fluxo de trabalho com seu agente de IA, utilize estes prompts iniciais em ordem:
+
+**1. Inicialização do Projeto:**
+> "Rode o comando `npm install` seguido de `npm run setup`. Preencha as informações do novo projeto respondendo às perguntas interativas, se houver, ou me pergunte o que colocar."
+
+**2. Concepção do Produto (se a ideia for nova):**
+> "Use a skill `plan-app` para conduzir uma entrevista curta comigo e definirmos o escopo deste produto. Ao final, gere o PRD e atualize as decisões de arquitetura."
+
+**3. Planejamento de Funcionalidade:**
+> "Use a skill `plan-feature` para planejar a funcionalidade: [Descreva a funcionalidade aqui]. Quero revisar o plano antes da implementação."
+
+**4. Implementação e Validação:**
+> "Use a skill `implement-feature` para executar o plano aprovado. Lembre-se de manter a Clean Architecture e garantir que o `npm run validate` passe limpo ao concluir."
+
 ## Instalação
 
 ```bash
