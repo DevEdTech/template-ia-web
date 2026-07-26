@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
+import { parseArgs } from 'node:util';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptDir, '..');
@@ -149,8 +150,8 @@ function explainUsageAndExit() {
   log('');
   log('  npm run setup');
   log('');
-  log('Ele pergunta: nome, descricao, organizacao, remocao da feature de');
-  log('exemplo, inicializacao da documentacao e sincronizacao das skills.');
+  log('Ou forneca argumentos via linha de comando para rodar automaticamente:');
+  log('  npm run setup -- --name="meu-app" --description="Meu app" --remove-example');
   log('');
   log('Para apenas sincronizar as skills sem o setup completo:');
   log('');
@@ -158,7 +159,69 @@ function explainUsageAndExit() {
   process.exit(0);
 }
 
+function applyChanges(projectName, description, organization, removeExample, doInitDocs, doSyncSkills) {
+  log('\nAplicando alteracoes...\n');
+
+  updatePackageJson(projectName, description);
+  updateIndexHtml(projectName);
+  updateReadme(projectName);
+
+  if (organization) {
+    log(`Organizacao informada: "${organization}".`);
+    log(
+      'Observacao: registre a organizacao no README/LICENSE conforme necessario (nao alterado automaticamente).',
+    );
+  }
+
+  if (removeExample) {
+    removeExampleFeature();
+  }
+  if (doInitDocs) {
+    initDocs();
+  }
+  if (doSyncSkills) {
+    log('\nSincronizando skills...');
+    runSyncSkills();
+  }
+
+  log('\nSetup concluido. Proximos passos:');
+  log('  1. Se ainda nao instalou as dependencias: npm install');
+  log('  2. Valide o projeto: npm run validate');
+  log('  3. Suba o ambiente de desenvolvimento: npm run dev');
+  log('');
+  log('Este script pode ser executado novamente, mas a troca do nome no README');
+  log(`so acontece enquanto o placeholder "${PLACEHOLDER_NAME}" existir no arquivo.`);
+}
+
 async function main() {
+  const args = parseArgs({
+    options: {
+      name: { type: 'string' },
+      description: { type: 'string' },
+      organization: { type: 'string' },
+      'remove-example': { type: 'boolean' },
+      'init-docs': { type: 'boolean' },
+      'no-sync-skills': { type: 'boolean' },
+    },
+    strict: false,
+  });
+
+  const { values } = args;
+  const hasArgs = Object.keys(values).length > 0;
+
+  if (hasArgs) {
+    log('Configuracao via argumentos de linha de comando detectada.');
+    applyChanges(
+      values.name || PLACEHOLDER_NAME,
+      values.description || '',
+      values.organization || '',
+      values['remove-example'] || false,
+      values['init-docs'] || false,
+      !values['no-sync-skills']
+    );
+    return;
+  }
+
   // Ambiente não interativo: explica e sai sem falhar.
   if (!stdin.isTTY) {
     explainUsageAndExit();
@@ -183,37 +246,7 @@ async function main() {
     );
     const doSyncSkills = isYes(await rl.question('Sincronizar skills? (S/n): '), true);
 
-    log('\nAplicando alteracoes...\n');
-
-    updatePackageJson(projectName, description);
-    updateIndexHtml(projectName);
-    updateReadme(projectName);
-
-    if (organization) {
-      log(`Organizacao informada: "${organization}".`);
-      log(
-        'Observacao: registre a organizacao no README/LICENSE conforme necessario (nao alterado automaticamente).',
-      );
-    }
-
-    if (removeExample) {
-      removeExampleFeature();
-    }
-    if (doInitDocs) {
-      initDocs();
-    }
-    if (doSyncSkills) {
-      log('\nSincronizando skills...');
-      runSyncSkills();
-    }
-
-    log('\nSetup concluido. Proximos passos:');
-    log('  1. Se ainda nao instalou as dependencias: npm install');
-    log('  2. Valide o projeto: npm run validate');
-    log('  3. Suba o ambiente de desenvolvimento: npm run dev');
-    log('');
-    log('Este script pode ser executado novamente, mas a troca do nome no README');
-    log(`so acontece enquanto o placeholder "${PLACEHOLDER_NAME}" existir no arquivo.`);
+    applyChanges(projectName, description, organization, removeExample, doInitDocs, doSyncSkills);
   } finally {
     rl.close();
   }
