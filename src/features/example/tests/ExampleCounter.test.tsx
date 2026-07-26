@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../test/render';
+import { renderWithProviders } from '@/test/render';
 import { ExampleCounter } from '../components/ExampleCounter';
 
 describe('ExampleCounter', () => {
@@ -18,7 +18,7 @@ describe('ExampleCounter', () => {
     expect(screen.getByTestId('count-value')).toHaveTextContent('2');
   });
 
-  it('nao decrementa abaixo de zero', async () => {
+  it('não decrementa abaixo de zero', async () => {
     const { user } = renderWithProviders(<ExampleCounter />);
 
     await user.click(screen.getByRole('button', { name: 'Diminuir' }));

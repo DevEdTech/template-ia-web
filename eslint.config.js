@@ -7,11 +7,15 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   { ignores: ['dist', 'coverage'] },
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: {
       'react-hooks': reactHooks,
@@ -23,7 +27,7 @@ export default tseslint.config(
     },
   },
   {
-    // Infra de testes nao participa do HMR; a regra de react-refresh nao se aplica.
+    // Infra de testes não participa do HMR; a regra de react-refresh não se aplica.
     files: ['**/*.test.{ts,tsx}', 'src/test/**/*.{ts,tsx}'],
     rules: {
       'react-refresh/only-export-components': 'off',

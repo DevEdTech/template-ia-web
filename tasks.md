@@ -47,6 +47,13 @@ Alvo: `project-template/` (nome interno do pacote: `web-project-template`).
 - [x] D5. `.github/pull_request_template.md`
 - [x] D6. `.claude/settings.example.json`
 
+### Adições extras de arquivos prometidos ✅
+
+- [x] `.nvmrc`
+- [x] `.editorconfig`
+- [x] `.env.example`
+- [x] `.prettierignore`
+
 ### Bloco E — Integração e validação (feito pelo orquestrador) ✅
 
 - [x] E1. `npm install` (0 vulnerabilidades)

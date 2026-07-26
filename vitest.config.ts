@@ -9,6 +9,15 @@ export default mergeConfig(
       globals: true,
       setupFiles: './src/test/setup.ts',
       css: true,
+      typecheck: {
+        tsconfig: './tsconfig.app.json',
+      },
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'html'],
+        include: ['src/**/*.{ts,tsx}'],
+        exclude: ['src/test/**', 'src/main.tsx', 'src/vite-env.d.ts'],
+      },
     },
   }),
 );

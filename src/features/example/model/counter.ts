@@ -1,4 +1,4 @@
-// Logica pura da feature de exemplo. Sem React, sem I/O, facil de testar.
+// Lógica pura da feature de exemplo. Sem React, sem I/O, fácil de testar.
 
 export const MIN_COUNT = 0;
 

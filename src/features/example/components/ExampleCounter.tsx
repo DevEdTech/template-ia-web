@@ -1,21 +1,33 @@
-import { useEffect, useState } from 'react';
-import { Button } from '../../../shared/components';
+import { useState } from 'react';
+import { Button } from '@/shared/components';
 import { decrement, increment } from '../model/counter';
 import { loadCount, saveCount } from '../services/counterStorage';
 import styles from './ExampleCounter.module.css';
 
 /**
- * Componente de exemplo minimo e interativo.
- * Demonstra a composicao das camadas da feature:
- * - `model` para a logica pura (increment/decrement);
- * - `services` para persistencia (localStorage via adaptador).
+ * Componente de exemplo mínimo e interativo.
+ * Demonstra a composição das camadas da feature:
+ * - `model` para a lógica pura (increment/decrement);
+ * - `services` para persistência (localStorage via adaptador).
  */
 export function ExampleCounter() {
   const [count, setCount] = useState<number>(() => loadCount() ?? 0);
 
-  useEffect(() => {
-    saveCount(count);
-  }, [count]);
+  function handleIncrement() {
+    setCount((c) => {
+      const next = increment(c);
+      saveCount(next);
+      return next;
+    });
+  }
+
+  function handleDecrement() {
+    setCount((c) => {
+      const next = decrement(c);
+      saveCount(next);
+      return next;
+    });
+  }
 
   return (
     <div className={styles.counter}>
@@ -23,10 +35,10 @@ export function ExampleCounter() {
         Contagem: <strong data-testid="count-value">{count}</strong>
       </p>
       <div className={styles.actions}>
-        <Button variant="secondary" onClick={() => setCount((c) => decrement(c))}>
+        <Button variant="secondary" onClick={handleDecrement}>
           Diminuir
         </Button>
-        <Button onClick={() => setCount((c) => increment(c))}>Aumentar</Button>
+        <Button onClick={handleIncrement}>Aumentar</Button>
       </div>
     </div>
   );
