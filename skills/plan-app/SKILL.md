@@ -1,6 +1,6 @@
 ---
 name: plan-app
-description: Conduzir pessoas não desenvolvedoras da ideia inicial até uma definição completa e aprovada do produto, por meio de perguntas curtas e decisões explícitas; usar ao iniciar um aplicativo, redefinir um produto ainda vago ou antes de planejar features, para criar ou atualizar docs/prd.md e registrar as decisões correspondentes em docs/architecture.md sem implementar código.
+description: Conduzir pessoas não desenvolvedoras da ideia inicial até uma definição completa e aprovada do produto, por meio de perguntas curtas e decisões explícitas; usar ao iniciar um aplicativo web corporativo, site, PWA, dashboard ou ferramenta interna, redefinir um produto ainda vago ou antes de planejar features, para criar ou atualizar docs/prd.md e registrar as decisões correspondentes em docs/architecture.md sem implementar código.
 ---
 
 # Planejar aplicativo
@@ -11,9 +11,9 @@ Transformar uma ideia de produto em decisões verificáveis, compreensíveis por
 
 ## Regras de conversa
 
-1. Ler `AGENTS.md`, `README.md`, `docs/architecture.md` e documentos de produto existentes antes de perguntar.
+1. Ler `AGENTS.md`, `README.md`, `docs/architecture.md`, `docs/building.md` e documentos de produto existentes antes de perguntar.
 2. Descobrir no repositório tudo que puder ser verificado sem o usuário. Não perguntar sobre framework, estrutura ou outra informação já registrada.
-3. Usar linguagem cotidiana. Ao precisar de uma decisão técnica com efeito no produto, explicar primeiro o efeito em custo, prazo, risco ou experiência.
+3. Usar linguagem cotidiana. Ao precisar de uma decisão técnica com efeito no produto, explicar primeiro o efeito em custo, prazo, risco, distribuição ou experiência.
 4. Fazer de uma a três perguntas curtas e relacionadas por rodada. Priorizar a decisão que desbloqueia mais respostas.
 5. Oferecer duas ou três opções concretas quando isso facilitar a resposta, indicar uma recomendação e explicar o principal trade-off. Permitir que o usuário proponha outra opção.
 6. Não aceitar palavras como “simples”, “rápido”, “intuitivo”, “moderno”, “completo”, “seguro”, “depois” ou “etc.” como especificação. Pedir exemplo, limite, referência ou resultado observável.
@@ -30,12 +30,14 @@ Avançar pela sequência de acordo com as respostas, sem transformar a conversa 
 3. Descrever a jornada principal passo a passo, do gatilho inicial ao resultado concluído.
 4. Definir as capacidades indispensáveis da primeira versão e classificar todas as demais como fora do escopo.
 5. Especificar, para cada capacidade, entradas, resultado, regras, exceções e permissões.
-6. Definir dados necessários, origem, armazenamento, atualização, exclusão e informações sensíveis.
-7. Definir integrações externas, dependências, falhas esperadas e comportamento sem conexão quando relevante.
-8. Definir telas ou pontos de interação e seus estados de carregamento, vazio, sucesso, erro e acesso negado.
-9. Definir restrições de plataforma, dispositivos, acessibilidade, idioma, marca, prazo ou orçamento que realmente se apliquem.
-10. Definir critérios de sucesso mensuráveis e critérios de aceite observáveis.
-11. Consolidar escopo e não escopo sem itens implícitos.
+6. Escolher a interface do produto: SPA, PWA, páginas estáticas, dashboard; definir como a pessoa inicia, navega, fornece dados e recebe retorno.
+7. Definir dados necessários, formatos de arquivo, origem, armazenamento, atualização, exclusão e informações sensíveis.
+8. Definir integrações externas, dependências, falhas esperadas e comportamento sem conexão quando relevante.
+9. Definir plataformas atendidas (desktop, mobile, navegadores) e forma de entrega (hospedagem estática, container, SSR) compatível com o template.
+10. Definir estados observáveis por interface: carregamento de dados, estado vazio, sucesso, erro e ações indisponíveis.
+11. Definir acessibilidade, uso de teclado, responsividade (redimensionamento), idioma, prazo, orçamento, desempenho (Core Web Vitals) e portabilidade aplicáveis.
+12. Definir critérios de sucesso mensuráveis e critérios de aceite observáveis.
+13. Consolidar escopo e não escopo sem itens implícitos.
 
 Não perguntar sobre categorias que comprovadamente não se aplicam. Registrar “não se aplica” com o motivo em vez de deixar a categoria vaga.
 
@@ -44,14 +46,14 @@ Não perguntar sobre categorias que comprovadamente não se aplicam. Registrar �
 Considerar uma decisão concreta somente quando outra pessoa puder implementá-la e verificar o resultado sem adivinhar:
 
 - nomear quem realiza a ação;
-- informar o gatilho ou a entrada;
-- descrever o resultado visível;
+- informar o evento, gatilho ou entrada;
+- descrever a saída e o resultado visível;
 - definir regras, limites e exceções relevantes;
-- cobrir falha, ausência de dados e permissão quando aplicável;
+- cobrir entrada inválida, ausência de dados, falha e permissão quando aplicável;
 - indicar como comprovar que o comportamento está correto;
 - classificar claramente o item dentro ou fora da primeira versão.
 
-Converter pedidos subjetivos em critérios observáveis. Por exemplo, trocar “a busca deve ser rápida” por um tempo de resposta acordado em uma condição definida, ou registrar que não há meta de desempenho específica para a primeira versão.
+Converter pedidos subjetivos em critérios observáveis. Por exemplo, trocar “o carregamento deve ser rápido” por um tempo acordado para um contexto definido, ou registrar que não há meta de desempenho específica para a primeira versão.
 
 ## Portão de conclusão
 
@@ -62,8 +64,9 @@ Antes de criar arquivos, confirmar que existem decisões explícitas para:
 - escopo exato da primeira versão;
 - não escopo explícito;
 - requisitos funcionais e regras de negócio;
-- dados, integrações, permissões e privacidade aplicáveis;
-- estados de interface e restrições relevantes;
+- interface ou interfaces de uso, entradas, saídas, feedback e navegação;
+- dados, formatos, integrações, permissões e privacidade aplicáveis;
+- plataformas, distribuição e restrições relevantes;
 - critérios de sucesso e de aceite;
 - compatibilidade ou conflito resolvido com os limites do template;
 - zero decisões obrigatórias em aberto.
@@ -90,15 +93,16 @@ Ao preencher:
 
 Preservar as regras arquiteturais do template e atualizar somente o que as decisões aprovadas afetarem. Criar ou atualizar uma seção `Decisões do produto` contendo:
 
-- limite do sistema e plataformas atendidas;
+- limite do sistema, interface de uso e navegadores/dispositivos atendidos;
 - mapa das capacidades para features;
-- responsabilidades e interfaces públicas entre features;
-- fluxo dos dados;
-- persistência e integrações externas;
-- decisões transversais de acesso, privacidade e operação;
+- responsabilidades de `model/`, `services/`, componentes (`components/`), rotas (`app/routes/`) e interfaces públicas;
+- fluxo dos dados, formatos de entrada e saída;
+- gerenciamento de estado global e integrações externas;
+- empacotamento e forma de distribuição;
+- decisões transversais de acesso, privacidade, operação e acessibilidade;
 - restrições, trade-offs e motivos das escolhas.
 
-Não copiar todo o PRD para a arquitetura. Não inventar tecnologia que não foi determinada pelo repositório ou aprovada. Se o produto exigir algo proibido pelo template, resolver o conflito com o usuário antes de concluir e registrar a decisão conforme as regras do projeto.
+Não copiar todo o PRD para a arquitetura. Não inventar tecnologia que não foi determinada pelo repositório ou aprovada. Verificar primeiro se a biblioteca padrão e as dependências atuais resolvem. Se o produto exigir algo proibido pelo template, resolver o conflito com o usuário antes de concluir e registrar a decisão conforme as regras do projeto.
 
 ## Encerramento
 
