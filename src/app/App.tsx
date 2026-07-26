@@ -1,5 +1,6 @@
 // App: apenas layout e composição. Sem regra de negócio aqui.
 import { ExampleCounter } from '@/features/example';
+import { NoteList } from '@/features/notes';
 import styles from './App.module.css';
 
 const PROJECT_NAME = 'Web Project Template';
@@ -27,6 +28,11 @@ export function App() {
       <section className={styles.section}>
         <h2>Componente de exemplo</h2>
         <ExampleCounter />
+      </section>
+
+      <section className={styles.section}>
+        <h2>Notas de exemplo</h2>
+        <NoteList />
       </section>
 
       <section className={styles.section}>

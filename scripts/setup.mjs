@@ -102,6 +102,12 @@ function removeExampleFeature() {
   }
   rmSync(dir, { recursive: true, force: true });
   log('Feature de exemplo removida: src/features/example');
+
+  const notesDir = join(projectRoot, 'src', 'features', 'notes');
+  if (existsSync(notesDir)) {
+    rmSync(notesDir, { recursive: true, force: true });
+    log('Feature de notas removida: src/features/notes');
+  }
   log('Atencao: imports que referenciavam essa feature podem precisar de ajuste.');
 }
 
@@ -159,7 +165,14 @@ function explainUsageAndExit() {
   process.exit(0);
 }
 
-function applyChanges(projectName, description, organization, removeExample, doInitDocs, doSyncSkills) {
+function applyChanges(
+  projectName,
+  description,
+  organization,
+  removeExample,
+  doInitDocs,
+  doSyncSkills,
+) {
   log('\nAplicando alteracoes...\n');
 
   updatePackageJson(projectName, description);
@@ -217,7 +230,7 @@ async function main() {
       values.organization || '',
       values['remove-example'] || false,
       values['init-docs'] || false,
-      !values['no-sync-skills']
+      !values['no-sync-skills'],
     );
     return;
   }
