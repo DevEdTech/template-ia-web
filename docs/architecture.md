@@ -9,6 +9,12 @@ Este documento descreve como o código do `web-project-template` é organizado e
 - Simplicidade primeiro: só adicione abstração quando houver necessidade real.
 - Regra de negócio fica nas features; a base (`app` e `shared`) permanece neutra.
 
+## Documentos de produto e arquitetura
+
+Ao iniciar um aplicativo a partir do template, use a skill `plan-app` para conduzir a descoberta antes de implementar. Ela cria `docs/prd.md` com o problema, os usuários, o escopo, o não escopo, os requisitos e os critérios de aceite aprovados.
+
+Este arquivo continua sendo a fonte das decisões técnicas. A `plan-app` deve preservar as regras do template e acrescentar uma seção `Decisões do produto` com o limite do sistema, o mapa de features, o fluxo de dados, a persistência, as integrações e os trade-offs definidos para o aplicativo. O PRD explica **o que e por que** construir; a arquitetura explica **como o sistema será organizado**.
+
 ## Árvore de pastas
 
 ```

@@ -115,6 +115,10 @@ Além disso, há skills que guiam tarefas comuns. Veja [docs/agents.md](docs/age
 
 ## Como criar uma feature
 
+Se a ideia do aplicativo ainda não tem escopo fechado, comece com: "Use a skill plan-app para me ajudar a definir este produto". A skill conduz a conversa em linguagem simples, cria `docs/prd.md` após sua aprovação e registra as decisões em `docs/architecture.md`.
+
+Depois que o produto estiver definido:
+
 1. Peça ao agente um plano: "Use a skill plan-feature para planejar..."
 2. Revise o plano.
 3. Peça a implementação: "Use a skill implement-feature...".

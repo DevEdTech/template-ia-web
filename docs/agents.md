@@ -13,6 +13,7 @@ O agente lê os arquivos persistentes automaticamente. Use o prompt para a taref
 
 ## Skills disponíveis
 
+- **plan-app** — entrevista pessoas não desenvolvedoras até transformar uma ideia em um PRD aprovado, com escopo, não escopo e decisões de arquitetura explícitas.
 - **plan-feature** — planeja uma funcionalidade antes de escrever código.
 - **implement-feature** — implementa a funcionalidade seguindo o plano e a arquitetura.
 - **review-changes** — revisa as alterações feitas.
@@ -21,6 +22,14 @@ O agente lê os arquivos persistentes automaticamente. Use o prompt para a taref
 - **prepare-pull-request** — organiza commit e descrição do Pull Request.
 
 As skills canônicas ficam em `/skills`; as cópias em `.claude/skills` e `.agents/skills` são geradas por `npm run sync:skills`.
+
+## Como definir o produto
+
+Use `plan-app` quando ainda existe uma ideia, mas não um produto completamente decidido. A skill faz perguntas curtas, explica escolhas sem exigir conhecimento técnico e não começa a implementação. Quando não restar nenhuma decisão necessária em aberto, ela pede a aprovação do resumo, cria `docs/prd.md` e atualiza `docs/architecture.md`.
+
+> Use a skill plan-app para me ajudar a definir um aplicativo para organizar os pedidos da minha pequena confeitaria.
+
+Ao responder, evite tentar escrever uma especificação técnica. Explique o problema e escolha entre as alternativas apresentadas; a skill transforma as respostas em requisitos verificáveis.
 
 ## Como pedir planejamento
 
