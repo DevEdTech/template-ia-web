@@ -2,20 +2,32 @@
   "name": "web-project-template",
   "private": true,
   "version": "0.0.0",
+  "license": "UNLICENSED",
   "type": "module",
+  "packageManager": "npm@10.6.0",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run typecheck && npm run build:bundle && npm run smoke:build",
+    "build:bundle": "vite build",
+    "check:architecture": "node scripts/check-architecture.mjs",
+    "check:docs": "node scripts/check-docs.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc -b",
-    "test": "vitest run",
+    "test": "npm run test:unit && npm run test:setup",
+    "test:unit": "vitest run",
+    "test:setup": "node --test scripts/*.test.mjs",
     "test:watch": "vitest",
     "setup": "node scripts/setup.mjs",
+    "generate:feature": "node scripts/generate-feature.mjs",
+    "smoke:build": "node scripts/smoke-build.mjs",
     "sync:skills": "node scripts/sync-skills.mjs",
     "check:skills": "node scripts/check-skills.mjs",
-    "validate": "npm run check:skills && npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
+    "validate": "npm run check:skills && npm run check:architecture && npm run check:docs && npm run format:check && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
     "react": "^19.2.8",

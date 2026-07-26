@@ -1,36 +1,88 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { Button } from '@/shared/components';
 import { createNote, validateTitle } from '../model/note';
 import type { Note } from '../model/note';
-import { loadNotes, addNoteToStorage, removeNoteFromStorage } from '../services/noteStorage';
+import {
+  NoteStorageError,
+  noteStorageKeys,
+  loadNotesSnapshot,
+  addNoteToStorage,
+  removeNoteFromStorage,
+} from '../services/noteStorage';
 import styles from './NoteList.module.css';
 
 export function NoteList() {
-  const [notes, setNotes] = useState<Note[]>(() => loadNotes());
+  const [initialState] = useState<{
+    notes: Note[];
+    revision: number;
+    storageError: string | null;
+  }>(() => {
+    try {
+      const snapshot = loadNotesSnapshot();
+      return { ...snapshot, storageError: null };
+    } catch (err) {
+      return {
+        notes: [],
+        revision: 0,
+        storageError: err instanceof Error ? err.message : 'Não foi possível carregar as notas.',
+      };
+    }
+  });
+  const [notes, setNotes] = useState<Note[]>(initialState.notes);
+  const [revision, setRevision] = useState(initialState.revision);
   const [title, setTitle] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [storageError, setStorageError] = useState<string | null>(initialState.storageError);
+
+  useEffect(() => {
+    function synchronize(event: StorageEvent) {
+      if (event.key !== noteStorageKeys.primary) return;
+      try {
+        const snapshot = loadNotesSnapshot();
+        setNotes(snapshot.notes);
+        setRevision(snapshot.revision);
+        setStorageError(null);
+      } catch (err) {
+        if (err instanceof Error) setStorageError(err.message);
+      }
+    }
+    window.addEventListener('storage', synchronize);
+    return () => window.removeEventListener('storage', synchronize);
+  }, []);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     try {
       const note = createNote(title);
-      addNoteToStorage(note);
-      setNotes((prev) => [note, ...prev]);
+      const snapshot = addNoteToStorage(note, revision);
+      setNotes(snapshot.notes);
+      setRevision(snapshot.revision);
       setTitle('');
       setError(null);
+      setStorageError(null);
     } catch (err) {
-      if (err instanceof Error) {
+      if (err instanceof NoteStorageError) {
+        setStorageError(err.message);
+      } else if (err instanceof Error) {
         setError(err.message);
       }
     }
   }
 
   function handleRemove(id: string) {
-    const removed = removeNoteFromStorage(id);
-    if (removed) {
-      setNotes((prev) => prev.filter((n) => n.id !== id));
+    try {
+      const result = removeNoteFromStorage(id, revision);
+      if (result.removed) {
+        setNotes(result.snapshot.notes);
+        setRevision(result.snapshot.revision);
+        setStorageError(null);
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setStorageError(err.message);
+      }
     }
   }
 
@@ -48,6 +100,11 @@ export function NoteList() {
 
   return (
     <div className={styles.container}>
+      {storageError && (
+        <p className={styles.storageError} role="alert">
+          {storageError}
+        </p>
+      )}
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.inputGroup}>
           <input

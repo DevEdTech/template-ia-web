@@ -8,6 +8,7 @@ Testamos o **comportamento observável** da aplicação: o que o usuário vê e 
 
 - **Unidade**: funções e lógica isoladas (ex.: cálculo, formatação).
 - **Componente**: renderização e interação de componentes, com Vitest + React Testing Library.
+- **Contrato local**: setup transacional, regras arquiteturais, links da documentação e artefato de build.
 
 ## Localização
 
@@ -25,6 +26,8 @@ features/minha-feature/
 
 ```bash
 npm run test         # roda os testes uma vez
+npm run test:unit    # roda apenas Vitest
+npm run test:setup   # testa setup e regras arquiteturais em projetos temporários
 npm run test:watch   # roda em modo contínuo enquanto você edita
 ```
 
@@ -41,6 +44,8 @@ test('mostra o nome informado', () => {
 ```
 
 O foco é no que aparece na tela, não em como o componente foi escrito por dentro.
+
+O setup também é comportamento público do template. Seus testes executam dry-run, personalização, repetição idempotente e rollback em pastas temporárias. A persistência testa migração, backup de dados inválidos, conflitos de revisão e sincronização entre abas. O smoke test serve `dist/` em uma porta efêmera e acessa o HTML e seus assets como um navegador faria.
 
 ## O que NÃO testar
 

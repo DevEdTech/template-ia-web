@@ -46,7 +46,7 @@ npm install
 npm run setup
 ```
 
-O `npm run setup` personaliza nome, descrição e organização do projeto, remove a feature de exemplo e sincroniza as skills dos agentes.
+O `npm run setup` separa o identificador técnico do nome exibido, personaliza descrição, organização, licença e repositório, pode remover a demonstração de notas sem quebrar a composição e sincroniza as skills dos agentes. Antes de aplicar, use `npm run setup -- --name="meu-app" --dry-run`; execuções repetidas com os mesmos valores são idempotentes e uma falha restaura o estado anterior.
 
 ## Prompts Iniciais (Copie, Preencha e Cole no Agente)
 
@@ -56,7 +56,7 @@ Escolha o cenário que se encaixa no seu momento e cole no seu agente de IA.
 
 ```text
 Estou começando um projeto novo. Faça o seguinte:
-1. Rode `npm install` e depois `npm run setup -- --name="[meu-app]" --description="[descreva aqui]" --remove-example --init-docs`.
+1. Rode `npm install` e depois `npm run setup -- --name="[meu-app]" --display-name="[Meu App]" --description="[descreva aqui]" --remove-example --reset-tasks`.
 2. Depois, use a skill plan-app para conduzir uma entrevista curta comigo e definirmos juntos o escopo do produto.
 ```
 
@@ -94,24 +94,30 @@ Antes de considerar qualquer alteração pronta, rode:
 npm run validate
 ```
 
-Esse comando executa, em sequência: verificação das skills, checagem de formatação, lint, checagem de tipos, testes e build. Se todos passarem, a alteração está saudável.
+Esse comando executa, em sequência: verificação das skills, arquitetura e documentação, formatação, lint, checagem de tipos, testes, bundle de produção e um smoke test HTTP do artefato. Se todos passarem, a alteração está saudável.
 
 ## Comandos
 
-| Comando                | O que faz                                                                |
-| ---------------------- | ------------------------------------------------------------------------ |
-| `npm run dev`          | Sobe o servidor de desenvolvimento com recarga automática                |
-| `npm run build`        | Gera a versão de produção                                                |
-| `npm run lint`         | Verifica problemas de código com ESLint                                  |
-| `npm run format`       | Formata os arquivos com Prettier                                         |
-| `npm run format:check` | Confere se os arquivos estão formatados                                  |
-| `npm run typecheck`    | Verifica os tipos do TypeScript                                          |
-| `npm run test`         | Roda os testes uma vez                                                   |
-| `npm run test:watch`   | Roda os testes em modo contínuo                                          |
-| `npm run setup`        | Personaliza o projeto (nome, descrição, organização) e sincroniza skills |
-| `npm run sync:skills`  | Gera as cópias das skills em `.claude/skills` e `.agents/skills`         |
-| `npm run check:skills` | Verifica se as cópias das skills estão sincronizadas                     |
-| `npm run validate`     | Roda tudo: check:skills, format:check, lint, typecheck, test e build     |
+| Comando                                         | O que faz                                                           |
+| ----------------------------------------------- | ------------------------------------------------------------------- |
+| `npm run dev`                                   | Sobe o servidor de desenvolvimento com recarga automática           |
+| `npm run build`                                 | Gera a versão de produção                                           |
+| `npm run lint`                                  | Verifica problemas de código com ESLint                             |
+| `npm run check:architecture`                    | Impede imports que atravessam as fronteiras das features            |
+| `npm run check:docs`                            | Valida links, comandos e referências da documentação                |
+| `npm run format`                                | Formata os arquivos com Prettier                                    |
+| `npm run format:check`                          | Confere se os arquivos estão formatados                             |
+| `npm run typecheck`                             | Verifica os tipos do TypeScript                                     |
+| `npm run test`                                  | Roda testes de unidade, componente, arquitetura e setup             |
+| `npm run test:unit`                             | Roda apenas os testes Vitest                                        |
+| `npm run test:setup`                            | Roda os testes black-box do setup e da arquitetura                  |
+| `npm run test:watch`                            | Roda os testes em modo contínuo                                     |
+| `npm run setup`                                 | Personaliza identificadores, apresentação e demonstração do projeto |
+| `npm run generate:feature -- --name="clientes"` | Gera a estrutura inicial de uma feature                             |
+| `npm run smoke:build`                           | Serve e verifica o conteúdo gerado em `dist/`                       |
+| `npm run sync:skills`                           | Gera as cópias das skills em `.claude/skills` e `.agents/skills`    |
+| `npm run check:skills`                          | Verifica se as cópias das skills estão sincronizadas                |
+| `npm run validate`                              | Roda skills, arquitetura, formato, lint, tipos, testes e bundle     |
 
 ## Estrutura resumida
 
@@ -119,7 +125,7 @@ Esse comando executa, em sequência: verificação das skills, checagem de forma
 src/
 ├── app/          # composição geral (providers, rotas, layout) — sem regra de negócio
 ├── features/     # cada capacidade do produto em sua pasta
-│   └── example/  # exemplo mínimo; removido/renomeado no setup
+│   └── notes/    # demonstração canônica; removida por --remove-example
 ├── shared/       # reutilizável e neutro (components, hooks, lib, styles, types)
 ├── test/         # setup.ts e render.tsx
 └── main.tsx
@@ -146,7 +152,7 @@ Depois que o produto estiver definido:
 1. Peça ao agente um plano: "Use a skill plan-feature para planejar..."
 2. Revise o plano.
 3. Peça a implementação: "Use a skill implement-feature...".
-4. Crie a pasta da feature em `src/features/<nome>` com `components`, `model`, `services`, `tests` e um `index.ts` que expõe a interface pública.
+4. Gere a base com `npm run generate:feature -- --name="minha-feature"`; use `--dry-run` para apenas listar os arquivos. O gerador cria `components`, `model`, `services`, `tests` e o `index.ts` público, mas não registra a feature na composição da aplicação.
 5. Rode `npm run validate`.
 
 Regras de arquitetura em [docs/architecture.md](docs/architecture.md).

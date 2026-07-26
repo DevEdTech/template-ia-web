@@ -21,7 +21,7 @@ Este arquivo continua sendo a fonte das decisões técnicas. A `plan-app` deve p
 src/
 ├── app/          # composição geral: providers, rotas, layout — sem regra de negócio
 ├── features/     # cada capacidade do produto em sua própria pasta
-│   └── example/  # exemplo mínimo; removido/renomeado no setup
+│   └── notes/    # demonstração canônica; removida por --remove-example
 ├── shared/       # reutilizável e neutro: components, hooks, lib, styles, types
 ├── test/         # setup.ts e render.tsx (utilidades de teste)
 └── main.tsx      # ponto de entrada da aplicação
@@ -61,6 +61,7 @@ features/minha-feature/
 12. Estados de tela explícitos: carregando, vazio, sucesso e erro.
 13. Toda mudança de comportamento considera os testes.
 14. Toda decisão relevante atualiza a documentação ou gera um ADR.
+15. Imports externos usam apenas o `index.ts` da feature; `npm run check:architecture` verifica essa fronteira.
 
 ## Acesso a APIs
 
@@ -68,7 +69,9 @@ Todo acesso a APIs passa por serviços dentro da feature (`services/`). Os compo
 
 ## Armazenamento
 
-Persistência local (ex.: `localStorage`) fica isolada em adaptadores/repositórios. Os componentes pedem e recebem dados sem saber onde eles são guardados. Assim, trocar o meio de armazenamento não afeta a tela.
+Persistência local (ex.: `localStorage`) fica isolada em adaptadores/repositórios. Dados lidos na fronteira são validados antes de entrar no modelo. O exemplo de notas grava um envelope versionado com revisão monotônica, migra automaticamente o array legado, preserva dados inválidos em uma chave de backup e rejeita gravações feitas sobre uma revisão antiga. Eventos de `storage` sincronizam abas abertas. Falhas de leitura, conflito e escrita têm códigos estáveis e são apresentadas pela interface; uma operação nunca confirma sucesso antes da persistência terminar.
+
+Novas versões do formato persistido devem ter migração explícita e teste do formato anterior. Nunca apague silenciosamente dados que não puderem ser interpretados.
 
 ## Estado
 
@@ -76,7 +79,7 @@ O estado é local aos componentes ou às features. Não usamos gerenciador globa
 
 ## Testes
 
-Os testes ficam colocalizados dentro da feature, na pasta `tests/`. Testam o comportamento observável da funcionalidade. Detalhes em [testing.md](testing.md).
+Os testes ficam colocalizados dentro da feature, na pasta `tests/`. Testam o comportamento observável da funcionalidade. Os scripts de arquitetura usam a AST do TypeScript para cobrir imports estáticos, reexports e imports dinâmicos. Detalhes em [testing.md](testing.md).
 
 ## Evolução incremental
 

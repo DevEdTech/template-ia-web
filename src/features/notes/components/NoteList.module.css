@@ -32,6 +32,15 @@
   margin: 0;
 }
 
+.storageError {
+  padding: 0.75rem;
+  margin: 0;
+  color: #842029;
+  background: #f8d7da;
+  border: 1px solid #f5c2c7;
+  border-radius: 4px;
+}
+
 .list {
   display: flex;
   flex-direction: column;

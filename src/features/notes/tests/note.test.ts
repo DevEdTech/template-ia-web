@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createNote, validateTitle } from '../model/note';
+import { createNote, parseNote, validateTitle } from '../model/note';
 
 describe('Note Model', () => {
   describe('createNote', () => {
@@ -18,8 +18,23 @@ describe('Note Model', () => {
     });
 
     it('throws on empty string', () => {
-      expect(() => validateTitle('')).toThrow('Title cannot be empty');
-      expect(() => validateTitle('   ')).toThrow('Title cannot be empty');
+      expect(() => validateTitle('')).toThrow('título da nota é obrigatório');
+      expect(() => validateTitle('   ')).toThrow('título da nota é obrigatório');
+    });
+  });
+
+  describe('parseNote', () => {
+    it('accepts a valid persisted note', () => {
+      expect(parseNote({ id: '1', title: 'Nota', createdAt: 123 })).toEqual({
+        id: '1',
+        title: 'Nota',
+        createdAt: 123,
+      });
+    });
+
+    it('rejects invalid persisted notes', () => {
+      expect(parseNote({ id: '1', title: '', createdAt: 123 })).toBeNull();
+      expect(parseNote({ id: '1', title: 'Nota', createdAt: 'ontem' })).toBeNull();
     });
   });
 });

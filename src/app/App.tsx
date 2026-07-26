@@ -1,5 +1,4 @@
 // App: apenas layout e composição. Sem regra de negócio aqui.
-import { ExampleCounter } from '@/features/example';
 import { NoteList } from '@/features/notes';
 import { ErrorBoundary } from '@/shared/components';
 import styles from './App.module.css';
@@ -28,14 +27,7 @@ export function App() {
 
       <ErrorBoundary>
         <section className={styles.section}>
-          <h2>Componente de exemplo</h2>
-          <ExampleCounter />
-        </section>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <section className={styles.section}>
-          <h2>Notas de exemplo</h2>
+          <h2>Exemplo: notas</h2>
           <NoteList />
         </section>
       </ErrorBoundary>

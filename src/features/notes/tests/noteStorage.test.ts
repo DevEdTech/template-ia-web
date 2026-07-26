@@ -1,9 +1,13 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   loadNotes,
   saveNotes,
   addNoteToStorage,
   removeNoteFromStorage,
+  loadNotesSnapshot,
+  NoteStorageConflictError,
+  NoteStorageError,
+  noteStorageKeys,
 } from '../services/noteStorage';
 
 describe('noteStorage', () => {
@@ -16,20 +20,58 @@ describe('noteStorage', () => {
       expect(loadNotes()).toEqual([]);
     });
 
-    it('handles corrupt data gracefully', () => {
+    it('preserves corrupt data and reports the problem', () => {
       localStorage.setItem('notes:list', '{ corrupt json');
-      expect(loadNotes()).toEqual([]);
+      expect(() => loadNotes()).toThrow(NoteStorageError);
+      expect(localStorage.getItem('notes:list')).toBe('{ corrupt json');
+      expect(localStorage.getItem(noteStorageKeys.backup)).toBe('{ corrupt json');
 
       localStorage.setItem('notes:list', '{"not": "an array"}');
-      expect(loadNotes()).toEqual([]);
+      expect(() => loadNotes()).toThrow('versão');
+
+      localStorage.setItem('notes:list', '[{"id":"1"}]');
+      expect(() => loadNotes()).toThrow('corrompidas');
+    });
+
+    it('migrates the legacy array to the versioned envelope', () => {
+      const note = { id: '1', title: 'legada', createdAt: 123 };
+      localStorage.setItem(noteStorageKeys.primary, JSON.stringify([note]));
+
+      expect(loadNotesSnapshot()).toEqual({ notes: [note], revision: 1 });
+      expect(JSON.parse(localStorage.getItem(noteStorageKeys.primary) ?? '')).toEqual({
+        version: 1,
+        revision: 1,
+        notes: [note],
+      });
     });
   });
 
   describe('saveNotes', () => {
     it('saves notes to localStorage', () => {
       const notes = [{ id: '1', title: 'test', createdAt: 123 }];
-      saveNotes(notes);
-      expect(localStorage.getItem('notes:list')).toBe(JSON.stringify(notes));
+      expect(saveNotes(notes)).toEqual({ notes, revision: 1 });
+      expect(JSON.parse(localStorage.getItem('notes:list') ?? '')).toEqual({
+        version: 1,
+        revision: 1,
+        notes,
+      });
+    });
+
+    it('detects a stale revision instead of losing another update', () => {
+      const initial = saveNotes([{ id: '1', title: 'primeira', createdAt: 1 }]);
+      saveNotes([{ id: '2', title: 'segunda', createdAt: 2 }], initial.revision);
+
+      expect(() => saveNotes([], initial.revision)).toThrow(NoteStorageConflictError);
+      expect(loadNotes().map((note) => note.id)).toEqual(['2']);
+    });
+
+    it('reports write failures instead of pretending success', () => {
+      const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new DOMException('quota', 'QuotaExceededError');
+      });
+
+      expect(() => saveNotes([])).toThrow('Não foi possível salvar');
+      spy.mockRestore();
     });
   });
 
@@ -52,13 +94,13 @@ describe('noteStorage', () => {
       saveNotes([note1, note2]);
 
       const result = removeNoteFromStorage('1');
-      expect(result).toBe(true);
+      expect(result.removed).toBe(true);
       expect(loadNotes()).toEqual([note2]);
     });
 
     it('returns false for unknown id', () => {
       const result = removeNoteFromStorage('999');
-      expect(result).toBe(false);
+      expect(result.removed).toBe(false);
     });
   });
 });
