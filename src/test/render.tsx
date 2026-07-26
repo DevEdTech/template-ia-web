@@ -1,13 +1,14 @@
 import type { ReactElement, ReactNode } from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 
 /**
  * Wrapper para providers globais usados nos testes.
  * Adicione aqui os mesmos providers da aplicacao (tema, store, etc.).
  */
 function AllProviders({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return <MemoryRouter>{children}</MemoryRouter>;
 }
 
 /**
