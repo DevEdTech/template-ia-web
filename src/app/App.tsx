@@ -1,6 +1,7 @@
 // App: apenas layout e composição. Sem regra de negócio aqui.
 import { ExampleCounter } from '@/features/example';
 import { NoteList } from '@/features/notes';
+import { ErrorBoundary } from '@/shared/components';
 import styles from './App.module.css';
 
 const PROJECT_NAME = 'Web Project Template';
@@ -25,15 +26,19 @@ export function App() {
         </p>
       </header>
 
-      <section className={styles.section}>
-        <h2>Componente de exemplo</h2>
-        <ExampleCounter />
-      </section>
+      <ErrorBoundary>
+        <section className={styles.section}>
+          <h2>Componente de exemplo</h2>
+          <ExampleCounter />
+        </section>
+      </ErrorBoundary>
 
-      <section className={styles.section}>
-        <h2>Notas de exemplo</h2>
-        <NoteList />
-      </section>
+      <ErrorBoundary>
+        <section className={styles.section}>
+          <h2>Notas de exemplo</h2>
+          <NoteList />
+        </section>
+      </ErrorBoundary>
 
       <section className={styles.section}>
         <h2>Comandos npm disponíveis</h2>
