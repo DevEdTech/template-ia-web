@@ -1,6 +1,6 @@
 ---
 name: implement-feature
-description: Use para implementar uma tarefa já planejada, mantendo as alterações dentro do escopo e validando o resultado.
+description: Executa um plano já aprovado, um incremento por vez, dentro do escopo e com npm run validate verde; use depois do plano existir, não para planejar nem para revisar.
 ---
 
 # Implementar funcionalidade

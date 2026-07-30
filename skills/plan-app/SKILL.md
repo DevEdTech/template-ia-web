@@ -1,6 +1,6 @@
 ---
 name: plan-app
-description: Conduzir pessoas não desenvolvedoras da ideia inicial até uma definição completa e aprovada do produto, por meio de perguntas curtas e decisões explícitas; usar ao iniciar um aplicativo web corporativo, site, PWA, dashboard ou ferramenta interna, redefinir um produto ainda vago ou antes de planejar features, para criar ou atualizar docs/prd.md e registrar as decisões correspondentes em docs/architecture.md sem implementar código.
+description: Conduz uma entrevista em linguagem simples até fechar o escopo de um produto e escrever docs/prd.md com requisitos e critérios de aceite; use quando a ideia ainda não tem escopo decidido, não para planejar uma funcionalidade de produto já definido.
 ---
 
 # Planejar aplicativo

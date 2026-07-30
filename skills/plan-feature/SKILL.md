@@ -1,6 +1,6 @@
 ---
 name: plan-feature
-description: Use antes de implementar, para transformar uma solicitação em um plano — nova funcionalidade, mudança multi-arquivo, demanda ambígua, integração externa ou alteração arquitetural.
+description: Transforma uma solicitação em plano antes de qualquer código: requisitos, suposições, não escopo, tarefas sequenciais e riscos; use para funcionalidade nova, mudança multi-arquivo, demanda ambígua, integração externa ou alteração arquitetural.
 ---
 
 # Planejar funcionalidade

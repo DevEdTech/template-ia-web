@@ -1,6 +1,6 @@
 ---
 name: generate-tests
-description: Use para criar ou atualizar testes com base no comportamento observável de uma feature.
+description: Cria ou atualiza testes a partir do comportamento observável de uma feature; use quando o comportamento mudou ou quando falta rede de segurança para alterar o código.
 ---
 
 # Gerar testes

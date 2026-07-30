@@ -1,6 +1,6 @@
 ---
 name: review-changes
-description: Use para revisar alterações antes de concluir uma tarefa, verificando escopo, arquitetura, testes, segurança e qualidade.
+description: Revisa o diff antes de concluir a tarefa, verificando escopo, arquitetura, testes, segurança e qualidade; use após implementar e antes do commit ou do pull request.
 ---
 
 # Revisar alterações

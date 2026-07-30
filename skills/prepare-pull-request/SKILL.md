@@ -1,6 +1,6 @@
 ---
 name: prepare-pull-request
-description: Use para preparar uma descrição clara de pull request após concluir e revisar uma alteração.
+description: Organiza os commits e escreve a descrição do pull request explicando o que mudou e por quê; use quando a alteração já foi revisada e está pronta para abrir o PR.
 ---
 
 # Preparar pull request

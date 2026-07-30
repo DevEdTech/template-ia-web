@@ -11,5 +11,5 @@ A configuração será feita utilizando as APIs modernas de Data Router (`create
 
 ## Consequências
 
-- **Positivas:** Temos navegação, deep-linking, e padrões de data loading resolvidos *out-of-the-box*. A estrutura já suporta crescimento orgânico para múltiplas features e páginas. O helper de testes já inclui o roteador.
+- **Positivas:** Temos navegação, deep-linking, e padrões de data loading resolvidos _out-of-the-box_. A estrutura já suporta crescimento orgânico para múltiplas features e páginas. O helper de testes já inclui o roteador.
 - **Negativas:** Adicionamos uma dependência pesada de roteamento no bundle base da aplicação, mesmo que o projeto inicial seja de página única. Aumentamos ligeiramente a curva de aprendizado para testar componentes isolados (necessidade do `MemoryRouter`).

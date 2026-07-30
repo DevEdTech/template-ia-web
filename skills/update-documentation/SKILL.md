@@ -1,6 +1,6 @@
 ---
 name: update-documentation
-description: Use para manter a documentação coerente com o código após mudanças de comandos, arquitetura, funcionalidades, integrações ou decisões.
+description: Realinha docs/ ao código e registra decisões como ADR; use após mudanças em comandos, variáveis de ambiente, arquitetura, funcionalidades ou integrações.
 ---
 
 # Atualizar documentação
