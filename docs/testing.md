@@ -25,11 +25,18 @@ features/minha-feature/
 ## Comandos
 
 ```bash
-npm run test         # roda os testes uma vez
-npm run test:unit    # roda apenas Vitest
-npm run test:setup   # testa setup e regras arquiteturais em projetos temporários
-npm run test:watch   # roda em modo contínuo enquanto você edita
+npm run test          # roda os testes uma vez, com limites de cobertura
+npm run test:unit     # roda apenas Vitest, sem cobertura (mais rápido)
+npm run test:coverage # roda Vitest aplicando os limites de cobertura
+npm run test:setup    # testa setup e regras arquiteturais em projetos temporários
+npm run test:watch    # roda em modo contínuo enquanto você edita
 ```
+
+## Cobertura
+
+`npm run test` aplica limites mínimos definidos em `vitest.config.ts`: 85% de instruções e linhas, 75% de ramos e 90% de funções. Uma queda abaixo disso falha o `validate` e o CI.
+
+Os limites existem para impedir regressão, não para virar meta. Não escreva teste de caso impossível só para subir o número — se um trecho é difícil de cobrir, normalmente ele está pedindo para ser simplificado. O relatório HTML fica em `coverage/` após rodar `npm run test:coverage`.
 
 ## Exemplo curto
 
@@ -51,6 +58,10 @@ Para componentes que dependem de estado global, providers de roteamento, ou clie
 - No nosso template, a importação customizada de `../../../test/render` (mostrada acima) se encarrega de envelopar o componente com todos os Providers necessários, garantindo que a árvore de componentes em teste tenha o mesmo contexto que a aplicação real.
 
 O foco é no que aparece na tela, não em como o componente foi escrito por dentro.
+
+### O que já vem testado
+
+A composição da aplicação tem smoke test em `src/app/tests/`: a rota raiz monta com layout e página inicial, um endereço desconhecido cai na tela de "não encontrada" sem derrubar o layout, e uma rota que lança erro é substituída pelo `errorElement`. Se você mexer em rotas ou no layout, esses testes são a primeira rede.
 
 O setup também é comportamento público do template. Seus testes executam dry-run, personalização, repetição idempotente e rollback em pastas temporárias. A persistência testa migração, backup de dados inválidos, conflitos de revisão e sincronização entre abas. O smoke test serve `dist/` em uma porta efêmera e acessa o HTML e seus assets como um navegador faria.
 

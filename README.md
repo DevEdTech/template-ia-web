@@ -46,7 +46,7 @@ npm install
 npm run setup
 ```
 
-O `npm run setup` separa o identificador técnico do nome exibido, personaliza descrição, organização, licença e repositório, pode remover a demonstração de notas sem quebrar a composição e sincroniza as skills dos agentes. Antes de aplicar, use `npm run setup -- --name="meu-app" --dry-run`; execuções repetidas com os mesmos valores são idempotentes e uma falha restaura o estado anterior.
+O `npm run setup` separa o identificador técnico do nome exibido, personaliza descrição, organização, licença e repositório, pode remover a demonstração de notas sem quebrar a composição e sincroniza as skills dos agentes. Ele também reinicia o `tasks.md` para que o projeto novo não herde o backlog do template — use `--keep-tasks` se quiser preservá-lo. Antes de aplicar, use `npm run setup -- --name="meu-app" --dry-run`; execuções repetidas com os mesmos valores são idempotentes e uma falha restaura o estado anterior.
 
 ## Prompts Iniciais (Copie, Preencha e Cole no Agente)
 
@@ -56,7 +56,7 @@ Escolha o cenário que se encaixa no seu momento e cole no seu agente de IA.
 
 ```text
 Estou começando um projeto novo. Faça o seguinte:
-1. Rode `npm install` e depois `npm run setup -- --name="[meu-app]" --display-name="[Meu App]" --description="[descreva aqui]" --remove-example --reset-tasks`.
+1. Rode `npm install` e depois `npm run setup -- --name="[meu-app]" --display-name="[Meu App]" --description="[descreva aqui]" --remove-example`.
 2. Depois, use a skill plan-app para conduzir uma entrevista curta comigo e definirmos juntos o escopo do produto.
 ```
 
@@ -94,7 +94,22 @@ Antes de considerar qualquer alteração pronta, rode:
 npm run validate
 ```
 
-Esse comando executa, em sequência: verificação das skills, arquitetura e documentação, formatação, lint, checagem de tipos, testes, bundle de produção e um smoke test HTTP do artefato. Se todos passarem, a alteração está saudável.
+Esse comando executa, em sequência: verificação das skills, arquitetura e documentação, formatação, lint, checagem de tipos, testes com limites de cobertura, bundle de produção e um smoke test HTTP do artefato. Se todos passarem, a alteração está saudável.
+
+## Verificação automática
+
+Além da validação local, o repositório traz portões automáticos:
+
+| Onde                | O que roda                                                      |
+| ------------------- | --------------------------------------------------------------- |
+| `pre-commit`        | `lint-staged` (ESLint e Prettier nos arquivos alterados)        |
+| `commit-msg`        | Convenção da mensagem de commit                                 |
+| `pre-push`          | `typecheck` e testes                                            |
+| CI (GitHub Actions) | `npm ci` e `npm run validate` em Node 22 e 24, mais `npm audit` |
+
+O CI está em `.github/workflows/ci.yml`. Configure a branch principal para exigir o check **Validate** antes do merge. As atualizações de dependência chegam por Dependabot (`.github/dependabot.yml`).
+
+Para pular um hook em uma emergência, use `git commit --no-verify` — o CI continua verificando.
 
 ## Comandos
 
@@ -109,7 +124,8 @@ Esse comando executa, em sequência: verificação das skills, arquitetura e doc
 | `npm run format:check`                          | Confere se os arquivos estão formatados                             |
 | `npm run typecheck`                             | Verifica os tipos do TypeScript                                     |
 | `npm run test`                                  | Roda testes de unidade, componente, arquitetura e setup             |
-| `npm run test:unit`                             | Roda apenas os testes Vitest                                        |
+| `npm run test:unit`                             | Roda apenas os testes Vitest, sem cobertura                         |
+| `npm run test:coverage`                         | Roda os testes Vitest aplicando os limites de cobertura             |
 | `npm run test:setup`                            | Roda os testes black-box do setup e da arquitetura                  |
 | `npm run test:watch`                            | Roda os testes em modo contínuo                                     |
 | `npm run setup`                                 | Personaliza identificadores, apresentação e demonstração do projeto |
@@ -126,7 +142,7 @@ src/
 ├── app/          # composição geral (providers, rotas, layout) — sem regra de negócio
 ├── features/     # cada capacidade do produto em sua pasta
 │   └── notes/    # demonstração canônica; removida por --remove-example
-├── shared/       # reutilizável e neutro (components, hooks, lib, styles, types)
+├── shared/       # reutilizável e neutro (components, config, hooks, lib, styles, types)
 ├── test/         # setup.ts e render.tsx
 └── main.tsx
 docs/             # esta documentação
@@ -160,6 +176,12 @@ Regras de arquitetura em [docs/architecture.md](docs/architecture.md).
 ## Como registrar uma decisão
 
 Decisões relevantes de arquitetura ou tecnologia viram um ADR (Architecture Decision Record) em `docs/decisions/`. Use o formato do primeiro registro, [0001-initial-architecture.md](docs/decisions/0001-initial-architecture.md), como modelo.
+
+## Variáveis de ambiente
+
+Copie `.env.example` para `.env.local` e preencha os valores. Só variáveis com o prefixo `VITE_` chegam ao front-end, e **tudo que chega ao front-end é público** — nunca coloque segredos ali.
+
+A leitura fica concentrada em [src/shared/config/env.ts](src/shared/config/env.ts): declare a variável em `ImportMetaEnv` (`src/vite-env.d.ts`) e, se ela for obrigatória, acrescente a chave em `REQUIRED_KEYS`. Assim uma configuração ausente ou malformada falha no boot, com mensagem dizendo qual variável corrigir, em vez de virar `undefined` em algum ponto distante do código.
 
 ## Limitações conhecidas
 

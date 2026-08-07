@@ -42,11 +42,24 @@
 
 - Chamadas HTTP em serviços/clientes.
 - Acesso a localStorage em adaptadores/repositórios.
+- Leitura de `import.meta.env` só em `shared/config/env.ts`.
+
+## Rotas
+
+- Importe de `react-router`, nunca de `react-router-dom`.
+- Acrescente rotas em `app/routes`, mantendo a curinga `'*'` por último.
+- Não envolva o `<Outlet />` em `ErrorBoundary`: o `errorElement` já cobre.
+
+## Commits
+
+- Primeira linha no formato `tipo: descrição`, até 72 caracteres, sem ponto final.
+- Não use `--no-verify` para contornar os hooks.
 
 ## Testes
 
 - Toda mudança de comportamento deve considerar testes.
 - Teste o resultado observável.
+- `npm run test` aplica limites de cobertura; não os reduza para fazer passar.
 
 ## Documentação
 
@@ -55,4 +68,5 @@
 ## Conclusão
 
 Uma tarefa só está concluída quando critérios de aceite, testes,
-lint, typecheck, build e documentação estiverem satisfeitos.
+lint, typecheck, build, cobertura, CI e documentação estiverem
+satisfeitos.

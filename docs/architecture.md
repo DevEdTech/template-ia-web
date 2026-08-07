@@ -20,9 +20,12 @@ Este arquivo continua sendo a fonte das decisões técnicas. A `plan-app` deve p
 ```
 src/
 ├── app/          # composição geral: providers, rotas, layout — sem regra de negócio
+│   ├── components/  # telas de erro e não encontrado usadas pelas rotas
+│   ├── routes/      # definição das rotas e o router
+│   └── tests/       # smoke test da composição
 ├── features/     # cada capacidade do produto em sua própria pasta
 │   └── notes/    # demonstração canônica; removida por --remove-example
-├── shared/       # reutilizável e neutro: components, hooks, lib, styles, types
+├── shared/       # reutilizável e neutro: components, config, hooks, lib, styles, types
 ├── test/         # setup.ts e render.tsx (utilidades de teste)
 └── main.tsx      # ponto de entrada da aplicação
 ```
@@ -72,6 +75,18 @@ Todo acesso a APIs passa por serviços dentro da feature (`services/`). Os compo
 Persistência local (ex.: `localStorage`) fica isolada em adaptadores/repositórios. Dados lidos na fronteira são validados antes de entrar no modelo. O exemplo de notas grava um envelope versionado com revisão monotônica, migra automaticamente o array legado, preserva dados inválidos em uma chave de backup e rejeita gravações feitas sobre uma revisão antiga. Eventos de `storage` sincronizam abas abertas. Falhas de leitura, conflito e escrita têm códigos estáveis e são apresentadas pela interface; uma operação nunca confirma sucesso antes da persistência terminar.
 
 Novas versões do formato persistido devem ter migração explícita e teste do formato anterior. Nunca apague silenciosamente dados que não puderem ser interpretados.
+
+## Rotas e falhas
+
+As rotas ficam em `app/routes`, que exporta `routes` (a árvore, montável com `createMemoryRouter` nos testes) e `router` (o router de produção). Importe sempre de `react-router`.
+
+A rota raiz registra um `errorElement`, então um erro de renderização no layout ou em qualquer rota filha vira uma tela de falha, nunca tela branca. Uma rota curinga (`path: '*'`) atende endereços desconhecidos dentro do layout — mantenha-a como último filho ao acrescentar rotas.
+
+O `ErrorBoundary` de `shared/components` não envolve mais o `<Outlet />`, para não sombrear o `errorElement`. Use-o para isolar um widget arriscado dentro de uma página.
+
+## Configuração de ambiente
+
+Toda leitura de `import.meta.env` passa por `shared/config/env.ts`. As variáveis são declaradas em `ImportMetaEnv` (`src/vite-env.d.ts`) e validadas no boot: ausência ou formato inválido falha imediatamente, nomeando a variável. Nada que chegue ao browser é secreto.
 
 ## Estado
 

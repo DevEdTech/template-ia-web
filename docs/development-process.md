@@ -26,7 +26,20 @@ fix: corrige data exibida no formato errado
 docs: documenta como configurar variáveis de ambiente
 ```
 
-Outros prefixos úteis: `test:`, `refactor:`, `chore:`.
+Outros prefixos úteis: `test:`, `refactor:`, `chore:`, `perf:`, `build:`, `ci:`, `style:`, `revert:`. Um escopo entre parênteses é opcional (`fix(notes): ...`), e `!` marca mudança incompatível (`feat!: ...`).
+
+A convenção é verificada pelo hook `commit-msg` (`scripts/check-commit-message.mjs`): a primeira linha precisa seguir `tipo: descrição`, ter no máximo 72 caracteres e não terminar com ponto. Commits de merge, revert e `fixup!` são ignorados.
+
+## Verificação automática
+
+| Momento      | O que roda                                                  |
+| ------------ | ----------------------------------------------------------- |
+| `pre-commit` | `lint-staged` nos arquivos alterados                        |
+| `commit-msg` | Convenção da mensagem                                       |
+| `pre-push`   | `typecheck` e testes                                        |
+| Pull Request | `npm run validate` em Node 22 e 24, mais `npm audit`, no CI |
+
+Os hooks são atalhos para pegar o problema cedo; o CI é a fonte da verdade. Em emergência, `git commit --no-verify` pula o hook — o CI continua verificando.
 
 ## Definição de concluído
 
@@ -36,5 +49,6 @@ Uma tarefa está concluída quando:
 - Funciona localmente
 - Os testes passam
 - Não há erro de lint, typecheck ou build (`npm run validate` verde)
+- O CI está verde no Pull Request
 - A documentação foi atualizada quando necessário
 - As alterações estão registradas no Git

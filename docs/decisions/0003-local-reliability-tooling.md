@@ -14,4 +14,6 @@ O template precisa detectar problemas antes da entrega sem depender de CI/CD e s
 
 ## Consequências
 
-O fluxo local leva um pouco mais de tempo, mas cobre o template como produto: personalização, arquitetura, documentação, dados e artefato final. CI/CD permanece fora do escopo.
+O fluxo local leva um pouco mais de tempo, mas cobre o template como produto: personalização, arquitetura, documentação, dados e artefato final.
+
+> **Atualização:** a decisão de manter CI/CD fora do escopo foi substituída pelo [ADR 0006](0006-quality-gates.md). O `validate` continua sendo o comando único de verificação; o CI passou a executá-lo.

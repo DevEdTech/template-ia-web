@@ -6,8 +6,9 @@ Projetos web frequentemente requerem navegação entre múltiplas páginas ou vi
 
 ## Decisão
 
-Decidimos **incluir** a biblioteca `react-router-dom` (v7) por padrão no template.
-A configuração será feita utilizando as APIs modernas de Data Router (`createBrowserRouter`) no diretório `app/routes/`, e o layout raiz injetará os componentes através do `<Outlet />`.
+Decidimos **incluir** um roteador por padrão no template, configurado com as APIs modernas de Data Router (`createBrowserRouter`) no diretório `app/routes/`, com o layout raiz injetando os componentes através do `<Outlet />`.
+
+> **Atualização:** o pacote adotado é `react-router` (v8). A escolha inicial, `react-router-dom` (v7), era um invólucro herdado da v6 e foi substituída — veja o [ADR 0007](0007-runtime-resilience.md). Importe sempre de `react-router`.
 
 ## Consequências
 

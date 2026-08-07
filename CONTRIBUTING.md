@@ -34,6 +34,8 @@ fix: corrige caminho na sincronização de skills
 docs: explica variáveis de ambiente em integrations
 ```
 
+O hook `commit-msg` verifica essa convenção automaticamente. Veja as regras completas em [docs/development-process.md](docs/development-process.md).
+
 ## Documentação e ADRs
 
 Toda mudança de arquitetura ou de regra do template deve atualizar a documentação afetada em `docs/`. Se a mudança for uma decisão relevante, registre um ADR em `docs/decisions/` seguindo o formato do [0001](docs/decisions/0001-initial-architecture.md).
@@ -49,5 +51,6 @@ Uma contribuição está pronta quando:
 - Roda localmente sem erros
 - Os testes passam
 - Não há erro de lint, typecheck ou build (`npm run validate` verde)
+- O CI está verde no Pull Request
 - A documentação e/ou ADR foram atualizados quando necessário
 - As alterações estão registradas no Git
