@@ -206,7 +206,7 @@ function removeExampleFeatures() {
 function resetTasks() {
   writeFileSync(
     join(projectRoot, 'tasks.md'),
-    '# Tarefas\n\nRegistre aqui as tarefas do projeto.\n\n## A fazer\n\n## Em andamento\n\n## Concluído\n',
+    '# Tarefas\n\nRegistre aqui as tarefas do projeto. O detalhamento de cada demanda fica em\n[docs/tasks/](docs/tasks/README.md).\n\n## A fazer\n\n## Em andamento\n\n## Concluído\n',
   );
 }
 
@@ -269,6 +269,7 @@ async function main() {
       'repository-url': { type: 'string' },
       'remove-example': { type: 'boolean' },
       'reset-tasks': { type: 'boolean' },
+      'keep-tasks': { type: 'boolean' },
       'init-docs': { type: 'boolean' },
       'no-sync-skills': { type: 'boolean' },
       'dry-run': { type: 'boolean' },
@@ -285,7 +286,9 @@ async function main() {
       license: values.license?.trim() || '',
       repositoryUrl: values['repository-url']?.trim() || '',
       removeExample: values['remove-example'] || false,
-      doResetTasks: values['reset-tasks'] || values['init-docs'] || false,
+      // Reiniciar é o padrão: um projeto novo não deve herdar o backlog do
+      // template. Use --keep-tasks para preservar o conteúdo existente.
+      doResetTasks: !values['keep-tasks'],
       doSyncSkills: !values['no-sync-skills'],
       dryRun: values['dry-run'] || false,
     });
@@ -303,7 +306,7 @@ async function main() {
     const description = (await rl.question('Descrição do projeto: ')).trim();
     const organization = (await rl.question('Nome da organização: ')).trim();
     const removeExample = isYes(await rl.question('Remover demonstrações? (s/N): '), false);
-    const doResetTasks = isYes(await rl.question('Reiniciar tasks.md? (s/N): '), false);
+    const doResetTasks = isYes(await rl.question('Reiniciar tasks.md? (S/n): '), true);
     const doSyncSkills = isYes(await rl.question('Sincronizar skills? (S/n): '), true);
     applyChanges({
       name: slugifyPackageName(name || suggestedName),

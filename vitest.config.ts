@@ -18,9 +18,13 @@ export default mergeConfig(
         reporter: ['text', 'html'],
         include: ['src/**/*.{ts,tsx}'],
         exclude: ['src/test/**', 'src/main.tsx', 'src/vite-env.d.ts'],
+        // Aplicados de fato: `npm run test` roda `test:coverage`, entao uma
+        // queda abaixo destes limites falha o `validate` e o CI.
         thresholds: {
-          lines: 80,
-          branches: 70,
+          statements: 85,
+          lines: 85,
+          branches: 75,
+          functions: 90,
         },
       },
     },

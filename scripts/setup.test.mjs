@@ -77,6 +77,28 @@ test('remove a demonstração e deixa uma composição sem imports quebrados', (
   }
 });
 
+test('reinicia tasks.md por padrão e preserva com --keep-tasks', () => {
+  const root = copyFixture();
+  try {
+    writeFileSync(join(root, 'tasks.md'), '# Backlog do template\n\n- [x] item herdado\n');
+    runSetup(root, '--name=reset-app', '--no-sync-skills');
+    const reset = readFileSync(join(root, 'tasks.md'), 'utf8');
+    assert.match(reset, /## A fazer/);
+    assert.doesNotMatch(reset, /item herdado/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+
+  const kept = copyFixture();
+  try {
+    writeFileSync(join(kept, 'tasks.md'), '# Backlog do template\n\n- [x] item herdado\n');
+    runSetup(kept, '--name=keep-app', '--keep-tasks', '--no-sync-skills');
+    assert.match(readFileSync(join(kept, 'tasks.md'), 'utf8'), /item herdado/);
+  } finally {
+    rmSync(kept, { recursive: true, force: true });
+  }
+});
+
 test('dry-run e repetição com os mesmos valores são idempotentes', () => {
   const root = copyFixture();
   try {
