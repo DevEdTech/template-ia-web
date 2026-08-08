@@ -31,3 +31,23 @@ test('encontra links quebrados e scripts npm inexistentes', () => {
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('rejeita recomendação para contornar hooks', () => {
+  const root = project('Em emergência, use `git commit --no-verify`.');
+  try {
+    assert.match(checkDocs(root).join('\n'), /não recomende contornar os hooks/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('rejeita hook que chama script npm inexistente', () => {
+  const root = project('# Projeto');
+  try {
+    mkdirSync(join(root, '.husky'), { recursive: true });
+    writeFileSync(join(root, '.husky', 'pre-push'), 'npm run teste-inexistente\n');
+    assert.match(checkDocs(root).join('\n'), /\.husky\/pre-push.*teste-inexistente/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

@@ -9,6 +9,8 @@ Testamos o **comportamento observável** da aplicação: o que o usuário vê e 
 - **Unidade**: funções e lógica isoladas (ex.: cálculo, formatação).
 - **Componente**: renderização e interação de componentes, com Vitest + React Testing Library.
 - **Contrato local**: setup transacional, regras arquiteturais, links da documentação e artefato de build.
+- **E2E**: fluxo crítico no Chromium contra o bundle de produção, com
+  Playwright.
 
 ## Localização
 
@@ -29,8 +31,21 @@ npm run test          # roda os testes uma vez, com limites de cobertura
 npm run test:unit     # roda apenas Vitest, sem cobertura (mais rápido)
 npm run test:coverage # roda Vitest aplicando os limites de cobertura
 npm run test:setup    # testa setup e regras arquiteturais em projetos temporários
+npm run test:e2e      # testa o fluxo crítico em um navegador Chromium real
 npm run test:watch    # roda em modo contínuo enquanto você edita
 ```
+
+Antes da primeira execução local do E2E, instale o navegador compatível com a
+versão do Playwright:
+
+```bash
+npx playwright install chromium
+```
+
+O E2E escolhe uma porta efêmera, gera o bundle e serve a aplicação localmente.
+Ele não depende de rede externa nem de dados preexistentes. O CI instala também
+as dependências de sistema do Chromium e publica trace e screenshot apenas em
+caso de falha.
 
 ## Cobertura
 
@@ -64,6 +79,11 @@ O foco é no que aparece na tela, não em como o componente foi escrito por dent
 A composição da aplicação tem smoke test em `src/app/tests/`: a rota raiz monta com layout e página inicial, um endereço desconhecido cai na tela de "não encontrada" sem derrubar o layout, e uma rota que lança erro é substituída pelo `errorElement`. Se você mexer em rotas ou no layout, esses testes são a primeira rede.
 
 O setup também é comportamento público do template. Seus testes executam dry-run, personalização, repetição idempotente e rollback em pastas temporárias. A persistência testa migração, backup de dados inválidos, conflitos de revisão e sincronização entre abas. O smoke test serve `dist/` em uma porta efêmera e acessa o HTML e seus assets como um navegador faria.
+
+O smoke E2E complementa essas redes executando o React no Chromium: adiciona e
+remove uma nota usando nomes acessíveis e confirma a rota de fallback. Ele fica
+em um gate separado de `npm run validate` para que a validação local não baixe
+binários de navegador implicitamente.
 
 ## O que NÃO testar
 

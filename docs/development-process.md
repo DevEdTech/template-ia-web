@@ -16,6 +16,9 @@ Fluxo recomendado para levar uma ideia até o código, de forma organizada e ver
 10. **Pull Request**: abra o PR descrevendo o que mudou e por quê.
 11. **Revisão**: ajuste conforme os comentários antes de integrar.
 
+Atualizações herdadas do template usam `npm run update:template -- --dry-run`
+antes da aplicação. Veja [updating.md](updating.md).
+
 ## Mensagens de commit
 
 Use um prefixo de tipo:
@@ -32,14 +35,15 @@ A convenção é verificada pelo hook `commit-msg` (`scripts/check-commit-messag
 
 ## Verificação automática
 
-| Momento      | O que roda                                                  |
-| ------------ | ----------------------------------------------------------- |
-| `pre-commit` | `lint-staged` nos arquivos alterados                        |
-| `commit-msg` | Convenção da mensagem                                       |
-| `pre-push`   | `typecheck` e testes                                        |
-| Pull Request | `npm run validate` em Node 22 e 24, mais `npm audit`, no CI |
+| Momento      | O que roda                                            |
+| ------------ | ----------------------------------------------------- |
+| `pre-commit` | `lint-staged` nos arquivos alterados                  |
+| `commit-msg` | Convenção da mensagem                                 |
+| `pre-push`   | `typecheck` e `test:unit` (Vitest sem cobertura)      |
+| Pull Request | `validate` em Node 22/24, auditoria e E2E no Chromium |
 
-Os hooks são atalhos para pegar o problema cedo; o CI é a fonte da verdade. Em emergência, `git commit --no-verify` pula o hook — o CI continua verificando.
+Os hooks são atalhos para pegar o problema cedo; corrija a causa quando um deles
+falhar. O CI executa os portões completos e é a fonte da verdade.
 
 ## Definição de concluído
 

@@ -1,16 +1,47 @@
-# Atualizando seu Projeto
+# Atualizando seu projeto
 
-Como este projeto foi criado a partir de um template, o template pode receber atualizações (novas configurações, regras de lint, integrações de CI/CD).
+Projetos derivados registram a versão de origem em
+`.template-state.json`. Atualizações compatíveis são distribuídas como migrações
+locais, sequenciais e transacionais no próprio repositório.
 
-Para trazer essas atualizações para o seu projeto sem perder suas modificações:
+## Conferir uma atualização
 
-1. Adicione o repositório do template como um _remote_:
-   `git remote add template https://github.com/DevEdTech/template-ia-web.git`
-2. Baixe as atualizações:
-   `git fetch template`
-3. Faça o merge das alterações na sua branch atual (permitindo históricos diferentes na primeira vez):
-   `git merge template/master --allow-unrelated-histories`
-4. Resolva possíveis conflitos (geralmente no `README.md` ou `package.json`).
-5. Faça um commit com a resolução.
+Antes de alterar arquivos, liste as migrações aplicáveis:
 
-Depois de configurar o remote `template` na primeira vez, os passos 2, 3 e 4 bastarão para as próximas atualizações.
+```bash
+npm run update:template -- --dry-run
+```
+
+O comando mostra cada transição de versão e não escreve no projeto.
+
+## Aplicar uma atualização
+
+Depois de revisar o plano:
+
+```bash
+npm run update:template
+npm run validate
+```
+
+Migrações concluídas atualizam `templateVersion`. Repetir o comando não reaplica
+etapas já executadas. Se qualquer etapa falhar, todos os arquivos declarados
+pela migração são restaurados ao estado anterior.
+
+## Obter novas migrações
+
+O atualizador executa apenas migrações que já existem no checkout. Trazer uma
+nova versão do template continua sendo uma operação explícita de Git: consulte o
+changelog ou release correspondente, copie ou integre os arquivos do template em
+uma branch dedicada e então rode o dry-run.
+
+Não use `--allow-unrelated-histories` como fluxo padrão. Projetos derivados
+podem ter mudanças incompatíveis, e conflitos devem ser resolvidos de forma
+consciente antes de executar as migrações.
+
+## Limites
+
+- O comando não baixa versões, não faz merge e não resolve conflitos.
+- Uma versão desconhecida falha com mensagem clara, sem alterar arquivos.
+- Migrações não podem sobrescrever código do usuário sem declarar o arquivo como
+  alvo e documentar a decisão.
+- Faça a atualização em uma branch e revise o diff antes do merge.

@@ -1,5 +1,5 @@
 import { configDefaults, defineConfig, mergeConfig } from 'vitest/config';
-import viteConfig from './vite.config';
+import viteConfig from './vite.config.ts';
 
 export default mergeConfig(
   viteConfig,
@@ -8,7 +8,7 @@ export default mergeConfig(
       environment: 'jsdom',
       globals: true,
       setupFiles: './src/test/setup.ts',
-      exclude: [...configDefaults.exclude, 'scripts/**/*.test.mjs'],
+      exclude: [...configDefaults.exclude, 'scripts/**/*.test.mjs', 'e2e/**'],
       css: true,
       typecheck: {
         tsconfig: './tsconfig.app.json',

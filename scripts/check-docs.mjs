@@ -44,6 +44,25 @@ export function checkDocs(root = defaultRoot) {
     }
   }
 
+  for (const file of [join(root, 'README.md'), join(root, 'docs', 'development-process.md')]) {
+    if (!existsSync(file)) continue;
+    if (readFileSync(file, 'utf8').includes('--no-verify')) {
+      errors.push(`${relative(root, file)}: não recomende contornar os hooks com --no-verify.`);
+    }
+  }
+
+  const hooksRoot = join(root, '.husky');
+  for (const hook of ['pre-commit', 'commit-msg', 'pre-push']) {
+    const hookFile = join(hooksRoot, hook);
+    if (!existsSync(hookFile)) continue;
+    const content = readFileSync(hookFile, 'utf8');
+    for (const match of content.matchAll(/npm run ([a-zA-Z0-9:_-]+)/g)) {
+      if (!scripts.has(match[1])) {
+        errors.push(`.husky/${hook}: script npm inexistente "${match[1]}".`);
+      }
+    }
+  }
+
   const agentsFile = join(root, 'docs', 'agents.md');
   if (existsSync(agentsFile)) {
     const agents = readFileSync(agentsFile, 'utf8');

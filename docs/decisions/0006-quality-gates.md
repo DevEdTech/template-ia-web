@@ -19,7 +19,10 @@ Adotar CI e fechar cada lacuna acima, sem abrir mão da execução local:
 2. **`npm audit` só no CI.** Uma falha ali indica vulnerabilidade publicada, não erro de código; manter fora do `validate` evita travar o trabalho local por indisponibilidade do registry.
 3. **Cobertura aplicada de fato**: `npm run test` passa a chamar `test:coverage`, e os limites subiram para 85% de linhas e instruções, 75% de ramos e 90% de funções.
 4. **Lint dos scripts do repositório**: bloco dedicado para `scripts/**/*.mjs` e para os arquivos de configuração da raiz.
-5. **Hooks completos**: `pre-commit` (lint-staged), `commit-msg` (convenção verificada por `scripts/check-commit-message.mjs`, sem dependência nova) e `pre-push` (typecheck e testes).
+5. **Hooks completos**: `pre-commit` (lint-staged), `commit-msg` (convenção
+   verificada por `scripts/check-commit-message.mjs`, sem dependência nova) e
+   `pre-push` (`typecheck` e `test:unit`, sem cobertura; o gate completo fica no
+   CI).
 6. **Reprodutibilidade**: `prepare` passa a rodar `sync:skills`, então `npm ci` deixa o clone pronto para `validate`.
 7. **`engine-strict=true`** em `.npmrc`, tornando `engines.node` uma exigência real.
 8. **Dependabot** semanal para npm e mensal para as actions, com atualizações de patch/minor agrupadas.
@@ -29,3 +32,5 @@ Adotar CI e fechar cada lacuna acima, sem abrir mão da execução local:
 - **Positivas:** o estado verde passa a ser verificável por terceiros e não depende de disciplina individual. Regressões de cobertura, vulnerabilidades e quebras em Node 24 aparecem no Pull Request.
 - **Negativas:** o ciclo de commit e push fica mais lento, e o projeto passa a depender do GitHub Actions. Quem usa outra forja precisa portar o workflow — o `validate` continua sendo o comando único que descreve tudo que o CI faz.
 - Este ADR substitui a frase "CI/CD permanece fora do escopo" do ADR 0003.
+- Falhas de hook devem ser corrigidas; a documentação pública não recomenda
+  contornar as verificações.

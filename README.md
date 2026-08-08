@@ -31,7 +31,7 @@ Indicado para:
 ## Pré-requisitos
 
 - Node.js 22 (o arquivo `.nvmrc` já indica a versão; com `nvm`, rode `nvm use`)
-- npm (vem junto com o Node)
+- npm 10.6.0 (a versão exata declarada em `packageManager`)
 - git
 - Um agente de código (ex.: Claude Code)
 
@@ -46,7 +46,7 @@ npm install
 npm run setup
 ```
 
-O `npm run setup` separa o identificador técnico do nome exibido, personaliza descrição, organização, licença e repositório, pode remover a demonstração de notas sem quebrar a composição e sincroniza as skills dos agentes. Ele também reinicia o `tasks.md` para que o projeto novo não herde o backlog do template — use `--keep-tasks` se quiser preservá-lo. Antes de aplicar, use `npm run setup -- --name="meu-app" --dry-run`; execuções repetidas com os mesmos valores são idempotentes e uma falha restaura o estado anterior.
+O `npm run setup` separa o identificador técnico do nome exibido, personaliza descrição, organização, licença e repositório, pode remover somente a demonstração canônica `notes` sem tocar em outras features e sincroniza as skills dos agentes. Ele também reinicia o `tasks.md` para que o projeto novo não herde o backlog do template — use `--keep-tasks` se quiser preservá-lo. Antes de aplicar, use `npm run setup -- --name="meu-app" --dry-run`; execuções repetidas com os mesmos valores são idempotentes e uma falha restaura o estado anterior.
 
 ## Prompts Iniciais (Copie, Preencha e Cole no Agente)
 
@@ -75,6 +75,7 @@ O plano foi aprovado. Use a skill implement-feature para executar. Garanta que `
 ## Instalação
 
 ```bash
+npm install --global npm@10.6.0
 npm install
 ```
 
@@ -100,16 +101,19 @@ Esse comando executa, em sequência: verificação das skills, arquitetura e doc
 
 Além da validação local, o repositório traz portões automáticos:
 
-| Onde                | O que roda                                                      |
-| ------------------- | --------------------------------------------------------------- |
-| `pre-commit`        | `lint-staged` (ESLint e Prettier nos arquivos alterados)        |
-| `commit-msg`        | Convenção da mensagem de commit                                 |
-| `pre-push`          | `typecheck` e testes                                            |
-| CI (GitHub Actions) | `npm ci` e `npm run validate` em Node 22 e 24, mais `npm audit` |
+| Onde                | O que roda                                               |
+| ------------------- | -------------------------------------------------------- |
+| `pre-commit`        | `lint-staged` (ESLint e Prettier nos arquivos alterados) |
+| `commit-msg`        | Convenção da mensagem de commit                          |
+| `pre-push`          | `typecheck` e `test:unit` (Vitest sem cobertura)         |
+| CI (GitHub Actions) | `validate` em Node 22/24, auditoria e E2E no Chromium    |
 
-O CI está em `.github/workflows/ci.yml`. Configure a branch principal para exigir o check **Validate** antes do merge. As atualizações de dependência chegam por Dependabot (`.github/dependabot.yml`).
+O CI está em `.github/workflows/ci.yml`. Configure a branch principal para
+exigir os checks **Validate** e **E2E (Chromium)** antes do merge. As
+atualizações de dependência chegam por Dependabot (`.github/dependabot.yml`).
 
-Para pular um hook em uma emergência, use `git commit --no-verify` — o CI continua verificando.
+Se um hook falhar, corrija a causa antes de prosseguir. O CI repete os portões
+completos e continua sendo a fonte da verdade para integração.
 
 ## Comandos
 
@@ -120,6 +124,7 @@ Para pular um hook em uma emergência, use `git commit --no-verify` — o CI con
 | `npm run lint`                                  | Verifica problemas de código com ESLint                             |
 | `npm run check:architecture`                    | Impede imports que atravessam as fronteiras das features            |
 | `npm run check:docs`                            | Valida links, comandos e referências da documentação                |
+| `npm run check:toolchain`                       | Confere a versão do npm declarada pelo projeto                      |
 | `npm run format`                                | Formata os arquivos com Prettier                                    |
 | `npm run format:check`                          | Confere se os arquivos estão formatados                             |
 | `npm run typecheck`                             | Verifica os tipos do TypeScript                                     |
@@ -127,8 +132,10 @@ Para pular um hook em uma emergência, use `git commit --no-verify` — o CI con
 | `npm run test:unit`                             | Roda apenas os testes Vitest, sem cobertura                         |
 | `npm run test:coverage`                         | Roda os testes Vitest aplicando os limites de cobertura             |
 | `npm run test:setup`                            | Roda os testes black-box do setup e da arquitetura                  |
+| `npm run test:e2e`                              | Executa o fluxo crítico no Chromium com Playwright                  |
 | `npm run test:watch`                            | Roda os testes em modo contínuo                                     |
 | `npm run setup`                                 | Personaliza identificadores, apresentação e demonstração do projeto |
+| `npm run update:template`                       | Aplica migrações locais conhecidas do template                      |
 | `npm run generate:feature -- --name="clientes"` | Gera a estrutura inicial de uma feature                             |
 | `npm run smoke:build`                           | Serve e verifica o conteúdo gerado em `dist/`                       |
 | `npm run sync:skills`                           | Gera as cópias das skills em `.claude/skills` e `.agents/skills`    |

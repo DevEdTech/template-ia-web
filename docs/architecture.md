@@ -65,14 +65,33 @@ features/minha-feature/
 13. Toda mudança de comportamento considera os testes.
 14. Toda decisão relevante atualiza a documentação ou gera um ADR.
 15. Imports externos usam apenas o `index.ts` da feature; `npm run check:architecture` verifica essa fronteira.
+16. `fetch` e armazenamento do navegador só aparecem em `services/`,
+    `adapters/` ou `repositories/`, dentro de uma feature ou de `shared`.
+17. `import.meta.env` só aparece em `shared/config/env.ts`.
 
 ## Acesso a APIs
 
-Todo acesso a APIs passa por serviços dentro da feature (`services/`). Os componentes chamam o serviço; nunca fazem `fetch` diretamente. Isso concentra o tratamento de erros e facilita substituir a fonte por dados fake nos testes. Veja [integrations.md](integrations.md).
+Todo acesso a APIs passa por `services/`, `adapters/` ou `repositories/` dentro
+da feature. Uma infraestrutura neutra e realmente compartilhada pode usar as
+mesmas pastas dentro de `shared`. Os componentes chamam essa fronteira; nunca
+fazem `fetch` diretamente. Isso concentra o tratamento de erros e facilita
+substituir a fonte por dados fake nos testes. Veja [integrations.md](integrations.md).
 
 ## Armazenamento
 
-Persistência local (ex.: `localStorage`) fica isolada em adaptadores/repositórios. Dados lidos na fronteira são validados antes de entrar no modelo. O exemplo de notas grava um envelope versionado com revisão monotônica, migra automaticamente o array legado, preserva dados inválidos em uma chave de backup e rejeita gravações feitas sobre uma revisão antiga. Eventos de `storage` sincronizam abas abertas. Falhas de leitura, conflito e escrita têm códigos estáveis e são apresentadas pela interface; uma operação nunca confirma sucesso antes da persistência terminar.
+Persistência local (ex.: `localStorage`) fica isolada em `services/`,
+`adapters/` ou `repositories/`. Dados lidos na fronteira são validados antes de
+entrar no modelo. O exemplo de notas grava um envelope versionado com revisão
+monotônica, migra automaticamente o array legado, preserva dados inválidos em
+uma chave de backup e rejeita gravações feitas sobre uma revisão antiga. Eventos
+de `storage` sincronizam abas abertas. Falhas de leitura, conflito e escrita têm
+códigos estáveis e são apresentadas pela interface; uma operação nunca confirma
+sucesso antes da persistência terminar.
+
+A orquestração da lista demonstrativa fica em um hook interno da feature. O
+componente `NoteList` cuida da composição visual e semântica, enquanto o hook
+coordena validação, revisões e sincronização sem expor detalhes pela interface
+pública da feature.
 
 Novas versões do formato persistido devem ter migração explícita e teste do formato anterior. Nunca apague silenciosamente dados que não puderem ser interpretados.
 
@@ -94,7 +113,11 @@ O estado é local aos componentes ou às features. Não usamos gerenciador globa
 
 ## Testes
 
-Os testes ficam colocalizados dentro da feature, na pasta `tests/`. Testam o comportamento observável da funcionalidade. Os scripts de arquitetura usam a AST do TypeScript para cobrir imports estáticos, reexports e imports dinâmicos. Detalhes em [testing.md](testing.md).
+Os testes ficam colocalizados dentro da feature, na pasta `tests/`. Testam o
+comportamento observável da funcionalidade. Os scripts de arquitetura usam a AST
+do TypeScript para cobrir imports estáticos, reexports, imports dinâmicos e o uso
+de `fetch`, `localStorage` e `import.meta.env` fora das fronteiras permitidas.
+Detalhes em [testing.md](testing.md).
 
 ## Evolução incremental
 

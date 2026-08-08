@@ -53,7 +53,9 @@ complexidade inicial além do necessário.
   ADR.
 - A atualização do template será incremental e explícita. O primeiro ciclo não
   fará merge automático de remotes nem resolverá conflitos de código do usuário.
-- Os incrementos serão implementados em PRs separados, na ordem proposta.
+- Os incrementos foram implementados sequencialmente no mesmo branch após a
+  solicitação de execução integral do plano. A separação em PRs permanece como
+  recomendação para integrações futuras.
 
 ## Não escopo
 
@@ -97,169 +99,169 @@ experiência operacional e a reprodutibilidade.
 
 ### Incremento 1 — Proteger o setup
 
-- [ ] Escrever um teste de regressão que crie `src/features/custom-feature`,
+- [x] Escrever um teste de regressão que crie `src/features/custom-feature`,
       execute o setup com `--remove-example` e verifique que somente `notes` foi
       removida.
-- [ ] Substituir a remoção genérica de diretórios por uma lista explícita de
+- [x] Substituir a remoção genérica de diretórios por uma lista explícita de
       exemplos pertencentes ao template.
-- [ ] Garantir que a remoção continue idempotente quando o exemplo já não
+- [x] Garantir que a remoção continue idempotente quando o exemplo já não
       existir.
-- [ ] Decidir entre implementar `--init-docs` ou removê-lo do parser. Preferir a
+- [x] Decidir entre implementar `--init-docs` ou removê-lo do parser. Preferir a
       remoção se não houver comportamento documentado que o exija.
-- [ ] Testar rollback quando uma falha acontece depois da remoção do exemplo.
-- [ ] Atualizar README e ADR do setup com a garantia de preservação das features
+- [x] Testar rollback quando uma falha acontece depois da remoção do exemplo.
+- [x] Atualizar README e ADR do setup com a garantia de preservação das features
       do usuário.
-- [ ] Executar `npm run validate` e revisar o diff.
+- [x] Executar `npm run validate` e revisar o diff.
 
 #### Critérios de aceite do incremento 1
 
-- [ ] `--remove-example` remove `src/features/notes` e nenhuma feature
+- [x] `--remove-example` remove `src/features/notes` e nenhuma feature
       desconhecida.
-- [ ] Repetir o comando produz o mesmo estado final sem erro.
-- [ ] Uma falha intermediária restaura exemplos e arquivos alterados.
-- [ ] Não existe opção de CLI aceita silenciosamente sem efeito.
+- [x] Repetir o comando produz o mesmo estado final sem erro.
+- [x] Uma falha intermediária restaura exemplos e arquivos alterados.
+- [x] Não existe opção de CLI aceita silenciosamente sem efeito.
 
 ### Incremento 2 — Automatizar as regras arquiteturais
 
-- [ ] Adicionar fixtures negativas antes de mudar o verificador para os casos:
+- [x] Adicionar fixtures negativas antes de mudar o verificador para os casos:
       `fetch` em componente, `localStorage` fora de `services`/adaptadores e
       `import.meta.env` fora de `shared/config/env.ts`.
-- [ ] Definir na documentação quais caminhos são permitidos para clientes HTTP,
+- [x] Definir na documentação quais caminhos são permitidos para clientes HTTP,
       repositórios e configuração de ambiente.
-- [ ] Estender a travessia AST para identificar essas APIs sem falsos positivos
+- [x] Estender a travessia AST para identificar essas APIs sem falsos positivos
       em comentários, strings, testes ou scripts Node.
-- [ ] Preservar as verificações atuais de imports estáticos, reexports e imports
+- [x] Preservar as verificações atuais de imports estáticos, reexports e imports
       dinâmicos entre features.
-- [ ] Adicionar mensagens de erro que indiquem arquivo, regra violada e destino
+- [x] Adicionar mensagens de erro que indiquem arquivo, regra violada e destino
       esperado.
-- [ ] Avaliar uma regra objetiva para impedir dependências de domínio em `app`;
+- [x] Avaliar uma regra objetiva para impedir dependências de domínio em `app`;
       implementar somente se houver critério sintático confiável.
-- [ ] Atualizar `docs/architecture.md`, `docs/integrations.md` e o ADR de
+- [x] Atualizar `docs/architecture.md`, `docs/integrations.md` e o ADR de
       fronteiras.
-- [ ] Executar `npm run validate` e revisar o diff.
+- [x] Executar `npm run validate` e revisar o diff.
 
 #### Critérios de aceite do incremento 2
 
-- [ ] Cada violação suportada possui ao menos um teste que falha sem a regra.
-- [ ] O código atual e os arquivos gerados por `generate:feature` continuam
+- [x] Cada violação suportada possui ao menos um teste que falha sem a regra.
+- [x] O código atual e os arquivos gerados por `generate:feature` continuam
       aprovados.
-- [ ] Comentários, strings e testes não causam falsos positivos.
-- [ ] As regras documentadas correspondem exatamente ao que o script verifica.
+- [x] Comentários, strings e testes não causam falsos positivos.
+- [x] As regras documentadas correspondem exatamente ao que o script verifica.
 
 ### Incremento 3 — Melhorar o exemplo canônico de notas
 
-- [ ] Acrescentar testes observáveis para conflito de revisão, falha durante
+- [x] Acrescentar testes observáveis para conflito de revisão, falha durante
       sincronização entre abas, tentativa de remover nota inexistente e limpeza do
       erro após correção do título.
-- [ ] Extrair estado, persistência e sincronização de `NoteList` para um hook
+- [x] Extrair estado, persistência e sincronização de `NoteList` para um hook
       interno da feature, sem expô-lo pela API pública.
-- [ ] Manter `NoteList` como componente de apresentação e composição do fluxo.
-- [ ] Adicionar um `label` explícito ao campo de título e ligar a mensagem de
+- [x] Manter `NoteList` como componente de apresentação e composição do fluxo.
+- [x] Adicionar um `label` explícito ao campo de título e ligar a mensagem de
       validação usando `aria-describedby`.
-- [ ] Preservar mensagens, ordem das notas, sincronização entre abas, migração,
+- [x] Preservar mensagens, ordem das notas, sincronização entre abas, migração,
       backup e conflito de revisão.
-- [ ] Confirmar que a complexidade do componente diminuiu e que a cobertura dos
+- [x] Confirmar que a complexidade do componente diminuiu e que a cobertura dos
       ramos críticos aumentou sem testes de detalhes internos.
-- [ ] Atualizar a descrição da feature em `docs/architecture.md`, se a nova
+- [x] Atualizar a descrição da feature em `docs/architecture.md`, se a nova
       separação de responsabilidades precisar ser registrada.
-- [ ] Executar `npm run validate` e revisar o diff.
+- [x] Executar `npm run validate` e revisar o diff.
 
 #### Critérios de aceite do incremento 3
 
-- [ ] Todos os fluxos existentes continuam observavelmente iguais.
-- [ ] Falhas de leitura, escrita, conflito e sincronização aparecem na interface.
-- [ ] O campo possui nome acessível e a mensagem de erro está associada a ele.
-- [ ] `NoteList` não acessa diretamente `localStorage` nem contém a orquestração
+- [x] Todos os fluxos existentes continuam observavelmente iguais.
+- [x] Falhas de leitura, escrita, conflito e sincronização aparecem na interface.
+- [x] O campo possui nome acessível e a mensagem de erro está associada a ele.
+- [x] `NoteList` não acessa diretamente `localStorage` nem contém a orquestração
       completa da persistência.
 
 ### Incremento 4 — Versionar e migrar o template
 
-- [ ] Registrar `templateVersion` em `.template-state.json` e definir a primeira
+- [x] Registrar `templateVersion` em `.template-state.json` e definir a primeira
       versão de referência.
-- [ ] Fazer o setup preservar e atualizar esse metadado de forma idempotente.
-- [ ] Criar um comando de atualização que leia a versão atual, liste migrações
+- [x] Fazer o setup preservar e atualizar esse metadado de forma idempotente.
+- [x] Criar um comando de atualização que leia a versão atual, liste migrações
       disponíveis e ofereça `--dry-run`.
-- [ ] Modelar migrações locais, sequenciais e testáveis, com falha para versões
+- [x] Modelar migrações locais, sequenciais e testáveis, com falha para versões
       desconhecidas ou caminhos incompletos.
-- [ ] Reutilizar a estratégia transacional do setup para restaurar arquivos se
+- [x] Reutilizar a estratégia transacional do setup para restaurar arquivos se
       uma migração falhar.
-- [ ] Criar testes black-box para projeto atualizado, projeto já atualizado,
+- [x] Criar testes black-box para projeto atualizado, projeto já atualizado,
       dry-run e rollback.
-- [ ] Substituir em `docs/updating.md` o merge com históricos não relacionados
+- [x] Substituir em `docs/updating.md` o merge com históricos não relacionados
       pelo fluxo versionado e documentar como atualizações manuais excepcionais são
       tratadas.
-- [ ] Registrar a decisão em novo ADR.
-- [ ] Executar `npm run validate` e revisar o diff.
+- [x] Registrar a decisão em novo ADR.
+- [x] Executar `npm run validate` e revisar o diff.
 
 #### Critérios de aceite do incremento 4
 
-- [ ] Um projeto informa de qual versão do template partiu.
-- [ ] O comando mostra antecipadamente arquivos e migrações que serão aplicados.
-- [ ] Reexecução não repete migrações concluídas.
-- [ ] Falhas não deixam o projeto em estado parcialmente migrado.
-- [ ] O processo não sobrescreve código do usuário sem uma migração explícita.
+- [x] Um projeto informa de qual versão do template partiu.
+- [x] O comando mostra antecipadamente arquivos e migrações que serão aplicados.
+- [x] Reexecução não repete migrações concluídas.
+- [x] Falhas não deixam o projeto em estado parcialmente migrado.
+- [x] O processo não sobrescreve código do usuário sem uma migração explícita.
 
 ### Incremento 5 — Alinhar processo, documentação e hooks
 
-- [ ] Remover a recomendação de `--no-verify` do README e de
+- [x] Remover a recomendação de `--no-verify` do README e de
       `docs/development-process.md`, alinhando-os ao `AGENTS.md`.
-- [ ] Descrever o `pre-push` como `typecheck` mais testes Vitest sem cobertura,
+- [x] Descrever o `pre-push` como `typecheck` mais testes Vitest sem cobertura,
       refletindo os comandos reais do hook.
-- [ ] Verificar se README, documentação, PR template e ADR de quality gates usam
+- [x] Verificar se README, documentação, PR template e ADR de quality gates usam
       os mesmos nomes para validações locais e de CI.
-- [ ] Ampliar `check:docs` apenas com verificações objetivas que previnam a volta
+- [x] Ampliar `check:docs` apenas com verificações objetivas que previnam a volta
       dessas divergências.
-- [ ] Atualizar testes do verificador de documentação.
-- [ ] Executar `npm run validate` e revisar o diff.
+- [x] Atualizar testes do verificador de documentação.
+- [x] Executar `npm run validate` e revisar o diff.
 
 #### Critérios de aceite do incremento 5
 
-- [ ] Nenhum documento recomenda contornar hooks.
-- [ ] A descrição de cada hook corresponde ao arquivo executado pelo Husky.
-- [ ] Comandos e links documentados continuam validados automaticamente.
+- [x] Nenhum documento recomenda contornar hooks.
+- [x] A descrição de cada hook corresponde ao arquivo executado pelo Husky.
+- [x] Comandos e links documentados continuam validados automaticamente.
 
 ### Incremento 6 — Adicionar smoke E2E em navegador real
 
-- [ ] Registrar em ADR a necessidade e o custo de `@playwright/test` antes de
+- [x] Registrar em ADR a necessidade e o custo de `@playwright/test` antes de
       adicionar a dependência.
-- [ ] Configurar um servidor efêmero do bundle e um projeto Chromium.
-- [ ] Criar um único fluxo E2E que carregue a aplicação, adicione e remova uma
+- [x] Configurar um servidor efêmero do bundle e um projeto Chromium.
+- [x] Criar um único fluxo E2E que carregue a aplicação, adicione e remova uma
       nota e confirme a rota desconhecida.
-- [ ] Usar seletores por papel e nome acessível para que o teste também pressione
+- [x] Usar seletores por papel e nome acessível para que o teste também pressione
       a semântica básica da interface.
-- [ ] Adicionar `test:e2e` aos scripts npm e um job de CI que instale o navegador
+- [x] Adicionar `test:e2e` aos scripts npm e um job de CI que instale o navegador
       de forma explícita.
-- [ ] Manter `npm run validate` utilizável sem download implícito de navegador;
+- [x] Manter `npm run validate` utilizável sem download implícito de navegador;
       documentar que o CI executa `validate` e `test:e2e` como gates separados.
-- [ ] Publicar trace ou screenshot somente quando o teste falhar.
-- [ ] Atualizar `docs/testing.md` e `docs/building.md`.
-- [ ] Executar validação local aplicável, E2E e revisar o diff.
+- [x] Publicar trace ou screenshot somente quando o teste falhar.
+- [x] Atualizar `docs/testing.md` e `docs/building.md`.
+- [x] Executar validação local aplicável, E2E e revisar o diff.
 
 #### Critérios de aceite do incremento 6
 
-- [ ] O CI falha se o bundle não iniciar ou se o fluxo principal quebrar no
+- [x] O CI falha se o bundle não iniciar ou se o fluxo principal quebrar no
       Chromium.
-- [ ] O teste não depende de rede externa, porta fixa ou dados preexistentes.
-- [ ] Evidências de falha ficam disponíveis como artefato do CI.
-- [ ] A instalação adicional e seu custo estão documentados.
+- [x] O teste não depende de rede externa, porta fixa ou dados preexistentes.
+- [x] Evidências de falha ficam disponíveis como artefato do CI.
+- [x] A instalação adicional e seu custo estão documentados.
 
 ### Incremento 7 — Reproduzir a versão declarada do npm
 
-- [ ] Confirmar a política: manter uma versão exata do npm ou declarar apenas a
+- [x] Confirmar a política: manter uma versão exata do npm ou declarar apenas a
       faixa suportada. Preferir manter a versão exata já informada pelo template.
-- [ ] Fazer o CI instalar e exibir a versão declarada antes de `npm ci`, tanto no
+- [x] Fazer o CI instalar e exibir a versão declarada antes de `npm ci`, tanto no
       job de validação quanto no de auditoria.
-- [ ] Adicionar uma verificação leve que detecte divergência entre
+- [x] Adicionar uma verificação leve que detecte divergência entre
       `packageManager` e o npm em uso nos ambientes controlados.
-- [ ] Documentar como atualizar Node, npm e lockfile em conjunto.
-- [ ] Confirmar a matriz Node 22/24 com a mesma versão do npm.
-- [ ] Executar `npm run validate` nas versões suportadas e revisar o diff.
+- [x] Documentar como atualizar Node, npm e lockfile em conjunto.
+- [x] Configurar a matriz Node 22/24 para instalar a mesma versão do npm.
+- [ ] Confirmar a execução de `npm run validate` em Node 22 e 24 no CI.
 
 #### Critérios de aceite do incremento 7
 
 - [ ] Os logs do CI mostram a mesma versão de npm declarada em `package.json`.
 - [ ] `npm ci` reproduz o lockfile nas duas versões suportadas do Node.
-- [ ] A documentação não promete um pin que a automação deixe de aplicar.
+- [x] A documentação não promete um pin que a automação deixe de aplicar.
 
 ## Riscos e pontos de atenção
 
@@ -280,12 +282,12 @@ experiência operacional e a reprodutibilidade.
 
 ## Critérios de aceite globais
 
-- [ ] Os sete incrementos foram entregues separadamente e na ordem planejada, ou
-      uma mudança de ordem foi registrada com justificativa.
-- [ ] Nenhum incremento altera comportamento fora da sua frente.
-- [ ] Toda mudança de comportamento possui teste de resultado observável.
-- [ ] `npm run validate` passa ao final de cada incremento.
+- [x] Os sete incrementos foram executados na ordem planejada; a implementação
+      consolidada no mesmo branch foi registrada nas suposições.
+- [x] Nenhum incremento altera comportamento fora da sua frente.
+- [x] Toda mudança de comportamento possui teste de resultado observável.
+- [x] `npm run validate` passa ao final de cada incremento.
 - [ ] O CI passa em todas as versões suportadas do Node.
-- [ ] Novas dependências têm necessidade e trade-offs registrados em ADR.
-- [ ] Documentação, scripts, hooks e comportamento real permanecem alinhados.
-- [ ] O diff de cada incremento é revisado antes do commit ou PR.
+- [x] Novas dependências têm necessidade e trade-offs registrados em ADR.
+- [x] Documentação, scripts, hooks e comportamento real permanecem alinhados.
+- [x] O diff de cada incremento é revisado antes do commit ou PR.

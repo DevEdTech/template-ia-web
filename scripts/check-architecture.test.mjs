@@ -47,3 +47,51 @@ test('rejeita import dinâmico de arquivo interno de outra feature', () => {
     (root) => assert.equal(checkArchitecture(root).length, 1),
   );
 });
+
+test('rejeita fetch fora de uma fronteira de serviço', () => {
+  withProject(
+    { 'features/search/components/Search.tsx': "export const load = () => fetch('/api');" },
+    (root) =>
+      assert.match(checkArchitecture(root).join('\n'), /fetch.*services, adapters ou repositories/),
+  );
+});
+
+test('rejeita localStorage fora de uma fronteira de persistência', () => {
+  withProject(
+    {
+      'features/notes/components/Notes.tsx': "export const load = () => localStorage.getItem('x');",
+    },
+    (root) => assert.match(checkArchitecture(root).join('\n'), /localStorage.*services/),
+  );
+});
+
+test('rejeita import.meta.env fora do módulo de configuração', () => {
+  withProject(
+    { 'features/search/services/search.ts': 'export const url = import.meta.env.VITE_API_URL;' },
+    (root) => assert.match(checkArchitecture(root).join('\n'), /import\.meta\.env.*shared\/config/),
+  );
+});
+
+test('aceita APIs de fronteira nos caminhos permitidos', () => {
+  withProject(
+    {
+      'features/search/services/search.ts': "export const load = () => fetch('/api');",
+      'features/notes/repositories/notes.ts':
+        "export const load = () => window.localStorage.getItem('notes');",
+      'shared/config/env.ts': 'export const raw = import.meta.env;',
+    },
+    (root) => assert.deepEqual(checkArchitecture(root), []),
+  );
+});
+
+test('ignora comentários, strings e arquivos de teste', () => {
+  withProject(
+    {
+      'features/search/components/Search.tsx':
+        "// fetch('/api')\nexport const text = 'localStorage import.meta.env';",
+      'features/search/tests/Search.test.ts':
+        'export const load = () => fetch(String(import.meta.env.VITE_API_URL)); localStorage.clear();',
+    },
+    (root) => assert.deepEqual(checkArchitecture(root), []),
+  );
+});

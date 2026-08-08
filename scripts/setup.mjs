@@ -1,22 +1,14 @@
 #!/usr/bin/env node
 
-import {
-  cpSync,
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 import { parseArgs } from 'node:util';
+import { withFileRollback } from './lib/file-transaction.mjs';
+import { LEGACY_TEMPLATE_VERSION } from './lib/template-version.mjs';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptDir, '..');
@@ -24,6 +16,7 @@ const stateFile = join(projectRoot, '.template-state.json');
 const defaultState = {
   technicalName: 'web-project-template',
   displayName: 'Web Project Template',
+  templateVersion: LEGACY_TEMPLATE_VERSION,
 };
 const transactionTargets = [
   '.template-state.json',
@@ -37,6 +30,7 @@ const transactionTargets = [
   '.claude/skills',
   '.agents/skills',
 ];
+const exampleFeatures = ['notes'];
 
 function log(message) {
   console.log(message);
@@ -74,35 +68,6 @@ function validatePreconditions() {
       throw new Error(`Arquivo obrigatório ausente: ${path}`);
   }
   JSON.parse(readFileSync(join(projectRoot, 'package.json'), 'utf8'));
-}
-
-function withRollback(action) {
-  const backupRoot = mkdtempSync(join(tmpdir(), 'web-setup-backup-'));
-  const existing = new Set();
-  try {
-    for (const target of transactionTargets) {
-      const source = join(projectRoot, target);
-      if (!existsSync(source)) continue;
-      existing.add(target);
-      const backup = join(backupRoot, target);
-      mkdirSync(dirname(backup), { recursive: true });
-      cpSync(source, backup, { recursive: true });
-    }
-    action();
-  } catch (error) {
-    for (const target of transactionTargets) {
-      const destination = join(projectRoot, target);
-      rmSync(destination, { recursive: true, force: true });
-      if (existing.has(target)) {
-        const backup = join(backupRoot, target);
-        mkdirSync(dirname(destination), { recursive: true });
-        cpSync(backup, destination, { recursive: true });
-      }
-    }
-    throw error;
-  } finally {
-    rmSync(backupRoot, { recursive: true, force: true });
-  }
 }
 
 function updatePackageJson(config) {
@@ -196,10 +161,11 @@ export function App() {
 function removeExampleFeatures() {
   const features = join(projectRoot, 'src', 'features');
   if (!existsSync(features)) return;
-  for (const entry of readdirSync(features, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-    rmSync(join(features, entry.name), { recursive: true, force: true });
-    log(`Demonstração removida: src/features/${entry.name}`);
+  for (const example of exampleFeatures) {
+    const feature = join(features, example);
+    if (!existsSync(feature)) continue;
+    rmSync(feature, { recursive: true, force: true });
+    log(`Demonstração removida: src/features/${example}`);
   }
 }
 
@@ -237,7 +203,7 @@ function applyChanges(config) {
     return;
   }
 
-  withRollback(() => {
+  withFileRollback(projectRoot, transactionTargets, () => {
     updatePackageJson(config);
     updateIndexHtml(config.displayName);
     updateDocumentation(config.displayName, state.displayName, state.technicalName);
@@ -247,7 +213,15 @@ function applyChanges(config) {
     if (config.doSyncSkills) runSyncSkills();
     writeFileSync(
       stateFile,
-      `${JSON.stringify({ technicalName: config.name, displayName: config.displayName }, null, 2)}\n`,
+      `${JSON.stringify(
+        {
+          technicalName: config.name,
+          displayName: config.displayName,
+          templateVersion: state.templateVersion,
+        },
+        null,
+        2,
+      )}\n`,
     );
   });
   log('\nSetup concluído. Rode `npm run validate`.');
@@ -270,7 +244,6 @@ async function main() {
       'remove-example': { type: 'boolean' },
       'reset-tasks': { type: 'boolean' },
       'keep-tasks': { type: 'boolean' },
-      'init-docs': { type: 'boolean' },
       'no-sync-skills': { type: 'boolean' },
       'dry-run': { type: 'boolean' },
     },

@@ -4,7 +4,15 @@ Como consumir dados externos com segurança neste template.
 
 ## Consumo de APIs
 
-Todo acesso a uma API passa por um **serviço** dentro da feature (`features/<nome>/services/`). Os componentes chamam o serviço; nunca fazem `fetch` diretamente. Isso concentra a lógica de rede e o tratamento de erros em um só lugar.
+Todo acesso a uma API passa por `services/`, `adapters/` ou `repositories/`
+dentro da feature. Infraestrutura neutra compartilhada pode usar as mesmas
+pastas em `shared/`. Os componentes nunca fazem `fetch` diretamente. Isso
+concentra a lógica de rede e o tratamento de erros em um só lugar.
+
+`npm run check:architecture` rejeita `fetch` e `localStorage` fora dessas
+fronteiras, além de rejeitar `import.meta.env` fora de
+`shared/config/env.ts`. Arquivos de teste são excluídos dessas regras para que
+possam preparar o ambiente e substituir APIs da plataforma.
 
 Prefira o `fetch` nativo. Só adote uma biblioteca de requisições se houver necessidade real (e registre a decisão em um ADR).
 

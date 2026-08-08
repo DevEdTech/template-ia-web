@@ -1,101 +1,15 @@
-import { useEffect, useState } from 'react';
-import type { FormEvent, ChangeEvent } from 'react';
+import type { FormEvent } from 'react';
 import { Button } from '@/shared/components';
-import { createNote, validateTitle } from '../model/note';
-import type { Note } from '../model/note';
-import {
-  NoteStorageError,
-  noteStorageKeys,
-  loadNotesSnapshot,
-  addNoteToStorage,
-  removeNoteFromStorage,
-} from '../services/noteStorage';
+import { useNotes } from '../hooks/useNotes';
 import styles from './NoteList.module.css';
 
 export function NoteList() {
-  const [initialState] = useState<{
-    notes: Note[];
-    revision: number;
-    storageError: string | null;
-  }>(() => {
-    try {
-      const snapshot = loadNotesSnapshot();
-      return { ...snapshot, storageError: null };
-    } catch (err) {
-      return {
-        notes: [],
-        revision: 0,
-        storageError: err instanceof Error ? err.message : 'Não foi possível carregar as notas.',
-      };
-    }
-  });
-  const [notes, setNotes] = useState<Note[]>(initialState.notes);
-  const [revision, setRevision] = useState(initialState.revision);
-  const [title, setTitle] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [storageError, setStorageError] = useState<string | null>(initialState.storageError);
-
-  useEffect(() => {
-    function synchronize(event: StorageEvent) {
-      if (event.key !== noteStorageKeys.primary) return;
-      try {
-        const snapshot = loadNotesSnapshot();
-        setNotes(snapshot.notes);
-        setRevision(snapshot.revision);
-        setStorageError(null);
-      } catch (err) {
-        if (err instanceof Error) setStorageError(err.message);
-      }
-    }
-    window.addEventListener('storage', synchronize);
-    return () => window.removeEventListener('storage', synchronize);
-  }, []);
+  const { notes, title, validationError, storageError, addNote, removeNote, updateTitle } =
+    useNotes();
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-
-    try {
-      const note = createNote(title);
-      const snapshot = addNoteToStorage(note, revision);
-      setNotes(snapshot.notes);
-      setRevision(snapshot.revision);
-      setTitle('');
-      setError(null);
-      setStorageError(null);
-    } catch (err) {
-      if (err instanceof NoteStorageError) {
-        setStorageError(err.message);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      }
-    }
-  }
-
-  function handleRemove(id: string) {
-    try {
-      const result = removeNoteFromStorage(id, revision);
-      if (result.removed) {
-        setNotes(result.snapshot.notes);
-        setRevision(result.snapshot.revision);
-        setStorageError(null);
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setStorageError(err.message);
-      }
-    }
-  }
-
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    setTitle(e.target.value);
-    if (error) {
-      try {
-        validateTitle(e.target.value);
-        setError(null);
-      } catch {
-        // keep error if still invalid
-      }
-    }
+    addNote();
   }
 
   return (
@@ -106,18 +20,29 @@ export function NoteList() {
         </p>
       )}
       <form onSubmit={handleSubmit} className={styles.form}>
+        <label className={styles.label} htmlFor="note-title">
+          Título da nota
+        </label>
         <div className={styles.inputGroup}>
           <input
+            id="note-title"
             type="text"
             value={title}
-            onChange={handleChange}
+            onChange={(event) => updateTitle(event.target.value)}
             placeholder="Nova nota..."
             className={styles.input}
-            aria-invalid={!!error}
+            aria-invalid={!!validationError}
+            aria-describedby={validationError ? 'note-title-error' : undefined}
           />
           <Button type="submit">Adicionar</Button>
         </div>
-        <div aria-live="polite">{error && <p className={styles.error}>{error}</p>}</div>
+        <div aria-live="polite">
+          {validationError && (
+            <p id="note-title-error" className={styles.error}>
+              {validationError}
+            </p>
+          )}
+        </div>
       </form>
 
       <div aria-live="polite">
@@ -133,7 +58,7 @@ export function NoteList() {
                 </div>
                 <Button
                   variant="secondary"
-                  onClick={() => handleRemove(note.id)}
+                  onClick={() => removeNote(note.id)}
                   aria-label={`Remover nota: ${note.title}`}
                 >
                   Remover

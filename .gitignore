@@ -8,6 +8,8 @@ dist/
 # Cobertura e cache
 coverage/
 .eslintcache
+playwright-report/
+test-results/
 
 # Segredos e variáveis locais
 .env
