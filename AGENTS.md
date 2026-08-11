@@ -6,6 +6,7 @@
 2. docs/architecture.md
 3. docs/development-process.md
 4. docs/testing.md
+5. docs/styleguide.md (antes de qualquer trabalho de interface)
 
 ## Processo obrigatório
 
@@ -26,6 +27,16 @@
 - Mantenha APIs externas e armazenamento do navegador atrás de serviços.
 - Mantenha `shared` neutro em relação ao domínio.
 - Não adicione abstrações sem necessidade demonstrada.
+
+## Estilo e interface
+
+- Siga `docs/styleguide.md`; ele vale também depois do `npm run setup`.
+- Cor, espaçamento, tipografia, raio e transição vêm dos tokens de
+  `shared/styles/tokens.css`. Não escreva cor literal em CSS de componente.
+- Ícones somente de `lucide-react`, com a classe `icon` ou `icon-sm`.
+- Estilo de componente fica no CSS Module do próprio componente.
+- Para mudar a identidade visual, altere os tokens, não os componentes.
+- Mantenha a rota `/styleguide` funcionando e atualizada.
 
 ## Escopo
 

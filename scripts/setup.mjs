@@ -127,7 +127,9 @@ function updateApp(displayName, removeExample) {
   if (removeExample) {
     writeFileSync(
       file,
-      `import styles from './App.module.css';
+      `import { CircleCheck, Home, Palette } from 'lucide-react';
+import { Link, Outlet } from 'react-router';
+import styles from './App.module.css';
 
 const PROJECT_NAME = ${JSON.stringify(displayName)};
 
@@ -137,9 +139,21 @@ export function App() {
       <header className={styles.header}>
         <h1>{PROJECT_NAME}</h1>
         <p className={styles.status}>
-          <span className={styles.dot} aria-hidden="true" />O projeto está pronto para sua primeira feature.
+          <CircleCheck className="icon" aria-hidden="true" />O projeto está pronto para sua primeira feature.
         </p>
+        <nav className={styles.nav} aria-label="Navegação principal">
+          <Link to="/">
+            <Home className="icon icon-sm" aria-hidden="true" />
+            Início
+          </Link>
+          <Link to="/styleguide">
+            <Palette className="icon icon-sm" aria-hidden="true" />
+            Styleguide
+          </Link>
+        </nav>
       </header>
+
+      <Outlet />
     </main>
   );
 }

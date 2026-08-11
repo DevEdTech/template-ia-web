@@ -2,6 +2,7 @@ import { createBrowserRouter, type RouteObject } from 'react-router';
 import { App } from '@/app/App';
 import { NotFound, RouteErrorFallback } from '@/app/components/RouteErrorFallback';
 import { HomePage } from '@/features/home';
+import { StyleguidePage } from '@/features/styleguide';
 
 /**
  * Definicao das rotas, separada do router para permitir montar a mesma
@@ -17,6 +18,12 @@ export const routes: RouteObject[] = [
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        // Styleguide vivo do projeto: referencia visual dos tokens e
+        // componentes base. Permanece depois do `npm run setup`.
+        path: 'styleguide',
+        element: <StyleguidePage />,
       },
       {
         // Qualquer endereco desconhecido cai aqui, dentro do layout.

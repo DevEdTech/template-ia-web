@@ -140,6 +140,7 @@ completos e continua sendo a fonte da verdade para integração.
 | `npm run smoke:build`                           | Serve e verifica o conteúdo gerado em `dist/`                       |
 | `npm run sync:skills`                           | Gera as cópias das skills em `.claude/skills` e `.agents/skills`    |
 | `npm run check:skills`                          | Verifica se as cópias das skills estão sincronizadas                |
+| `npm run check:styleguide`                      | Avisa sobre cor literal, token ausente ou ícone fora do padrão      |
 | `npm run validate`                              | Roda skills, arquitetura, formato, lint, tipos, testes e bundle     |
 
 ## Estrutura resumida
@@ -148,7 +149,8 @@ completos e continua sendo a fonte da verdade para integração.
 src/
 ├── app/          # composição geral (providers, rotas, layout) — sem regra de negócio
 ├── features/     # cada capacidade do produto em sua pasta
-│   └── notes/    # demonstração canônica; removida por --remove-example
+│   ├── notes/    # demonstração canônica; removida por --remove-example
+│   └── styleguide/ # referência visual viva em /styleguide; permanece após o setup
 ├── shared/       # reutilizável e neutro (components, config, hooks, lib, styles, types)
 ├── test/         # setup.ts e render.tsx
 └── main.tsx
@@ -156,6 +158,17 @@ docs/             # esta documentação
 ```
 
 Detalhes em [docs/architecture.md](docs/architecture.md).
+
+## Styleguide
+
+O template já vem com uma base visual definida: tokens de cor, tipografia,
+espaçamento, raio e movimento em `src/shared/styles/tokens.css`, tema padrão
+`vitru` e `lucide-react` como biblioteca de ícones. Rode `npm run dev` e abra
+`/styleguide` para ver a referência viva.
+
+Essas regras continuam valendo depois do `npm run setup`. Leia
+[docs/styleguide.md](docs/styleguide.md) antes de criar telas; `npm run check:styleguide`
+avisa quando algo sai do padrão.
 
 ## Como usar agentes
 
@@ -175,10 +188,10 @@ Depois que o produto estiver definido:
 1. Peça ao agente um plano: "Use a skill plan-feature para planejar..."
 2. Revise o plano.
 3. Peça a implementação: "Use a skill implement-feature...".
-4. Gere a base com `npm run generate:feature -- --name="minha-feature"`; use `--dry-run` para apenas listar os arquivos. O gerador cria `components`, `model`, `services`, `tests` e o `index.ts` público, mas não registra a feature na composição da aplicação.
+4. Gere a base com `npm run generate:feature -- --name="minha-feature"`; use `--dry-run` para apenas listar os arquivos. O gerador cria `components` (com CSS Module já baseado nos tokens), `model`, `services`, `tests` e o `index.ts` público, mas não registra a feature na composição da aplicação.
 5. Rode `npm run validate`.
 
-Regras de arquitetura em [docs/architecture.md](docs/architecture.md).
+Regras de arquitetura em [docs/architecture.md](docs/architecture.md); regras visuais em [docs/styleguide.md](docs/styleguide.md).
 
 ## Como registrar uma decisão
 

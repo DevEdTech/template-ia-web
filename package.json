@@ -31,10 +31,12 @@
     "smoke:build": "node scripts/smoke-build.mjs",
     "sync:skills": "node scripts/sync-skills.mjs",
     "check:skills": "node scripts/check-skills.mjs",
-    "validate": "npm run check:skills && npm run check:architecture && npm run check:docs && npm run format:check && npm run lint && npm run test && npm run build",
+    "check:styleguide": "node scripts/check-styleguide.mjs",
+    "validate": "npm run check:skills && npm run check:architecture && npm run check:docs && npm run check:styleguide && npm run format:check && npm run lint && npm run test && npm run build",
     "prepare": "husky && npm run sync:skills"
   },
   "dependencies": {
+    "lucide-react": "^1.31.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router": "^8.3.0"

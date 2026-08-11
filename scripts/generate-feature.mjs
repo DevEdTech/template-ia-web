@@ -30,7 +30,10 @@ export function generateFeature(root, rawName, dryRun = false) {
   if (existsSync(featureRoot)) throw new Error(`A feature "${name}" já existe.`);
   const files = {
     'index.ts': `export { ${component} } from './components/${component}';\n`,
-    [`components/${component}.tsx`]: `export function ${component}() {\n  return (\n    <section>\n      <h2>${component}</h2>\n    </section>\n  );\n}\n`,
+    // O componente já nasce com CSS Module usando os tokens do styleguide:
+    // nenhum valor literal de cor ou espaçamento. Veja docs/styleguide.md.
+    [`components/${component}.tsx`]: `import styles from './${component}.module.css';\n\nexport function ${component}() {\n  return (\n    <section className={styles.section}>\n      <h2 className={styles.title}>${component}</h2>\n    </section>\n  );\n}\n`,
+    [`components/${component}.module.css`]: `.section {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-4);\n}\n\n.title {\n  margin: 0;\n  font-size: var(--text-lg);\n  color: var(--navy);\n}\n`,
     'model/index.ts': `export type ${component}State = Readonly<Record<string, never>>;\n`,
     'services/index.ts': `// Adicione aqui integrações externas e persistência da feature.\nexport {};\n`,
     [`tests/${component}.test.tsx`]: `import { render, screen } from '../../../test/render';\nimport { ${component} } from '../components/${component}';\n\ntest('renderiza a feature ${name}', () => {\n  render(<${component} />);\n  expect(screen.getByRole('heading', { name: '${component}' })).toBeInTheDocument();\n});\n`,

@@ -1,3 +1,4 @@
+import { Plus, Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { Button } from '@/shared/components';
 import { useNotes } from '../hooks/useNotes';
@@ -34,7 +35,10 @@ export function NoteList() {
             aria-invalid={!!validationError}
             aria-describedby={validationError ? 'note-title-error' : undefined}
           />
-          <Button type="submit">Adicionar</Button>
+          <Button type="submit">
+            <Plus className="icon icon-sm" aria-hidden="true" />
+            Adicionar
+          </Button>
         </div>
         <div aria-live="polite">
           {validationError && (
@@ -57,10 +61,11 @@ export function NoteList() {
                   <p className={styles.noteDate}>{new Date(note.createdAt).toLocaleString()}</p>
                 </div>
                 <Button
-                  variant="secondary"
+                  variant="danger"
                   onClick={() => removeNote(note.id)}
                   aria-label={`Remover nota: ${note.title}`}
                 >
+                  <Trash2 className="icon icon-sm" aria-hidden="true" />
                   Remover
                 </Button>
               </li>

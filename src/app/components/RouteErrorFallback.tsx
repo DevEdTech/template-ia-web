@@ -1,3 +1,4 @@
+import { FileQuestionMark, TriangleAlert } from 'lucide-react';
 import { Link, isRouteErrorResponse, useRouteError } from 'react-router';
 import styles from './RouteErrorFallback.module.css';
 
@@ -8,7 +9,10 @@ import styles from './RouteErrorFallback.module.css';
 export function NotFound() {
   return (
     <section className={styles.container} role="alert">
-      <h2>Pagina nao encontrada</h2>
+      <h2 className={styles.title}>
+        <FileQuestionMark className="icon" aria-hidden="true" />
+        Pagina nao encontrada
+      </h2>
       <p>O endereco acessado nao existe neste aplicativo.</p>
       <Link to="/">Voltar para o inicio</Link>
     </section>
@@ -31,7 +35,10 @@ export function RouteErrorFallback() {
 
   return (
     <section className={styles.container} role="alert">
-      <h2>Nao foi possivel carregar esta pagina</h2>
+      <h2 className={styles.title}>
+        <TriangleAlert className="icon" aria-hidden="true" />
+        Nao foi possivel carregar esta pagina
+      </h2>
       <p>Tente novamente. Se o problema continuar, avise quem mantem o projeto.</p>
       {detail ? <pre className={styles.detail}>{detail}</pre> : null}
       <Link to="/">Voltar para o inicio</Link>

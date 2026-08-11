@@ -5,6 +5,18 @@ description: Use when the task asks for a visually strong landing page, website,
 
 # Frontend Skill
 
+## Regras do projeto (têm precedência)
+
+Antes de aplicar qualquer orientação genérica desta skill, leia
+`docs/styleguide.md`. Neste projeto:
+
+- cor, tipografia, espaçamento, raio e movimento vêm dos tokens de
+  `src/shared/styles/tokens.css` — nunca use valor literal de cor;
+- a paleta é o tema `vitru`; a cor de destaque é `--accent`;
+- a biblioteca de ícones é `lucide-react`, com as classes `icon`/`icon-sm`;
+- estilização é feita com CSS Modules, um por componente;
+- a rota `/styleguide` é a referência viva e deve continuar funcionando.
+
 Use this skill when the quality of the work depends on art direction, hierarchy, restraint, imagery, and motion rather than component count.
 
 Goal: ship interfaces that feel deliberate, premium, and current. Default toward award-level composition: one big idea, strong imagery, sparse copy, rigorous spacing, and a small number of memorable motions.

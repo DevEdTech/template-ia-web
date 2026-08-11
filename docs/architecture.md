@@ -24,7 +24,8 @@ src/
 │   ├── routes/      # definição das rotas e o router
 │   └── tests/       # smoke test da composição
 ├── features/     # cada capacidade do produto em sua própria pasta
-│   └── notes/    # demonstração canônica; removida por --remove-example
+│   ├── notes/    # demonstração canônica; removida por --remove-example
+│   └── styleguide/ # referência visual viva (/styleguide); permanece após o setup
 ├── shared/       # reutilizável e neutro: components, config, hooks, lib, styles, types
 ├── test/         # setup.ts e render.tsx (utilidades de teste)
 └── main.tsx      # ponto de entrada da aplicação
@@ -106,6 +107,20 @@ O `ErrorBoundary` de `shared/components` não envolve mais o `<Outlet />`, para 
 ## Configuração de ambiente
 
 Toda leitura de `import.meta.env` passa por `shared/config/env.ts`. As variáveis são declaradas em `ImportMetaEnv` (`src/vite-env.d.ts`) e validadas no boot: ausência ou formato inválido falha imediatamente, nomeando a variável. Nada que chegue ao browser é secreto.
+
+## Estilo e identidade visual
+
+Estilização por CSS Modules ([ADR 0005](decisions/0005-css-modules.md)), com os
+valores concentrados em `shared/styles/tokens.css`
+([ADR 0011](decisions/0011-design-tokens-and-styleguide.md)). Cor, tipografia,
+espaçamento, raio, sombra e movimento vêm de tokens; nenhum CSS de componente
+declara cor literal. O tema padrão é `vitru`, aplicado pelo atributo
+`data-theme` no `index.html`.
+
+A feature `styleguide` renderiza esses tokens em `/styleguide` e serve de
+referência viva para pessoas e agentes. Ícones vêm de `lucide-react`. As regras
+completas estão em [styleguide.md](styleguide.md) e `npm run check:styleguide`
+avisa quando são quebradas.
 
 ## Estado
 

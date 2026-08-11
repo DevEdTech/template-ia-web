@@ -11,7 +11,7 @@ Fluxo recomendado para levar uma ideia até o código, de forma organizada e ver
 5. **Planejamento**: quebre em passos. Você pode pedir ao agente: "Use a skill plan-feature...".
 6. **Branch**: crie uma branch para o trabalho (`git checkout -b feat/descricao`).
 7. **Implementação**: escreva o código seguindo a [arquitetura](architecture.md).
-8. **Validação local**: rode `npm run validate` até ficar tudo verde.
+8. **Validação local**: rode `npm run validate` até ficar tudo verde. Em mudanças de interface, resolva também os avisos de `npm run check:styleguide`.
 9. **Commit**: registre as mudanças com mensagem clara.
 10. **Pull Request**: abra o PR descrevendo o que mudou e por quê.
 11. **Revisão**: ajuste conforme os comentários antes de integrar.

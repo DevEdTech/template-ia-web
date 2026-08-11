@@ -1,17 +1,15 @@
+/* Base global da aplicacao. So define comportamento de elementos nativos:
+ * todo estilo de componente vive no CSS Module correspondente, e toda cor vem
+ * dos tokens importados abaixo. Veja docs/styleguide.md. */
+@import './tokens.css';
+
 :root {
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  font-family: var(--font-sans);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+  color-scheme: light;
+  color: var(--ink);
+  background-color: var(--paper);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -27,25 +25,49 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+h1,
+h2,
+h3 {
+  line-height: var(--leading-tight);
 }
 
 a {
-  color: #646cff;
-  font-weight: 500;
-  text-decoration: inherit;
+  color: var(--accent);
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 a:hover {
-  color: #535bf2;
+  color: var(--navy-strong);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+}
 
-  a:hover {
-    color: #747bff;
-  }
+/* Um unico anel de foco para toda a aplicacao: teclado sempre visivel. */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--accent);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Tamanho e cor padrao dos icones lucide-react. */
+svg.icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: currentcolor;
+  flex: none;
+}
+
+svg.icon-sm {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
 }
