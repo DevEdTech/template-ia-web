@@ -117,8 +117,12 @@ espaçamento, raio, sombra e movimento vêm de tokens; nenhum CSS de componente
 declara cor literal. O tema padrão é `vitru`, aplicado pelo atributo
 `data-theme` no `index.html`.
 
-A feature `styleguide` renderiza esses tokens em `/styleguide` e serve de
-referência viva para pessoas e agentes. Ícones vêm de `lucide-react`. As regras
+As telas são montadas com o kit de `shared/components` (cabeçalho, blocos,
+campos, tabela, avisos, modal e os estados de carregando, vazio e erro), que já
+consome os tokens e traz a semântica de acessibilidade esperada
+([ADR 0012](decisions/0012-component-kit-and-visual-guardrails.md)). A feature
+`styleguide` renderiza tokens e kit em `/styleguide` e serve de referência viva
+para pessoas e agentes. Ícones vêm de `lucide-react`. As regras
 completas estão em [styleguide.md](styleguide.md) e `npm run check:styleguide`
 avisa quando são quebradas.
 

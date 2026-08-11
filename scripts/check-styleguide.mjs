@@ -13,6 +13,8 @@
 //     de cor CSS): componentes consomem `var(--token)`.
 //  4. A única biblioteca de ícones é `lucide-react`, declarada em
 //     `dependencies`.
+//  5. O kit base continua exportado por `shared/components`: telas de
+//     projetos diferentes só se parecem se os mesmos componentes existirem.
 //
 // Compatível com macOS, Linux e Windows: apenas APIs nativas do Node.
 
@@ -66,6 +68,24 @@ export const REQUIRED_SCALE_TOKENS = [
   '--radius-md',
   '--transition-base',
   '--icon-size',
+];
+
+/** Kit base do template, exportado por `src/shared/components/index.ts`. */
+export const REQUIRED_COMPONENTS = [
+  'Alert',
+  'Badge',
+  'Button',
+  'Card',
+  'Dialog',
+  'EmptyState',
+  'ErrorBoundary',
+  'ErrorState',
+  'Input',
+  'LoadingState',
+  'PageHeader',
+  'Select',
+  'Table',
+  'Textarea',
 ];
 
 /** Bibliotecas de ícones que competem com a padrão. */
@@ -181,11 +201,28 @@ function checkIcons(root, warnings) {
   }
 }
 
+function checkKit(root, warnings) {
+  const indexPath = join(root, 'src/shared/components/index.ts');
+  if (!existsSync(indexPath)) {
+    warnings.push('src/shared/components/index.ts: índice do kit base ausente.');
+    return;
+  }
+  const index = readFileSync(indexPath, 'utf8');
+  for (const component of REQUIRED_COMPONENTS) {
+    if (!new RegExp(`\\b${component}\\b`).test(index)) {
+      warnings.push(
+        `src/shared/components/index.ts: o kit base perdeu "${component}" (docs/styleguide.md).`,
+      );
+    }
+  }
+}
+
 export function checkStyleguide(root = defaultRoot) {
   const warnings = [];
   checkTokens(root, warnings);
   checkCssLiterals(root, warnings);
   checkIcons(root, warnings);
+  checkKit(root, warnings);
   return warnings;
 }
 

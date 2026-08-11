@@ -101,3 +101,17 @@ export const RADIUS_TOKENS: readonly TokenEntry[] = [
   { name: '--radius-lg', usage: 'Áreas grandes' },
   { name: '--radius-pill', usage: 'Etiquetas e chips' },
 ];
+
+/** Dados de exemplo da tabela do styleguide. Nao representam dominio real. */
+export interface SampleRow {
+  readonly id: string;
+  readonly nome: string;
+  readonly plano: string;
+  readonly ativo: boolean;
+}
+
+export const SAMPLE_ROWS: readonly SampleRow[] = [
+  { id: '1', nome: 'Ana Souza', plano: 'Anual', ativo: true },
+  { id: '2', nome: 'Bruno Lima', plano: 'Mensal', ativo: true },
+  { id: '3', nome: 'Carla Dias', plano: 'Mensal', ativo: false },
+];

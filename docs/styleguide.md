@@ -105,16 +105,39 @@ import { Trash2 } from 'lucide-react';
   dentro de um CSS Module, use `:global(.icon)` — sem isso o nome é hasheado e
   a regra nunca casa.
 
-## Componentes base
+## Kit de componentes
 
-- `Button` (`src/shared/components/Button.tsx`) com as variantes `primary`,
-  `secondary` e `danger`. Use `primary` para a ação principal da tela (uma por
-  tela), `secondary` para ações de apoio e `danger` para ações destrutivas.
-- Campos de formulário seguem o padrão demonstrado no styleguide: rótulo
-  visível associado por `htmlFor`, `aria-invalid` em erro e mensagem
-  descrita por `aria-describedby`.
-- Estados de tela obrigatórios: carregando, vazio, sucesso e erro
-  ([architecture.md](architecture.md)).
+Toda tela é montada com o kit de `src/shared/components`, exportado por
+`@/shared/components`. Antes de criar um componente novo, verifique se um
+destes resolve — é o que mantém telas de projetos diferentes parecidas.
+
+| Componente                    | Para quê                                       |
+| ----------------------------- | ---------------------------------------------- |
+| `PageHeader`                  | Título, descrição e ações no topo de cada tela |
+| `Card`                        | Bloco de conteúdo (`plain`, `quiet`, `raised`) |
+| `Button`                      | Ação (`primary`, `secondary`, `danger`)        |
+| `Input`, `Textarea`, `Select` | Campos com rótulo, dica e erro já ligados      |
+| `Table`                       | Tabela de dados com legenda e estado vazio     |
+| `Alert`                       | Aviso na tela (`info`, `success`, `danger`)    |
+| `Badge`                       | Etiqueta de status ou categoria                |
+| `Dialog`                      | Janela modal sobre o `<dialog>` nativo         |
+| `LoadingState`                | Estado de carregamento                         |
+| `EmptyState`                  | Estado vazio, com o próximo passo              |
+| `ErrorState`                  | Estado de erro, com caminho de recuperação     |
+| `ErrorBoundary`               | Isola um widget arriscado dentro de uma página |
+
+Regras de uso:
+
+- Uma ação `primary` por tela; ação destrutiva sempre confirma antes.
+- Campo de formulário sempre pelo `Input`/`Textarea`/`Select`, nunca um
+  `<input>` solto: o rótulo, o `aria-invalid` e o `aria-describedby` já vêm
+  ligados.
+- Toda tela que busca dados cobre os quatro estados: carregando, vazio, erro e
+  sucesso ([architecture.md](architecture.md)).
+- Etiqueta e alerta precisam fazer sentido sem a cor: o texto carrega a
+  informação.
+- Precisa de um componente que não existe? Crie em `shared/components` usando
+  os tokens, adicione ao `/styleguide` e ao índice acima.
 
 ## Acessibilidade
 
@@ -136,6 +159,14 @@ atual é CSS Modules + tokens ([ADR 0005](decisions/0005-css-modules.md),
 [ADR 0011](decisions/0011-design-tokens-and-styleguide.md)).
 
 ## Verificação
+
+Três camadas, da mais leve para a mais forte:
+
+| Camada                | Onde roda                      | O que pega                                                |
+| --------------------- | ------------------------------ | --------------------------------------------------------- |
+| `check:styleguide`    | `npm run validate`             | Cor literal, token ausente, ícone fora do padrão (avisa)  |
+| ESLint                | `npm run lint` e no pre-commit | Import de outra lib de ícones, framework de CSS/UI (erro) |
+| `e2e/styleguide.spec` | `npm run test:e2e`             | Mudança de cor aplicada e regressão visual da página      |
 
 `npm run check:styleguide` avisa quando:
 

@@ -35,6 +35,11 @@
   `shared/styles/tokens.css`. Não escreva cor literal em CSS de componente.
 - Ícones somente de `lucide-react`, com a classe `icon` ou `icon-sm`.
 - Estilo de componente fica no CSS Module do próprio componente.
+- Monte as telas com o kit de `shared/components` (`PageHeader`, `Card`,
+  `Input`, `Table`, `Alert`, `Dialog`, `LoadingState`, `EmptyState`,
+  `ErrorState`...). Só crie componente novo se nenhum deles resolver.
+- Campo de formulário sempre pelo `Input`/`Textarea`/`Select`.
+- Toda tela que busca dados cobre carregando, vazio, erro e sucesso.
 - Para mudar a identidade visual, altere os tokens, não os componentes.
 - Mantenha a rota `/styleguide` funcionando e atualizada.
 

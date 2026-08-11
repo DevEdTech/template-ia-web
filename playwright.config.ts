@@ -30,6 +30,15 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
+  // Imagens de referência por plataforma: a fonte do sistema muda o
+  // resultado, então a imagem do macOS não serve para o Linux do CI.
+  snapshotPathTemplate: '{testDir}/__screenshots__/{platform}/{arg}{ext}',
+  expect: {
+    // Estreito de propósito: na mesma plataforma a renderização é
+    // determinística, e uma tolerância folgada deixaria passar troca de cor
+    // em elementos pequenos numa página longa.
+    toHaveScreenshot: { maxDiffPixelRatio: 0.0005 },
+  },
   use: {
     baseURL,
     trace: 'retain-on-failure',

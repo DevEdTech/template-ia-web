@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import test from 'node:test';
 import {
+  REQUIRED_COMPONENTS,
   REQUIRED_SCALE_TOKENS,
   REQUIRED_THEME_TOKENS,
   checkStyleguide,
@@ -24,6 +25,11 @@ function project() {
   write(root, 'src/shared/styles/global.css', "@import './tokens.css';\n");
   write(root, 'index.html', '<html lang="pt-BR" data-theme="vitru"></html>\n');
   write(root, 'package.json', JSON.stringify({ dependencies: { 'lucide-react': '^1.0.0' } }));
+  write(
+    root,
+    'src/shared/components/index.ts',
+    REQUIRED_COMPONENTS.map((name) => `export { ${name} } from './${name}';`).join('\n'),
+  );
   return root;
 }
 
@@ -101,6 +107,18 @@ test('avisa quando tokens.css some, quando global.css não importa e quando o te
     assert.match(warnings, /arquivo de tokens ausente/);
     assert.match(warnings, /importe "\.\/tokens\.css"/);
     assert.match(warnings, /declare o tema no <html>/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('avisa quando o kit base perde um componente', () => {
+  const root = project();
+  try {
+    write(root, 'src/shared/components/index.ts', "export { Button } from './Button';\n");
+    const warnings = checkStyleguide(root).join('\n');
+    assert.match(warnings, /o kit base perdeu "Table"/);
+    assert.doesNotMatch(warnings, /o kit base perdeu "Button"/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

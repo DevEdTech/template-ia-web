@@ -133,6 +133,7 @@ completos e continua sendo a fonte da verdade para integração.
 | `npm run test:coverage`                         | Roda os testes Vitest aplicando os limites de cobertura             |
 | `npm run test:setup`                            | Roda os testes black-box do setup e da arquitetura                  |
 | `npm run test:e2e`                              | Executa o fluxo crítico no Chromium com Playwright                  |
+| `npm run test:e2e:update`                       | Regera as imagens de referência do styleguide                       |
 | `npm run test:watch`                            | Roda os testes em modo contínuo                                     |
 | `npm run setup`                                 | Personaliza identificadores, apresentação e demonstração do projeto |
 | `npm run update:template`                       | Aplica migrações locais conhecidas do template                      |
@@ -163,7 +164,9 @@ Detalhes em [docs/architecture.md](docs/architecture.md).
 
 O template já vem com uma base visual definida: tokens de cor, tipografia,
 espaçamento, raio e movimento em `src/shared/styles/tokens.css`, tema padrão
-`vitru` e `lucide-react` como biblioteca de ícones. Rode `npm run dev` e abra
+`vitru`, `lucide-react` como biblioteca de ícones e um kit de componentes
+prontos em `src/shared/components` (cabeçalho de tela, campos, tabela, avisos,
+modal e os estados de carregando/vazio/erro). Rode `npm run dev` e abra
 `/styleguide` para ver a referência viva.
 
 Essas regras continuam valendo depois do `npm run setup`. Leia

@@ -30,6 +30,60 @@ export default tseslint.config(
       // para corrigir depois que a tela já está pronta.
       ...jsxA11y.flatConfigs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      // Decisões do template viradas em erro de lint: o `check:styleguide`
+      // apenas avisa, mas trocar a biblioteca de ícones, adicionar um
+      // framework de CSS/UI ou importar `react-router-dom` muda a base do
+      // projeto e precisa de ADR antes. Rodam no pre-commit, então o desvio
+      // é barrado sem depender de alguém ler um aviso.
+      // Regras: docs/styleguide.md e docs/architecture.md.
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'react-router-dom',
+              message: 'Importe de "react-router" (ADR 0004).',
+            },
+          ],
+          patterns: [
+            {
+              group: [
+                'react-icons',
+                'react-icons/*',
+                '@heroicons/*',
+                '@mui/icons-material',
+                '@mui/icons-material/*',
+                '@fortawesome/*',
+                '@phosphor-icons/*',
+                'phosphor-react',
+                'react-feather',
+                'feather-icons',
+                '@tabler/icons-react',
+                'bootstrap-icons',
+              ],
+              message: 'A biblioteca de ícones do projeto é "lucide-react" (docs/styleguide.md).',
+            },
+            {
+              group: [
+                'styled-components',
+                '@emotion/*',
+                'tailwindcss',
+                'tailwindcss/*',
+                '@mui/material',
+                '@mui/material/*',
+                'antd',
+                'antd/*',
+                '@chakra-ui/*',
+                'react-bootstrap',
+                'bootstrap',
+                '@mantine/*',
+              ],
+              message:
+                'A estilização do projeto é CSS Modules + tokens (ADR 0005 e ADR 0011). Registre um ADR antes de trocar.',
+            },
+          ],
+        },
+      ],
     },
   },
   {

@@ -11,6 +11,8 @@ Testamos o **comportamento observável** da aplicação: o que o usuário vê e 
 - **Contrato local**: setup transacional, regras arquiteturais, links da documentação e artefato de build.
 - **E2E**: fluxo crítico no Chromium contra o bundle de produção, com
   Playwright.
+- **Identidade visual**: contrato de estilo (valores computados dos tokens) e
+  regressão visual da página `/styleguide`.
 
 ## Localização
 
@@ -32,6 +34,7 @@ npm run test:unit     # roda apenas Vitest, sem cobertura (mais rápido)
 npm run test:coverage # roda Vitest aplicando os limites de cobertura
 npm run test:setup    # testa setup e regras arquiteturais em projetos temporários
 npm run test:e2e      # testa o fluxo crítico em um navegador Chromium real
+npm run test:e2e:update # regera as imagens de referência do styleguide
 npm run test:watch    # roda em modo contínuo enquanto você edita
 ```
 
@@ -43,6 +46,33 @@ npx playwright install chromium
 ```
 
 O E2E escolhe uma porta efêmera, gera o bundle e serve a aplicação localmente.
+
+## Identidade visual
+
+`e2e/styleguide.spec.ts` protege o styleguide em duas camadas:
+
+1. **Contrato de estilo**: compara os valores realmente aplicados (`--accent`,
+   `--danger`, cor de fundo do botão primário, cor da mensagem de erro). É
+   determinístico em qualquer sistema operacional e a falha diz exatamente qual
+   valor mudou. Roda sempre, inclusive no CI.
+2. **Regressão visual**: compara a página `/styleguide` inteira, pixel a pixel,
+   com a imagem em `e2e/__screenshots__/<plataforma>/`. Pega mudanças de
+   layout e espaçamento que o contrato não vê.
+
+A fonte do sistema muda o resultado, então cada plataforma tem sua própria
+imagem. Quando não existe imagem para a plataforma atual (por exemplo, no Linux
+do CI antes de alguém gerar a primeira), o teste é **pulado** com a instrução,
+em vez de falhar.
+
+Depois de uma mudança visual **intencional**, regere e revise a imagem no diff
+do pull request:
+
+```bash
+npm run test:e2e:update
+```
+
+Se a imagem mudou sem que ninguém tenha mexido no visual, é regressão: veja o
+comparativo em `test-results/` antes de aceitar.
 Ele não depende de rede externa nem de dados preexistentes. O CI instala também
 as dependências de sistema do Chromium e publica trace e screenshot apenas em
 caso de falha.

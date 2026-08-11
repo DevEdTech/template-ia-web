@@ -24,6 +24,7 @@
     "test:coverage": "vitest run --coverage",
     "test:setup": "node --test scripts/*.test.mjs",
     "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
     "test:watch": "vitest",
     "setup": "node scripts/setup.mjs",
     "update:template": "node scripts/update-template.mjs",

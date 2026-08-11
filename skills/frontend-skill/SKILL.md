@@ -15,6 +15,8 @@ Antes de aplicar qualquer orientação genérica desta skill, leia
 - a paleta é o tema `vitru`; a cor de destaque é `--accent`;
 - a biblioteca de ícones é `lucide-react`, com as classes `icon`/`icon-sm`;
 - estilização é feita com CSS Modules, um por componente;
+- as telas são montadas com o kit de `@/shared/components`, não com marcação
+  inventada do zero;
 - a rota `/styleguide` é a referência viva e deve continuar funcionando.
 
 Use this skill when the quality of the work depends on art direction, hierarchy, restraint, imagery, and motion rather than component count.

@@ -8,13 +8,44 @@ describe('styleguide', () => {
     renderWithProviders(<StyleguidePage />);
 
     expect(screen.getByRole('heading', { name: 'Styleguide' })).toBeInTheDocument();
-    for (const name of ['Cores', 'Tipografia', 'Espaçamento e raio', 'Componentes', 'Ícones']) {
+    for (const name of [
+      'Cores',
+      'Tipografia',
+      'Espaçamento e raio',
+      'Botões',
+      'Cabeçalho de tela',
+      'Campos de formulário',
+      'Blocos e etiquetas',
+      'Avisos',
+      'Tabela',
+      'Estados de tela',
+      'Janela modal',
+      'Ícones',
+    ]) {
       expect(screen.getByRole('heading', { name })).toBeInTheDocument();
     }
 
     expect(screen.getByRole('button', { name: 'Ação primária' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Desabilitado' })).toBeDisabled();
-    expect(screen.getByLabelText('Campo de texto')).toBeInTheDocument();
+    expect(screen.getByLabelText('Nome')).toBeInTheDocument();
+  });
+
+  it('demonstra o kit inteiro, para que nada saia do padrão sem aparecer aqui', async () => {
+    const { user } = renderWithProviders(<StyleguidePage />);
+
+    // Campos: rótulo, dica e erro ligados ao controle.
+    expect(screen.getByLabelText('E-mail')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByLabelText('Nome')).toHaveAccessibleDescription('Como aparece no contrato');
+
+    // Tabela com legenda e estados de tela.
+    expect(screen.getByRole('table', { name: 'Clientes ativos' })).toBeInTheDocument();
+    expect(screen.getByText('Nenhum cliente ainda')).toBeInTheDocument();
+
+    // Modal abre e fecha.
+    await user.click(screen.getByRole('button', { name: 'Abrir exemplo' }));
+    expect(screen.getByRole('heading', { name: 'Confirmar exclusão' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(screen.queryByRole('heading', { name: 'Confirmar exclusão' })).toBeNull();
   });
 
   it('documenta cada token do catálogo', () => {

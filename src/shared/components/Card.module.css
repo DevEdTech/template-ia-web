@@ -1,0 +1,23 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--paper);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.raised {
+  box-shadow: var(--elevation-1);
+}
+
+.quiet {
+  background-color: var(--paper-2);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-lg);
+  color: var(--navy);
+}

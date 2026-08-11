@@ -49,8 +49,14 @@ em uma branch dedicada:
 2. o atributo `data-theme` no `<html>` do `index.html`;
 3. `src/features/styleguide/` e a rota `/styleguide` em `src/app/routes`;
 4. `scripts/check-styleguide.mjs`, seu teste e o script npm `check:styleguide`;
-5. `docs/styleguide.md` e a [ADR 0011](decisions/0011-design-tokens-and-styleguide.md);
-6. `npm install lucide-react`.
+5. `docs/styleguide.md`, a [ADR 0011](decisions/0011-design-tokens-and-styleguide.md)
+   e a [ADR 0012](decisions/0012-component-kit-and-visual-guardrails.md);
+6. `npm install lucide-react`;
+7. o kit de `src/shared/components` (e o `index.ts` que o exporta);
+8. as regras de `no-restricted-imports` do `eslint.config.js`;
+9. `e2e/styleguide.spec.ts` e o script npm `test:e2e:update` — gere a imagem
+   de referência da sua plataforma com `npm run test:e2e:update`;
+10. `public/favicon.svg` e o `theme-color` do `index.html`.
 
 Depois rode `npm run check:styleguide` para listar o que ainda usa cor literal e
 substitua por tokens aos poucos.
