@@ -114,7 +114,9 @@ Estilização por CSS Modules ([ADR 0005](decisions/0005-css-modules.md)), com o
 valores concentrados em `shared/styles/tokens.css`
 ([ADR 0011](decisions/0011-design-tokens-and-styleguide.md)). Cor, tipografia,
 espaçamento, raio, sombra e movimento vêm de tokens; nenhum CSS de componente
-declara cor literal. O tema padrão é `vitru`, aplicado pelo atributo
+declara cor literal. As fontes oficiais (TheMix nos títulos, Archivo no texto)
+são autohospedadas em `shared/styles/fonts/`
+([ADR 0013](decisions/0013-official-fonts.md)). O tema padrão é `vitru`, aplicado pelo atributo
 `data-theme` no `index.html`.
 
 As telas são montadas com o kit de `shared/components` (cabeçalho, blocos,

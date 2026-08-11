@@ -56,7 +56,10 @@ em uma branch dedicada:
 8. as regras de `no-restricted-imports` do `eslint.config.js`;
 9. `e2e/styleguide.spec.ts` e o script npm `test:e2e:update` — gere a imagem
    de referência da sua plataforma com `npm run test:e2e:update`;
-10. `public/favicon.svg` e o `theme-color` do `index.html`.
+10. `public/favicon.svg` e o `theme-color` do `index.html`;
+11. `src/shared/styles/fonts/` e o `fonts.css`, com os tokens
+    `--font-display` e `--font-sans`
+    ([ADR 0013](decisions/0013-official-fonts.md)).
 
 Depois rode `npm run check:styleguide` para listar o que ainda usa cor literal e
 substitua por tokens aos poucos.

@@ -164,7 +164,8 @@ Detalhes em [docs/architecture.md](docs/architecture.md).
 
 O template já vem com uma base visual definida: tokens de cor, tipografia,
 espaçamento, raio e movimento em `src/shared/styles/tokens.css`, tema padrão
-`vitru`, `lucide-react` como biblioteca de ícones e um kit de componentes
+`vitru`, as fontes oficiais TheMix (títulos) e Archivo (texto) já embutidas,
+`lucide-react` como biblioteca de ícones e um kit de componentes
 prontos em `src/shared/components` (cabeçalho de tela, campos, tabela, avisos,
 modal e os estados de carregando/vazio/erro). Rode `npm run dev` e abra
 `/styleguide` para ver a referência viva.

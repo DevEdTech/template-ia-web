@@ -1,6 +1,7 @@
 /* Base global da aplicacao. So define comportamento de elementos nativos:
  * todo estilo de componente vive no CSS Module correspondente, e toda cor vem
  * dos tokens importados abaixo. Veja docs/styleguide.md. */
+@import './fonts.css';
 @import './tokens.css';
 
 :root {
@@ -29,9 +30,13 @@ body {
   color: var(--ink);
 }
 
+/* Titulos usam a fonte de display; TheMix so existe em 700. */
 h1,
 h2,
-h3 {
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
 }
 

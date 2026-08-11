@@ -61,7 +61,7 @@ também responde por `:root` puro, então a aplicação nunca renderiza sem pale
 
 Independente de tema, também em `tokens.css`:
 
-- Tipografia: `--font-sans`, `--font-mono`, `--text-xs` a `--text-2xl`,
+- Tipografia: `--font-display`, `--font-sans`, `--font-mono`, `--text-xs` a `--text-2xl`,
   `--leading-tight`/`--leading-normal`, `--weight-regular` a `--weight-bold`.
 - Espaçamento (base 4px): `--space-1` (4px) a `--space-8` (48px).
 - Formas: `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-pill`,
@@ -82,6 +82,36 @@ Independente de tema, também em `tokens.css`:
   color: var(--ink);
 }
 ```
+
+## Fontes
+
+As fontes oficiais são servidas pelo próprio projeto, em WOFF2, a partir de
+`src/shared/styles/fonts/` e declaradas em
+[`fonts.css`](../src/shared/styles/fonts.css). Não usamos CDN de fontes: sem
+dependência externa em runtime e sem dado do usuário indo para terceiros.
+
+| Fonte       | Token            | Onde                                    | Pesos disponíveis                  |
+| ----------- | ---------------- | --------------------------------------- | ---------------------------------- |
+| **TheMix**  | `--font-display` | Títulos (`h1`–`h4`), aplicado no global | 700 normal e itálico               |
+| **Archivo** | `--font-sans`    | Todo o resto (texto, botões, campos)    | 400, 400 itálico, 700, 900 itálico |
+
+Regras:
+
+- Não declare peso que não temos. TheMix só existe em Bold: pedir 400 faz o
+  navegador simular o traço e o resultado deixa de ser a fonte da marca.
+- Título não precisa de `font-family`: o `global.css` já aplica
+  `--font-display` em `h1`–`h4`. Para um texto de destaque fora de título, use
+  `font-family: var(--font-display)` explicitamente.
+- `font-display: swap`: o texto aparece na hora com a fonte de sistema e troca
+  quando a oficial carrega. A lista de reserva dos tokens cobre o intervalo.
+- Para adicionar um peso, converta para WOFF2, coloque em `fonts/` e declare
+  um `@font-face` novo — nunca aponte para um arquivo `.ttf` direto: o WOFF2
+  é cerca de 4× menor.
+
+**Licenças**: Archivo é SIL Open Font License (o texto está em
+`fonts/Archivo-OFL.txt`). TheMix é uma fonte comercial da LucasFonts —
+confirme que a licença da empresa cobre uso como webfont autohospedada antes
+de publicar um projeto externo.
 
 ## Ícones
 

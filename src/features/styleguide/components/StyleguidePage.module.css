@@ -206,3 +206,17 @@
   flex-direction: column;
   gap: var(--space-2);
 }
+
+.displaySample {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-xl);
+  color: var(--navy);
+}
+
+.bodySample {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+}

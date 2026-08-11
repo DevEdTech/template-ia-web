@@ -128,6 +128,24 @@ export function StyleguidePage() {
           <Type className="icon" aria-hidden="true" />
           Tipografia
         </h3>
+        <div className={styles.cardGrid}>
+          <Card title="TheMix — títulos">
+            <p className={styles.usage}>
+              <code className={styles.code}>--font-display</code>. Só existe em Bold (700), normal e
+              itálico. Aplicada automaticamente em h1 a h4.
+            </p>
+            <p className={styles.displaySample}>Aa Bb Cc 0123</p>
+          </Card>
+          <Card title="Archivo — texto">
+            <p className={styles.usage}>
+              <code className={styles.code}>--font-sans</code>. Regular, itálico, bold e black
+              itálico. É a fonte padrão de todo o resto.
+            </p>
+            <p className={styles.bodySample}>
+              Aa Bb Cc 0123 <strong>negrito</strong> <em>itálico</em>
+            </p>
+          </Card>
+        </div>
         <ul className={styles.typeList}>
           {TEXT_TOKENS.map((entry) => (
             <li key={entry.name}>

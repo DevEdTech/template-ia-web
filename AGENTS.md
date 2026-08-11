@@ -34,6 +34,8 @@
 - Cor, espaçamento, tipografia, raio e transição vêm dos tokens de
   `shared/styles/tokens.css`. Não escreva cor literal em CSS de componente.
 - Ícones somente de `lucide-react`, com a classe `icon` ou `icon-sm`.
+- Fontes oficiais: TheMix nos títulos (`--font-display`, só peso 700) e
+  Archivo no texto (`--font-sans`). Não adicione fonte nem use CDN.
 - Estilo de componente fica no CSS Module do próprio componente.
 - Monte as telas com o kit de `shared/components` (`PageHeader`, `Card`,
   `Input`, `Table`, `Alert`, `Dialog`, `LoadingState`, `EmptyState`,

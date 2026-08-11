@@ -61,6 +61,7 @@ export const REQUIRED_THEME_TOKENS = [
 
 /** Escalas compartilhadas por qualquer tema. */
 export const REQUIRED_SCALE_TOKENS = [
+  '--font-display',
   '--font-sans',
   '--font-mono',
   '--text-md',

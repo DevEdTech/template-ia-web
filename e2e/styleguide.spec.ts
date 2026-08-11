@@ -39,6 +39,20 @@ test('mantém o contrato de estilo do tema', async ({ page }) => {
     'rgb(255, 245, 246)',
   );
   await expect(page.getByText('Informe um e-mail válido')).toHaveCSS('color', 'rgb(161, 26, 43)');
+
+  // Fontes oficiais: título em TheMix, texto em Archivo. Se um arquivo sumir,
+  // o navegador cai na fonte de reserva e isto acusa.
+  await expect(page.getByRole('heading', { name: 'Styleguide' })).toHaveCSS(
+    'font-family',
+    /^TheMix/,
+  );
+  await expect(page.locator('body')).toHaveCSS('font-family', /^Archivo/);
+  const carregadas = await page.evaluate(async () => {
+    await document.fonts.ready;
+    return [...document.fonts].map((face) => `${face.family} ${face.weight} ${face.style}`);
+  });
+  expect(carregadas).toContain('TheMix 700 normal');
+  expect(carregadas).toContain('Archivo 400 normal');
 });
 
 test('mantém a aparência da página do styleguide', async ({ page }) => {
