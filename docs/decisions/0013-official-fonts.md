@@ -1,5 +1,10 @@
 # ADR 0013: Fontes oficiais autohospedadas
 
+## Status
+
+Substituída pela [ADR 0014](0014-extract-shared-styleguide-package.md). A
+decisão abaixo registra o estado anterior à extração do pacote.
+
 ## Contexto
 
 O template usava `system-ui`, então cada projeto assumia a fonte do sistema de

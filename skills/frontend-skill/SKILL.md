@@ -11,11 +11,11 @@ Antes de aplicar qualquer orientação genérica desta skill, leia
 `docs/styleguide.md`. Neste projeto:
 
 - cor, tipografia, espaçamento, raio e movimento vêm dos tokens de
-  `src/shared/styles/tokens.css` — nunca use valor literal de cor;
+  `@vitru/styleguide/tokens.css` — nunca use valor literal de cor;
 - a paleta é o tema `vitru`; a cor de destaque é `--accent`;
 - a biblioteca de ícones é `lucide-react`, com as classes `icon`/`icon-sm`;
 - estilização é feita com CSS Modules, um por componente;
-- as telas são montadas com o kit de `@/shared/components`, não com marcação
+- as telas são montadas com o kit de `@vitru/styleguide`, não com marcação
   inventada do zero;
 - a rota `/styleguide` é a referência viva e deve continuar funcionando.
 

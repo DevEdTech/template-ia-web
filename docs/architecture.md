@@ -24,9 +24,8 @@ src/
 │   ├── routes/      # definição das rotas e o router
 │   └── tests/       # smoke test da composição
 ├── features/     # cada capacidade do produto em sua própria pasta
-│   ├── notes/    # demonstração canônica; removida por --remove-example
-│   └── styleguide/ # referência visual viva (/styleguide); permanece após o setup
-├── shared/       # reutilizável e neutro: components, config, hooks, lib, styles, types
+│   └── notes/    # demonstração canônica; removida por --remove-example
+├── shared/       # reutilizável e neutro: config, hooks, lib, types
 ├── test/         # setup.ts e render.tsx (utilidades de teste)
 └── main.tsx      # ponto de entrada da aplicação
 ```
@@ -102,7 +101,7 @@ As rotas ficam em `app/routes`, que exporta `routes` (a árvore, montável com `
 
 A rota raiz registra um `errorElement`, então um erro de renderização no layout ou em qualquer rota filha vira uma tela de falha, nunca tela branca. Uma rota curinga (`path: '*'`) atende endereços desconhecidos dentro do layout — mantenha-a como último filho ao acrescentar rotas.
 
-O `ErrorBoundary` de `shared/components` não envolve mais o `<Outlet />`, para não sombrear o `errorElement`. Use-o para isolar um widget arriscado dentro de uma página.
+O `ErrorBoundary` de `@vitru/styleguide` não envolve o `<Outlet />`, para não sombrear o `errorElement`. Use-o para isolar um widget arriscado dentro de uma página.
 
 ## Configuração de ambiente
 
@@ -111,20 +110,20 @@ Toda leitura de `import.meta.env` passa por `shared/config/env.ts`. As variávei
 ## Estilo e identidade visual
 
 Estilização por CSS Modules ([ADR 0005](decisions/0005-css-modules.md)), com os
-valores concentrados em `shared/styles/tokens.css`
+valores fornecidos por `@vitru/styleguide/tokens.css`
 ([ADR 0011](decisions/0011-design-tokens-and-styleguide.md)). Cor, tipografia,
 espaçamento, raio, sombra e movimento vêm de tokens; nenhum CSS de componente
-declara cor literal. As fontes oficiais (TheMix nos títulos, Archivo no texto)
-são autohospedadas em `shared/styles/fonts/`
+declara cor literal. Archivo vem do pacote; os arquivos licenciados da TheMix
+ficam apenas no projeto consumidor, em `public/fonts/`
 ([ADR 0013](decisions/0013-official-fonts.md)). O tema padrão é `vitru`, aplicado pelo atributo
 `data-theme` no `index.html`.
 
-As telas são montadas com o kit de `shared/components` (cabeçalho, blocos,
+As telas são montadas com o kit de `@vitru/styleguide` (cabeçalho, blocos,
 campos, tabela, avisos, modal e os estados de carregando, vazio e erro), que já
 consome os tokens e traz a semântica de acessibilidade esperada
-([ADR 0012](decisions/0012-component-kit-and-visual-guardrails.md)). A feature
-`styleguide` renderiza tokens e kit em `/styleguide` e serve de referência viva
-para pessoas e agentes. Ícones vêm de `lucide-react`. As regras
+([ADR 0012](decisions/0012-component-kit-and-visual-guardrails.md)). O subpath
+`@vitru/styleguide/showcase` renderiza tokens e kit em `/styleguide` e serve de
+referência viva para pessoas e agentes. Ícones vêm de `lucide-react`. As regras
 completas estão em [styleguide.md](styleguide.md) e `npm run check:styleguide`
 avisa quando são quebradas.
 

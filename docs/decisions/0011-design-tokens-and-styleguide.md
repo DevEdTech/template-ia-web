@@ -1,5 +1,10 @@
 # ADR 0011: Design tokens, styleguide inicial e biblioteca de ícones
 
+## Status
+
+Substituída pela [ADR 0014](0014-extract-shared-styleguide-package.md). A
+decisão abaixo registra o estado anterior à extração do pacote.
+
 ## Contexto
 
 O template entregava componentes com cores literais espalhadas pelos CSS

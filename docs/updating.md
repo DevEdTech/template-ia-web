@@ -38,31 +38,20 @@ Não use `--allow-unrelated-histories` como fluxo padrão. Projetos derivados
 podem ter mudanças incompatíveis, e conflitos devem ser resolvidos de forma
 consciente antes de executar as migrações.
 
-## Projetos criados antes do styleguide
+## Projetos criados antes do pacote compartilhado
 
-O styleguide (tokens, tema `vitru`, `lucide-react` e a rota `/styleguide`) não é
-distribuído por migração: ele adiciona arquivos, e migrações não sobrescrevem
-código do usuário. Para adotá-lo em um projeto já existente, traga do template,
-em uma branch dedicada:
+Para migrar um projeto que ainda mantém tokens e componentes locais:
 
-1. `src/shared/styles/tokens.css` e a base de `src/shared/styles/global.css`;
-2. o atributo `data-theme` no `<html>` do `index.html`;
-3. `src/features/styleguide/` e a rota `/styleguide` em `src/app/routes`;
-4. `scripts/check-styleguide.mjs`, seu teste e o script npm `check:styleguide`;
-5. `docs/styleguide.md`, a [ADR 0011](decisions/0011-design-tokens-and-styleguide.md)
-   e a [ADR 0012](decisions/0012-component-kit-and-visual-guardrails.md);
-6. `npm install lucide-react`;
-7. o kit de `src/shared/components` (e o `index.ts` que o exporta);
-8. as regras de `no-restricted-imports` do `eslint.config.js`;
-9. `e2e/styleguide.spec.ts` e o script npm `test:e2e:update` — gere a imagem
-   de referência da sua plataforma com `npm run test:e2e:update`;
-10. `public/favicon.svg` e o `theme-color` do `index.html`;
-11. `src/shared/styles/fonts/` e o `fonts.css`, com os tokens
-    `--font-display` e `--font-sans`
-    ([ADR 0013](decisions/0013-official-fonts.md)).
+1. instale `@vitru/styleguide` pelo registro público do npm;
+2. importe `@vitru/styleguide/styles.css` uma vez no entrypoint;
+3. substitua imports do kit local por `@vitru/styleguide`;
+4. remova as cópias locais somente depois de testes e build verdes;
+5. mantenha arquivos licenciados da TheMix no consumidor e execute
+   `npx vitru-install-themix` se necessário;
+6. opcionalmente exponha `@vitru/styleguide/showcase` em `/styleguide`;
+7. rode `npm run check:styleguide`, `npm run validate` e o E2E.
 
-Depois rode `npm run check:styleguide` para listar o que ainda usa cor literal e
-substitua por tokens aos poucos.
+Veja a [ADR 0014](decisions/0014-extract-shared-styleguide-package.md).
 
 ## Limites
 

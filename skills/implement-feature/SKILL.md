@@ -23,7 +23,7 @@ verificadas.
 4. Não expanda o escopo nem antecipe trabalho futuro.
 5. Reutilize os padrões e módulos já existentes.
 6. Em interface, siga `docs/styleguide.md`: monte a tela com o kit de
-   `@/shared/components`, use os tokens de `shared/styles/tokens.css` (sem
+   `@vitru/styleguide`, use os tokens de `@vitru/styleguide/tokens.css` (sem
    cor literal) e ícones de `lucide-react`.
 7. Mantenha APIs externas e armazenamento atrás de serviços.
 8. Adicione ou atualize os testes de comportamento afetados.

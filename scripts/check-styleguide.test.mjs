@@ -21,13 +21,19 @@ function project() {
   const declarations = [...REQUIRED_THEME_TOKENS, ...REQUIRED_SCALE_TOKENS]
     .map((token) => `  ${token}: initial;`)
     .join('\n');
-  write(root, 'src/shared/styles/tokens.css', `:root {\n${declarations}\n}\n`);
-  write(root, 'src/shared/styles/global.css', "@import './tokens.css';\n");
+  write(root, 'node_modules/@vitru/styleguide/dist/tokens.css', `:root {\n${declarations}\n}\n`);
+  write(root, 'src/main.tsx', "import '@vitru/styleguide/styles.css';\n");
   write(root, 'index.html', '<html lang="pt-BR" data-theme="vitru"></html>\n');
-  write(root, 'package.json', JSON.stringify({ dependencies: { 'lucide-react': '^1.0.0' } }));
   write(
     root,
-    'src/shared/components/index.ts',
+    'package.json',
+    JSON.stringify({
+      dependencies: { '@vitru/styleguide': '^0.1.0', 'lucide-react': '^1.0.0' },
+    }),
+  );
+  write(
+    root,
+    'node_modules/@vitru/styleguide/dist/index.d.ts',
     REQUIRED_COMPONENTS.map((name) => `export { ${name} } from './${name}';`).join('\n'),
   );
   return root;
@@ -74,7 +80,11 @@ test('ignora cor citada em comentário', () => {
 test('avisa quando falta um token obrigatório', () => {
   const root = project();
   try {
-    write(root, 'src/shared/styles/tokens.css', ':root {\n  --ink: initial;\n}\n');
+    write(
+      root,
+      'node_modules/@vitru/styleguide/dist/tokens.css',
+      ':root {\n  --ink: initial;\n}\n',
+    );
     const warnings = checkStyleguide(root);
     assert.match(warnings.join('\n'), /token obrigatório "--accent"/);
     assert.doesNotMatch(warnings.join('\n'), /token obrigatório "--ink"/);
@@ -97,15 +107,36 @@ test('avisa sobre outra biblioteca de ícones e sobre a ausência da padrão', (
   }
 });
 
-test('avisa quando tokens.css some, quando global.css não importa e quando o tema não é declarado', () => {
+test('avisa quando o styleguide aponta para uma dependência local', () => {
   const root = project();
   try {
-    rmSync(join(root, 'src/shared/styles/tokens.css'));
-    write(root, 'src/shared/styles/global.css', 'body {\n  margin: 0;\n}\n');
+    write(
+      root,
+      'package.json',
+      JSON.stringify({
+        dependencies: {
+          '@vitru/styleguide': 'file:../styleguide-vitru',
+          'lucide-react': '^1.0.0',
+        },
+      }),
+    );
+    const warnings = checkStyleguide(root).join('\n');
+    assert.match(warnings, /deve usar uma versão publicada no npm/);
+    assert.match(warnings, /file:\.\.\/styleguide-vitru/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('avisa quando tokens.css some, quando main.tsx não importa o pacote e quando o tema não é declarado', () => {
+  const root = project();
+  try {
+    rmSync(join(root, 'node_modules/@vitru/styleguide/dist/tokens.css'));
+    write(root, 'src/main.tsx', 'export {};\n');
     write(root, 'index.html', '<html lang="pt-BR"></html>\n');
     const warnings = checkStyleguide(root).join('\n');
-    assert.match(warnings, /arquivo de tokens ausente/);
-    assert.match(warnings, /importe "\.\/tokens\.css"/);
+    assert.match(warnings, /tokens do pacote ausentes/);
+    assert.match(warnings, /importe "@vitru\/styleguide\/styles\.css"/);
     assert.match(warnings, /declare o tema no <html>/);
   } finally {
     rmSync(root, { recursive: true, force: true });
@@ -115,7 +146,11 @@ test('avisa quando tokens.css some, quando global.css não importa e quando o te
 test('avisa quando o kit base perde um componente', () => {
   const root = project();
   try {
-    write(root, 'src/shared/components/index.ts', "export { Button } from './Button';\n");
+    write(
+      root,
+      'node_modules/@vitru/styleguide/dist/index.d.ts',
+      "export { Button } from './Button';\n",
+    );
     const warnings = checkStyleguide(root).join('\n');
     assert.match(warnings, /o kit base perdeu "Table"/);
     assert.doesNotMatch(warnings, /o kit base perdeu "Button"/);

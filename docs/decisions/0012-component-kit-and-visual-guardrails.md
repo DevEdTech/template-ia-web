@@ -1,5 +1,10 @@
 # ADR 0012: Kit de componentes e barreiras visuais automáticas
 
+## Status
+
+Substituída pela [ADR 0014](0014-extract-shared-styleguide-package.md). A
+decisão abaixo registra o estado anterior à extração do pacote.
+
 ## Contexto
 
 O template é usado por pessoas sem formação em programação, que conduzem

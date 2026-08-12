@@ -1,6 +1,6 @@
 import { Plus, Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
-import { Button } from '@/shared/components';
+import { Button } from '@vitru/styleguide';
 import { useNotes } from '../hooks/useNotes';
 import styles from './NoteList.module.css';
 

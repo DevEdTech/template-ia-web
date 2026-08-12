@@ -3,7 +3,7 @@
 // Erros de renderizacao deste layout ou das rotas filhas sao tratados pelo
 // `errorElement` registrado em `app/routes`, que cobre inclusive falhas no
 // proprio header. Para isolar um widget arriscado dentro de uma pagina, use
-// o `ErrorBoundary` de `shared/components`.
+// o `ErrorBoundary` de `@vitru/styleguide`.
 import { CircleCheck, Home, Palette } from 'lucide-react';
 import { Link, Outlet } from 'react-router';
 import styles from './App.module.css';

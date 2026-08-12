@@ -7,14 +7,13 @@
 // avisos em falha.
 //
 // Regras verificadas:
-//  1. `src/shared/styles/tokens.css` existe e declara todos os tokens do tema.
-//  2. `global.css` importa os tokens e `index.html` declara o tema.
+//  1. O pacote `@vitru/styleguide` está instalado e expõe os tokens esperados.
+//  2. `main.tsx` importa o CSS público e `index.html` declara o tema.
 //  3. Nenhum CSS fora de `tokens.css` usa cor literal (hex, rgb, hsl ou nome
 //     de cor CSS): componentes consomem `var(--token)`.
 //  4. A única biblioteca de ícones é `lucide-react`, declarada em
 //     `dependencies`.
-//  5. O kit base continua exportado por `shared/components`: telas de
-//     projetos diferentes só se parecem se os mesmos componentes existirem.
+//  5. O pacote continua expondo o kit base esperado pelo template.
 //
 // Compatível com macOS, Linux e Windows: apenas APIs nativas do Node.
 
@@ -25,8 +24,10 @@ import { fileURLToPath } from 'node:url';
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const defaultRoot = resolve(scriptDir, '..');
 
-export const TOKENS_FILE = 'src/shared/styles/tokens.css';
+export const STYLEGUIDE_PACKAGE = '@vitru/styleguide';
+export const TOKENS_FILE = 'node_modules/@vitru/styleguide/dist/tokens.css';
 export const ICON_LIBRARY = 'lucide-react';
+const LOCAL_DEPENDENCY_PROTOCOL = /^(?:file|link|workspace):/;
 
 /** Tokens de tema obrigatórios: renomeá-los quebra os componentes do template. */
 export const REQUIRED_THEME_TOKENS = [
@@ -71,7 +72,7 @@ export const REQUIRED_SCALE_TOKENS = [
   '--icon-size',
 ];
 
-/** Kit base do template, exportado por `src/shared/components/index.ts`. */
+/** Kit base esperado no contrato público do pacote. */
 export const REQUIRED_COMPONENTS = [
   'Alert',
   'Badge',
@@ -136,7 +137,7 @@ function withoutComments(css) {
 function checkTokens(root, warnings) {
   const tokensPath = join(root, TOKENS_FILE);
   if (!existsSync(tokensPath)) {
-    warnings.push(`${TOKENS_FILE}: arquivo de tokens ausente; o styleguide depende dele.`);
+    warnings.push(`${TOKENS_FILE}: tokens do pacote ausentes; instale "${STYLEGUIDE_PACKAGE}".`);
   } else {
     const tokens = withoutComments(readFileSync(tokensPath, 'utf8'));
     for (const token of [...REQUIRED_THEME_TOKENS, ...REQUIRED_SCALE_TOKENS]) {
@@ -146,9 +147,12 @@ function checkTokens(root, warnings) {
     }
   }
 
-  const globalPath = join(root, 'src/shared/styles/global.css');
-  if (existsSync(globalPath) && !readFileSync(globalPath, 'utf8').includes('tokens.css')) {
-    warnings.push('src/shared/styles/global.css: importe "./tokens.css" antes das regras base.');
+  const mainPath = join(root, 'src/main.tsx');
+  if (
+    !existsSync(mainPath) ||
+    !readFileSync(mainPath, 'utf8').includes('@vitru/styleguide/styles.css')
+  ) {
+    warnings.push('src/main.tsx: importe "@vitru/styleguide/styles.css" uma única vez.');
   }
 
   const indexPath = join(root, 'index.html');
@@ -178,6 +182,14 @@ function checkIcons(root, warnings) {
   if (existsSync(packagePath)) {
     const pkg = JSON.parse(readFileSync(packagePath, 'utf8'));
     const dependencies = pkg.dependencies ?? {};
+    const styleguideVersion = dependencies[STYLEGUIDE_PACKAGE];
+    if (!styleguideVersion) {
+      warnings.push(`package.json: "${STYLEGUIDE_PACKAGE}" deve estar em dependencies.`);
+    } else if (LOCAL_DEPENDENCY_PROTOCOL.test(styleguideVersion)) {
+      warnings.push(
+        `package.json: "${STYLEGUIDE_PACKAGE}" deve usar uma versão publicada no npm, não "${styleguideVersion}".`,
+      );
+    }
     if (!dependencies[ICON_LIBRARY]) {
       warnings.push(`package.json: "${ICON_LIBRARY}" deve estar em dependencies.`);
     }
@@ -203,16 +215,16 @@ function checkIcons(root, warnings) {
 }
 
 function checkKit(root, warnings) {
-  const indexPath = join(root, 'src/shared/components/index.ts');
+  const indexPath = join(root, 'node_modules/@vitru/styleguide/dist/index.d.ts');
   if (!existsSync(indexPath)) {
-    warnings.push('src/shared/components/index.ts: índice do kit base ausente.');
+    warnings.push(`${indexPath}: declarações públicas do kit ausentes.`);
     return;
   }
   const index = readFileSync(indexPath, 'utf8');
   for (const component of REQUIRED_COMPONENTS) {
     if (!new RegExp(`\\b${component}\\b`).test(index)) {
       warnings.push(
-        `src/shared/components/index.ts: o kit base perdeu "${component}" (docs/styleguide.md).`,
+        `${STYLEGUIDE_PACKAGE}: o kit base perdeu "${component}" (docs/styleguide.md).`,
       );
     }
   }

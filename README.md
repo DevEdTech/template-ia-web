@@ -151,8 +151,7 @@ src/
 ├── app/          # composição geral (providers, rotas, layout) — sem regra de negócio
 ├── features/     # cada capacidade do produto em sua pasta
 │   ├── notes/    # demonstração canônica; removida por --remove-example
-│   └── styleguide/ # referência visual viva em /styleguide; permanece após o setup
-├── shared/       # reutilizável e neutro (components, config, hooks, lib, styles, types)
+├── shared/       # reutilizável e neutro (config, hooks, lib, types)
 ├── test/         # setup.ts e render.tsx
 └── main.tsx
 docs/             # esta documentação
@@ -162,13 +161,10 @@ Detalhes em [docs/architecture.md](docs/architecture.md).
 
 ## Styleguide
 
-O template já vem com uma base visual definida: tokens de cor, tipografia,
-espaçamento, raio e movimento em `src/shared/styles/tokens.css`, tema padrão
-`vitru`, as fontes oficiais TheMix (títulos) e Archivo (texto) já embutidas,
-`lucide-react` como biblioteca de ícones e um kit de componentes
-prontos em `src/shared/components` (cabeçalho de tela, campos, tabela, avisos,
-modal e os estados de carregando/vazio/erro). Rode `npm run dev` e abra
-`/styleguide` para ver a referência viva.
+O template consome `@vitru/styleguide`, pacote que concentra tokens, tema
+`vitru`, Archivo, componentes e a referência visual. TheMix permanece local ao
+projeto consumidor em `public/fonts`, sem ser redistribuída pelo pacote. Rode
+`npm run dev` e abra `/styleguide` para ver a referência viva.
 
 Essas regras continuam valendo depois do `npm run setup`. Leia
 [docs/styleguide.md](docs/styleguide.md) antes de criar telas; `npm run check:styleguide`

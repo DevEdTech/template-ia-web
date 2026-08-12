@@ -9,5 +9,7 @@ export default defineConfig({
     alias: {
       '@': resolve(import.meta.dirname, './src'),
     },
+    // Mantém os peers do pacote na mesma instância usada pelo consumidor.
+    dedupe: ['react', 'react-dom'],
   },
 });
