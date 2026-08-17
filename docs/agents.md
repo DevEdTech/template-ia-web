@@ -17,6 +17,7 @@ O agente lê os arquivos persistentes automaticamente. Use o prompt para a taref
 - **save-legacy-project** — analisa um projeto legado sem documentação e produz um plano aprovado de reestruturação em features, com documentação completa, sem mudar o comportamento.
 - **plan-feature** — planeja uma funcionalidade antes de escrever código.
 - **implement-feature** — implementa a funcionalidade seguindo o plano e a arquitetura.
+- **document-delivery** — registra em `docs/entregas` a evidência do que foi entregue: funcionalidades, testes e validações.
 - **review-changes** — revisa as alterações feitas.
 - **generate-tests** — gera testes para o comportamento implementado.
 - **update-documentation** — atualiza a documentação após uma mudança.
@@ -45,6 +46,14 @@ Use `save-legacy-project` quando o projeto já existe, mas não tem documentaç�
 ## Como pedir revisão
 
 > Use a skill review-changes para revisar o que foi alterado nesta branch.
+
+## Como registrar a entrega
+
+Use `document-delivery` depois que o plano foi implementado com `implement-feature` e `npm run validate` está verde. A skill escreve um arquivo em [docs/entregas](entregas/README.md) com as funcionalidades entregues, os testes que as cobrem e a saída real das validações — a evidência da entrega, para consultar depois sem reconstruir a história a partir do Git.
+
+> A implementação terminou e a validação passou. Use a skill document-delivery para registrar a evidência desta entrega.
+
+Ela não altera código e não substitui `update-documentation`: realinhar `docs/` ao código e registrar ADR continuam sendo daquela skill.
 
 ## Limites de autonomia
 

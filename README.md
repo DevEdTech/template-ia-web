@@ -69,7 +69,7 @@ O produto já está definido em docs/prd.md. Use a skill plan-feature para plane
 **Cenário C — "O plano foi aprovado, implemente"**
 
 ```text
-O plano foi aprovado. Use a skill implement-feature para executar. Garanta que `npm run validate` passe limpo ao concluir.
+O plano foi aprovado. Use a skill implement-feature para executar. Garanta que `npm run validate` passe limpo ao concluir e registre a evidência com a skill document-delivery.
 ```
 
 ## Instalação
@@ -190,6 +190,7 @@ Depois que o produto estiver definido:
 3. Peça a implementação: "Use a skill implement-feature...".
 4. Gere a base com `npm run generate:feature -- --name="minha-feature"`; use `--dry-run` para apenas listar os arquivos. O gerador cria `components` (com CSS Module já baseado nos tokens), `model`, `services`, `tests` e o `index.ts` público, mas não registra a feature na composição da aplicação.
 5. Rode `npm run validate`.
+6. Peça a evidência da entrega: "Use a skill document-delivery...". O resumo do que foi entregue, dos testes e das validações fica em [docs/entregas](docs/entregas/README.md).
 
 Regras de arquitetura em [docs/architecture.md](docs/architecture.md); regras visuais em [docs/styleguide.md](docs/styleguide.md).
 

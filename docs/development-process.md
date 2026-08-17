@@ -12,9 +12,10 @@ Fluxo recomendado para levar uma ideia até o código, de forma organizada e ver
 6. **Branch**: crie uma branch para o trabalho (`git checkout -b feat/descricao`).
 7. **Implementação**: escreva o código seguindo a [arquitetura](architecture.md).
 8. **Validação local**: rode `npm run validate` até ficar tudo verde. Em mudanças de interface, resolva também os avisos de `npm run check:styleguide`.
-9. **Commit**: registre as mudanças com mensagem clara.
-10. **Pull Request**: abra o PR descrevendo o que mudou e por quê.
-11. **Revisão**: ajuste conforme os comentários antes de integrar.
+9. **Evidência da entrega**: registre em [entregas](entregas/README.md) o que foi entregue, os testes e o resultado das validações. Você pode pedir ao agente: "Use a skill document-delivery...".
+10. **Commit**: registre as mudanças com mensagem clara.
+11. **Pull Request**: abra o PR descrevendo o que mudou e por quê.
+12. **Revisão**: ajuste conforme os comentários antes de integrar.
 
 Atualizações herdadas do template usam `npm run update:template -- --dry-run`
 antes da aplicação. Veja [updating.md](updating.md).
@@ -55,4 +56,5 @@ Uma tarefa está concluída quando:
 - Não há erro de lint, typecheck ou build (`npm run validate` verde)
 - O CI está verde no Pull Request
 - A documentação foi atualizada quando necessário
+- A entrega está registrada em [entregas](entregas/README.md)
 - As alterações estão registradas no Git

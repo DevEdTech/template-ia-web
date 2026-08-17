@@ -29,6 +29,7 @@ verificadas.
 8. Adicione ou atualize os testes de comportamento afetados.
 9. Execute `npm run validate`.
 10. Revise o diff final.
+11. Registre a evidência da entrega com `document-delivery`.
 
 ## Resultado esperado
 
