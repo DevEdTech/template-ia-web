@@ -21,6 +21,7 @@ O agente lê os arquivos persistentes automaticamente. Use o prompt para a taref
 - **review-changes** — revisa as alterações feitas.
 - **generate-tests** — gera testes para o comportamento implementado.
 - **update-documentation** — atualiza a documentação após uma mudança.
+- **update-readme** — gera ou reescreve o `README.md` no padrão do template.
 - **prepare-pull-request** — organiza commit e descrição do Pull Request.
 
 As skills canônicas ficam em `/skills`; as cópias em `.claude/skills` e `.agents/skills` são geradas por `npm run sync:skills`.
@@ -54,6 +55,14 @@ Use `document-delivery` depois que o plano foi implementado com `implement-featu
 > A implementação terminou e a validação passou. Use a skill document-delivery para registrar a evidência desta entrega.
 
 Ela não altera código e não substitui `update-documentation`: realinhar `docs/` ao código e registrar ADR continuam sendo daquela skill.
+
+## Como atualizar o README
+
+Use `update-readme` quando o `README.md` deixar de descrever o projeto: logo depois do `npm run setup`, quando ele ainda fala do template, ou quando comandos, estrutura de pastas e variáveis de ambiente mudaram. A skill levanta os fatos do próprio repositório (`package.json`, `docs/prd.md`, `docs/architecture.md`, `.env.example`, workflows) e reescreve na estrutura padrão: objetivo, pré-requisitos, instalação, execução, validação, comandos, estrutura, agentes e limitações.
+
+> Acabei de rodar o setup. Use a skill update-readme para reescrever o README descrevendo este projeto.
+
+Ela cita apenas script que existe e link que resolve — `npm run check:docs` reprova o contrário.
 
 ## Limites de autonomia
 
