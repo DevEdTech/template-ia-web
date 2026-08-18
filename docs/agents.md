@@ -22,6 +22,7 @@ O agente lê os arquivos persistentes automaticamente. Use o prompt para a taref
 - **generate-tests** — gera testes para o comportamento implementado.
 - **update-documentation** — atualiza a documentação após uma mudança.
 - **update-readme** — gera ou reescreve o `README.md` no padrão do template.
+- **update-agents** — atualiza o `AGENTS.md` da raiz quando as regras do projeto mudam.
 - **prepare-pull-request** — organiza commit e descrição do Pull Request.
 
 As skills canônicas ficam em `/skills`; as cópias em `.claude/skills` e `.agents/skills` são geradas por `npm run sync:skills`.
@@ -63,6 +64,14 @@ Use `update-readme` quando o `README.md` deixar de descrever o projeto: logo dep
 > Acabei de rodar o setup. Use a skill update-readme para reescrever o README descrevendo este projeto.
 
 Ela cita apenas script que existe e link que resolve — `npm run check:docs` reprova o contrário.
+
+## Como atualizar as regras dos agentes
+
+Use `update-agents` quando uma mudança importante altera **como se trabalha** no projeto: uma fronteira de arquitetura, o comando de validação, uma convenção de commit ou de teste, uma dependência aceita ou proibida, uma pasta nova com regra própria. A skill mexe apenas no `AGENTS.md` da raiz — as regras que todo agente carrega em toda sessão.
+
+> A fronteira entre features mudou e o validate está verde. Use a skill update-agents para atualizar as regras.
+
+Não confunda os dois arquivos: `AGENTS.md` (raiz) guarda as **regras**; este `docs/agents.md` é o **guia** de como acionar as skills, e quem cuida dele é `update-documentation`. Repare também que `npm run check:docs` valida `README.md` e `docs/`, mas não cobre o `AGENTS.md`: os comandos e caminhos citados lá precisam ser conferidos à mão.
 
 ## Limites de autonomia
 

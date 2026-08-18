@@ -85,6 +85,7 @@
 - Toda decisão relevante atualiza a documentação ou uma ADR.
 - Toda entrega implementada gera um registro em `docs/entregas`, com
   funcionalidades, testes e o resultado real das validações.
+- Mudança que cria ou revoga uma regra atualiza este `AGENTS.md`.
 
 ## Conclusão
 
