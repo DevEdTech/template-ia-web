@@ -31,10 +31,11 @@
 
 ## Estilo e interface
 
-- Siga `docs/styleguide.md`; ele vale também depois do `npm run setup`.
+- Siga `docs/styleguide.md`.
 - Cor, espaçamento, tipografia, raio e transição vêm dos tokens de
   `@vitru/styleguide/tokens.css`. Não escreva cor literal em CSS de componente.
-- Ícones somente de `lucide-react`, com a classe `icon` ou `icon-sm`.
+- Ícones somente de `lucide-react`, com a classe `icon`; acrescente
+  `icon-sm` para o tamanho menor.
 - Fontes oficiais: TheMix nos títulos (`--font-display`, só peso 700) e
   Archivo no texto (`--font-sans`). Não adicione fonte nem use CDN.
 - Estilo de componente fica no CSS Module do próprio componente.
@@ -55,6 +56,9 @@
 
 - Não adicione dependências sem explicar a necessidade.
 - Prefira APIs da plataforma e dependências existentes.
+
+## Segurança
+
 - Nunca faça commit de segredos.
 
 ## Armazenamento e APIs
@@ -89,6 +93,6 @@
 
 ## Conclusão
 
-Uma tarefa só está concluída quando critérios de aceite, testes,
-lint, typecheck, build, cobertura, CI e documentação estiverem
-satisfeitos.
+Uma tarefa só está concluída quando todos os itens da definição de
+concluído estiverem satisfeitos. A lista fica em
+`docs/development-process.md` e é a única fonte da verdade.
