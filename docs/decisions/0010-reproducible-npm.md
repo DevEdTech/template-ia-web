@@ -1,5 +1,7 @@
 # 0010 - Versão exata do npm nos ambientes controlados
 
+> A política de versões do Node foi atualizada pelo [ADR 0015](0015-node24-minimum.md).
+
 - **Status**: Aceito
 - **Data**: 2026-08-08
 

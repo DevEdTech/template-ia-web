@@ -255,7 +255,7 @@ experiência operacional e a reprodutibilidade.
       `packageManager` e o npm em uso nos ambientes controlados.
 - [x] Documentar como atualizar Node, npm e lockfile em conjunto.
 - [x] Configurar a matriz Node 22/24 para instalar a mesma versão do npm.
-- [ ] Confirmar a execução de `npm run validate` em Node 22 e 24 no CI.
+- [ ] Confirmar a execução de `npm run validate` em Node 24 e 26 no CI.
 
 #### Critérios de aceite do incremento 7
 

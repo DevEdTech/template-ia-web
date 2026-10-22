@@ -15,7 +15,7 @@ test('aceita a versão exata declarada em packageManager', () => {
   const root = project();
   try {
     assert.equal(expectedNpmVersion(root), '10.6.0');
-    assert.equal(checkToolchain(root, 'npm/10.6.0 node/v22.0.0 darwin arm64'), '10.6.0');
+    assert.equal(checkToolchain(root, 'npm/10.6.0 node/v24.0.0 darwin arm64'), '10.6.0');
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

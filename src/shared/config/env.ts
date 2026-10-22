@@ -76,7 +76,7 @@ export function createEnv(raw: ImportMetaEnv): Env {
   if (problems.length > 0) throw new EnvValidationError(problems);
 
   return {
-    baseUrl: raw.BASE_URL,
+    baseUrl: raw.BASE_URL.endsWith('/') ? raw.BASE_URL : `${raw.BASE_URL}/`,
     mode: raw.MODE,
     isProduction: raw.PROD,
     apiUrl,

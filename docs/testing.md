@@ -139,3 +139,7 @@ a demonstração. O E2E de onboarding confere navegação, ausência de rolagem
 horizontal no celular e acesso ao styleguide. Os testes black-box do setup
 protegem a remoção das referências nas rotas, a preservação de composições
 personalizadas e o rollback quando uma etapa posterior falha.
+
+Os workers do Vitest desativam o Web Storage nativo do Node com
+`--no-experimental-webstorage`, permitindo que o jsdom forneça o armazenamento
+isolado do navegador simulado. Isso mantém a suíte compatível com Node 24 e 26.

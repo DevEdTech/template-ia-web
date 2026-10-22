@@ -5,7 +5,7 @@ Template de projeto front-end em React + TypeScript + Vite, pensado para pessoas
 ## Comece por aqui
 
 Depois de criar seu repositório pelo botão **Use this template**, abra a pasta
-no terminal. Com Node 22 ativo (`nvm use`), execute:
+no terminal. Com Node 24 LTS ativo (`nvm use`), execute:
 
 ```bash
 npm install --global npm@10.6.0
@@ -54,7 +54,7 @@ Indicado para:
 
 ## Pré-requisitos
 
-- Node.js 22 (o arquivo `.nvmrc` já indica a versão; com `nvm`, rode `nvm use`)
+- Node.js 24 LTS ou superior (o arquivo `.nvmrc` já indica a versão; com `nvm`, rode `nvm use`)
 - npm 10.6.0 (a versão exata declarada em `packageManager`)
 - git
 - Um agente de código (ex.: Claude Code)
@@ -144,7 +144,7 @@ Além da validação local, o repositório traz portões automáticos:
 | `pre-commit`        | `lint-staged` (ESLint e Prettier nos arquivos alterados) |
 | `commit-msg`        | Convenção da mensagem de commit                          |
 | `pre-push`          | `typecheck` e `test:unit` (Vitest sem cobertura)         |
-| CI (GitHub Actions) | `validate` em Node 22/24, auditoria e E2E no Chromium    |
+| CI (GitHub Actions) | `validate` em Node 24/26, auditoria e E2E no Chromium    |
 
 O CI está em `.github/workflows/ci.yml`. Configure a branch principal para
 exigir os checks **Validate** e **E2E (Chromium)** antes do merge. As

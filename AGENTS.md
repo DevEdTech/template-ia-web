@@ -52,6 +52,12 @@
 - Não expanda o escopo além do solicitado.
 - Uma funcionalidade por vez.
 
+## Runtime
+
+- Node.js mínimo 24; use a linha 24 LTS de `.nvmrc` como padrão local e de deploy.
+- Não reintroduza suporte ou jobs de CI para Node 22.
+- Mantenha `engines.node`, `.nvmrc`, lockfile, CI e documentação coerentes.
+
 ## Dependências
 
 - Não adicione dependências sem explicar a necessidade.

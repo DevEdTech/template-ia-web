@@ -6,6 +6,8 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
+      // Mantém o Web Storage dos testes sob controle do jsdom em Node 24+.
+      execArgv: ['--no-experimental-webstorage'],
       globals: true,
       setupFiles: './src/test/setup.ts',
       exclude: [...configDefaults.exclude, 'scripts/**/*.test.mjs', 'e2e/**'],
