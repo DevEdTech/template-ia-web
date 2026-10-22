@@ -58,8 +58,11 @@ test('mantém o contrato de estilo do tema', async ({ page }) => {
 test('mantém a aparência da página do styleguide', async ({ page }) => {
   // Sem referência para esta plataforma o teste é pulado com instrução, em vez
   // de falhar por um arquivo que ninguém gerou ainda. `--update-snapshots`
-  // (npm run test:e2e:update) muda o modo e cria a imagem.
-  const criandoReferencia = test.info().config.updateSnapshots !== 'missing';
+  // (npm run test:e2e:update) muda o modo para `changed` e cria a imagem. O
+  // modo sem a flag mudou de `missing` para `default` no Playwright 1.64, então
+  // a condição olha os modos que gravam, e não o padrão.
+  const { updateSnapshots } = test.info().config;
+  const criandoReferencia = updateSnapshots === 'all' || updateSnapshots === 'changed';
   test.skip(
     !existsSync(baseline) && !criandoReferencia,
     `Sem imagem de referência para ${process.platform}. Gere com: npm run test:e2e:update`,

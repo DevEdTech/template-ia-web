@@ -98,3 +98,28 @@ found 0 vulnerabilities
 
 1. `npm ci` e `npm outdated`: só o TypeScript aparece.
 2. `npm run validate` e `npm run test:e2e` passam.
+
+## Incremento de 2026-10-22: teste de aparência no Playwright 1.64
+
+O CI da `master` falhou no E2E: no Linux não há imagem de referência, e o teste
+de aparência deveria ser pulado. O Playwright 1.64 trocou o modo padrão de
+`updateSnapshots` de `missing` para `default`, e o teste tratava qualquer modo
+diferente de `missing` como "gerando a referência". Agora ele só gera a imagem
+nos modos que gravam (`all` e `changed`, o de `--update-snapshots`).
+
+| Arquivo                  | Mudança                                  |
+| ------------------------ | ---------------------------------------- |
+| `e2e/styleguide.spec.ts` | Condição de pulo pelos modos que gravam. |
+
+Verificado localmente, nos três caminhos:
+
+```text
+-- sem referência:
+  1 skipped
+  1 passed (3.5s)
+(não gravou imagem)
+-- gerando:
+  2 passed (5.6s)
+-- normal:
+  5 passed (6.4s)
+```
