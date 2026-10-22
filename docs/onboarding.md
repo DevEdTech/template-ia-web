@@ -6,7 +6,7 @@ O objetivo é sair da base instalada para a primeira funcionalidade planejada.
 ## 1. Instale e abra o projeto
 
 Crie seu repositório com **Use this template** no GitHub e abra a pasta no
-terminal. Ative o Node 22 com `nvm use`, caso use nvm. Use npm 10.6.0, a versão
+terminal. Ative o Node 24 LTS com `nvm use`, caso use nvm. Use npm 10.6.0, a versão
 declarada em `package.json`.
 
 ```bash
@@ -75,7 +75,7 @@ O fluxo de entrega está em [development-process.md](development-process.md).
 
 | Situação                                 | O que fazer                                                                             |
 | ---------------------------------------- | --------------------------------------------------------------------------------------- |
-| npm informa versão incompatível          | Confira `node --version` e `npm --version`; ative Node 22 e npm 10.6.0.                 |
+| npm informa versão incompatível          | Confira `node --version` e `npm --version`; ative Node 24 LTS e npm 10.6.0.             |
 | O setup só mostra um comando de uso      | Em um agente sem terminal interativo, passe `--name` e `--display-name` explicitamente. |
 | A página não abre                        | Use o endereço exato que aparece após `npm run dev` e mantenha o terminal aberto.       |
 | O botão Copiar falha                     | Selecione o texto visível e copie manualmente.                                          |

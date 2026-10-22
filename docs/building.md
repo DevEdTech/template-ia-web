@@ -20,13 +20,13 @@ Variáveis ausentes ou malformadas falham no boot da aplicação, com mensagem n
 ## Integração contínua
 
 O workflow `.github/workflows/ci.yml` roda `npm ci` e `npm run validate` em Node
-22 e 24 a cada Pull Request, audita as dependências com
+24 e 26 a cada Pull Request, audita as dependências com
 `npm audit --audit-level=high` e executa o fluxo crítico no Chromium em jobs
 separados. Configure a branch principal para exigir os checks **Validate** e
 **E2E (Chromium)** antes do merge.
 
 Todos os jobs leem `packageManager` do `package.json`, instalam essa versão exata
-do npm e executam `npm run check:toolchain` antes de `npm ci`. Assim Node 22 e 24
+do npm e executam `npm run check:toolchain` antes de `npm ci`. Assim Node 24 e 26
 usam o mesmo resolvedor e a mesma interpretação do lockfile. Ao atualizar a
 toolchain, altere em conjunto `packageManager`, `.nvmrc`, `engines`, a matriz do
 CI e `package-lock.json`.

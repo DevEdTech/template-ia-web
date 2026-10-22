@@ -1,5 +1,7 @@
 # ADR 0006 — Portões de qualidade automatizados
 
+> A política de versões do Node foi atualizada pelo [ADR 0015](0015-node24-minimum.md).
+
 ## Contexto
 
 O [ADR 0003](0003-local-reliability-tooling.md) deixou CI/CD fora do escopo e apostou apenas na execução local de `npm run validate`. Na prática isso deixou lacunas:

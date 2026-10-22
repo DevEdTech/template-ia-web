@@ -21,8 +21,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 22 é o piso declarado em engines/.nvmrc; 24 antecipa a próxima LTS.
-        node: ['22', '24']
+        # 24 é o mínimo LTS; 26 verifica compatibilidade com a linha posterior.
+        node: ['24', '26']
     steps:
       - uses: actions/checkout@v7
 
@@ -46,7 +46,7 @@ jobs:
         run: npm run validate
 
       - name: Publicar relatório de cobertura
-        if: always() && matrix.node == '22'
+        if: always() && matrix.node == '24'
         uses: actions/upload-artifact@v7
         with:
           name: coverage

@@ -20,7 +20,7 @@ Indicado para:
 
 ## Pré-requisitos
 
-- Node.js 22 (a versão está em `.nvmrc`; com `nvm`, rode `nvm use`)
+- Node.js 24 LTS ou superior (a versão está em `.nvmrc`; com `nvm`, rode `nvm use`)
 - npm 10.6.0 (a versão exata declarada em `packageManager`)
 - git
 
