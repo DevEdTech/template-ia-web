@@ -30,7 +30,14 @@ export function checkDocs(root = defaultRoot) {
   const packageFile = join(root, 'package.json');
   const packageJson = JSON.parse(readFileSync(packageFile, 'utf8'));
   const scripts = new Set(Object.keys(packageJson.scripts ?? {}));
-  const files = [join(root, 'README.md'), ...markdownFiles(join(root, 'docs'))].filter(existsSync);
+  // AGENTS.md e CLAUDE.md sao o que todo agente carrega em toda sessao: eram
+  // justamente os unicos documentos sem verificacao de link e de comando.
+  const files = [
+    join(root, 'README.md'),
+    join(root, 'AGENTS.md'),
+    join(root, 'CLAUDE.md'),
+    ...markdownFiles(join(root, 'docs')),
+  ].filter(existsSync);
 
   for (const file of files) {
     const content = readFileSync(file, 'utf8');
@@ -63,12 +70,12 @@ export function checkDocs(root = defaultRoot) {
     }
   }
 
-  const agentsFile = join(root, 'docs', 'agents.md');
-  if (existsSync(agentsFile)) {
-    const agents = readFileSync(agentsFile, 'utf8');
-    for (const match of agents.matchAll(/^- \*\*([a-z0-9-]+)\*\* —/gm)) {
+  const guideFile = join(root, 'docs', 'skills-guide.md');
+  if (existsSync(guideFile)) {
+    const guide = readFileSync(guideFile, 'utf8');
+    for (const match of guide.matchAll(/^- \*\*([a-z0-9-]+)\*\* —/gm)) {
       if (!existsSync(join(root, 'skills', match[1], 'SKILL.md'))) {
-        errors.push(`docs/agents.md: skill inexistente "${match[1]}".`);
+        errors.push(`docs/skills-guide.md: skill inexistente "${match[1]}".`);
       }
     }
   }

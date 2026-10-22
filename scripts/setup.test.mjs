@@ -18,21 +18,62 @@ const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 function copyFixture() {
   const root = mkdtempSync(join(tmpdir(), 'web-setup-'));
-  for (const path of [
-    '.template-state.json',
-    'package.json',
-    'index.html',
-    'README.md',
-    'tasks.md',
-  ]) {
+  for (const path of ['package.json', 'index.html', 'README.md', 'tasks.md']) {
     cpSync(join(projectRoot, path), join(root, path));
   }
-  for (const path of ['docs', 'src', 'scripts/setup.mjs', 'scripts/lib']) {
+  // Arquivos que as capacidades reescrevem; podem nao existir num projeto
+  // derivado que ja removeu a capacidade correspondente.
+  for (const path of ['AGENTS.md', 'CLAUDE.md', '.env.example']) {
+    const source = join(projectRoot, path);
+    if (existsSync(source)) cpSync(source, join(root, path));
+  }
+  for (const path of ['docs', 'src', 'e2e', 'scripts/setup.mjs', 'scripts/lib']) {
+    const source = join(projectRoot, path);
+    if (!existsSync(source)) continue;
     const destination = join(root, path);
     mkdirSync(dirname(destination), { recursive: true });
-    cpSync(join(projectRoot, path), destination, { recursive: true });
+    cpSync(source, destination, { recursive: true });
   }
+  // Estado de partida explicito, nao herdado: estes testes exercitam o setup,
+  // e um projeto derivado que ja desligou uma capacidade faria o guard de
+  // religamento disparar em testes que nada tem a ver com isso.
+  writeFileSync(
+    join(root, '.template-state.json'),
+    `${JSON.stringify(
+      {
+        technicalName: 'web-project-template',
+        displayName: 'Web Project Template',
+        templateVersion: readTemplateVersion(),
+        profile: 'padrao',
+        capabilities: { styleguide: true, auth: true, e2e: true, visualRegression: false },
+      },
+      null,
+      2,
+    )}\n`,
+  );
   return root;
+}
+
+/**
+ * Estes testes exercitam a *remocao* de uma capacidade. Num projeto derivado
+ * que ja a removeu nao existe mais o que remover, e o teste deixa de ter
+ * objeto: ele e pulado com a razao, nao falha.
+ */
+function semCapacidade(nome) {
+  const marcos = {
+    styleguide: 'src/app/routes/index.tsx',
+    auth: 'src/features/auth',
+  };
+  if (!existsSync(join(projectRoot, marcos[nome]))) {
+    return `projeto sem a capacidade "${nome}"`;
+  }
+  const state = JSON.parse(readFileSync(join(projectRoot, '.template-state.json'), 'utf8'));
+  return state.capabilities?.[nome] === false ? `projeto sem a capacidade "${nome}"` : false;
+}
+
+function readTemplateVersion() {
+  return JSON.parse(readFileSync(join(projectRoot, '.template-state.json'), 'utf8'))
+    .templateVersion;
 }
 
 function runSetup(root, ...args) {
@@ -243,6 +284,128 @@ test('preserva composições personalizadas e explica como remover suas referên
     assert.match(result.stderr, /composição das notas foi personalizada/);
     assert.equal(readFileSync(routesFile, 'utf8'), before);
     assert.equal(existsSync(join(root, 'src/features/notes')), true);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test(
+  'remove o styleguide e deixa uma base visual local sem referência ao pacote',
+  { skip: semCapacidade('styleguide') },
+  () => {
+    const root = copyFixture();
+    try {
+      runSetup(root, '--name=sem-styleguide', '--no-styleguide', '--no-sync-skills');
+
+      // A base local substitui o que o pacote fornecia.
+      assert.ok(existsSync(join(root, 'src/styles/tokens.css')));
+      assert.ok(existsSync(join(root, 'src/shared/ui/index.ts')));
+
+      const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+      assert.equal(pkg.dependencies['@vitru/styleguide'], undefined);
+      assert.match(readFileSync(join(root, 'src/main.tsx'), 'utf8'), /\.\/styles\/tokens\.css/);
+
+      // Nenhuma referência pendente ao pacote removido.
+      for (const file of [
+        'src/app/routes/index.tsx',
+        'src/app/App.tsx',
+        'src/features/notes/components/NoteList.tsx',
+        'src/features/home/components/HomePage.tsx',
+      ]) {
+        assert.doesNotMatch(readFileSync(join(root, file), 'utf8'), /@vitru\/styleguide/, file);
+      }
+      assert.ok(!existsSync(join(root, 'e2e/styleguide.spec.ts')));
+
+      // As regras deixam de exigir o kit.
+      assert.doesNotMatch(
+        readFileSync(join(root, 'AGENTS.md'), 'utf8'),
+        /kit de `@vitru\/styleguide`/,
+      );
+      assert.match(readFileSync(join(root, 'docs/styleguide.md'), 'utf8'), /não usa/);
+
+      const state = JSON.parse(readFileSync(join(root, '.template-state.json'), 'utf8'));
+      assert.equal(state.capabilities.styleguide, false);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  },
+);
+
+test(
+  'remove a autenticação sem deixar rota nem variável de ambiente órfã',
+  { skip: semCapacidade('auth') },
+  () => {
+    const root = copyFixture();
+    try {
+      runSetup(root, '--name=sem-auth', '--no-auth', '--no-sync-skills');
+
+      assert.ok(!existsSync(join(root, 'src/features/auth')));
+      assert.ok(!existsSync(join(root, 'src/app/components/AuthGate.tsx')));
+
+      const routes = readFileSync(join(root, 'src/app/routes/index.tsx'), 'utf8');
+      assert.doesNotMatch(routes, /AuthGate|auth\/callback/);
+      assert.match(routes, /element: <App \/>/);
+
+      assert.doesNotMatch(readFileSync(join(root, 'src/vite-env.d.ts'), 'utf8'), /VITE_AUTH_/);
+      assert.doesNotMatch(readFileSync(join(root, 'src/shared/config/env.ts'), 'utf8'), /AuthEnv/);
+      assert.doesNotMatch(readFileSync(join(root, '.env.example'), 'utf8'), /VITE_AUTH_/);
+      assert.doesNotMatch(readFileSync(join(root, 'AGENTS.md'), 'utf8'), /## Autenticação/);
+
+      const state = JSON.parse(readFileSync(join(root, '.template-state.json'), 'utf8'));
+      assert.equal(state.capabilities.auth, false);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  },
+);
+
+test(
+  'recusa religar uma capacidade já removida em vez de fingir que a restaura',
+  { skip: semCapacidade('styleguide') },
+  () => {
+    const root = copyFixture();
+    try {
+      runSetup(root, '--name=sem-styleguide', '--no-styleguide', '--no-sync-skills');
+
+      const result = spawnSync(
+        process.execPath,
+        [join(root, 'scripts', 'setup.mjs'), '--name=sem-styleguide', '--no-sync-skills'],
+        {
+          cwd: root,
+          encoding: 'utf8',
+        },
+      );
+
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /já foi removida/);
+      // O estado continua coerente com o disco.
+      const state = JSON.parse(readFileSync(join(root, '.template-state.json'), 'utf8'));
+      assert.equal(state.capabilities.styleguide, false);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  },
+);
+
+test('grava o perfil escolhido e rejeita perfil desconhecido', () => {
+  const root = copyFixture();
+  try {
+    runSetup(root, '--name=app', '--profile=rigoroso', '--no-sync-skills');
+    assert.equal(
+      JSON.parse(readFileSync(join(root, '.template-state.json'), 'utf8')).profile,
+      'rigoroso',
+    );
+
+    const result = spawnSync(
+      process.execPath,
+      [join(root, 'scripts', 'setup.mjs'), '--name=app', '--profile=turbo', '--no-sync-skills'],
+      {
+        cwd: root,
+        encoding: 'utf8',
+      },
+    );
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Perfil desconhecido/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

@@ -1,6 +1,8 @@
 # Contexto do projeto para o Claude Code
 
-Leia e siga o `AGENTS.md`.
+Leia e siga o `AGENTS.md`. Comece conferindo o perfil e as capacidades deste
+projeto com `npm run validate -- --list`: regra de capacidade desligada não se
+aplica.
 
 Depois leia, quando relevante:
 
@@ -18,7 +20,7 @@ Para trabalho com vários arquivos ou ambíguo:
 2. use a skill de planejamento (plan-feature);
 3. apresente o plano;
 4. implemente um incremento por vez;
-5. execute `npm run validate`;
+5. execute `npm run validate` (use `-- --changed` para iterar rápido);
 6. revise o diff final.
 
 Não expanda o escopo, não adicione dependências, não exponha

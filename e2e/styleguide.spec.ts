@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
+import { readProjectConfig } from '../scripts/lib/project-config.mjs';
 
 /**
  * Rede de proteção da identidade visual, em duas camadas:
@@ -15,6 +16,7 @@ import { expect, test } from '@playwright/test';
 
 const screenshotName = 'styleguide.png';
 const baseline = join('e2e', '__screenshots__', process.platform, screenshotName);
+const { capabilities } = readProjectConfig();
 
 test('mantém o contrato de estilo do tema', async ({ page }) => {
   await page.goto('/styleguide');
@@ -56,6 +58,14 @@ test('mantém o contrato de estilo do tema', async ({ page }) => {
 });
 
 test('mantém a aparência da página do styleguide', async ({ page }) => {
+  // Comparação pixel a pixel é opcional: ela é frágil (fonte do sistema, uma
+  // imagem por plataforma) e custa manutenção em projeto que não evolui o
+  // visual. Ligue `visualRegression` em `.template-state.json` para exigi-la.
+  test.skip(
+    capabilities.visualRegression !== true,
+    'Capacidade "visualRegression" desligada em .template-state.json.',
+  );
+
   // Sem referência para esta plataforma o teste é pulado com instrução, em vez
   // de falhar por um arquivo que ninguém gerou ainda. `--update-snapshots`
   // (npm run test:e2e:update) muda o modo e cria a imagem.

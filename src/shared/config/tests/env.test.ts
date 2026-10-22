@@ -48,3 +48,45 @@ describe('createEnv', () => {
     }
   });
 });
+
+describe('configuracao de autenticacao', () => {
+  const completa = {
+    VITE_AUTH_ISSUER: 'https://login.exemplo.com',
+    VITE_AUTH_CLIENT_ID: 'cliente-1',
+    VITE_AUTH_REDIRECT_URI: 'https://app.exemplo.com/auth/callback',
+  };
+
+  it('fica indefinida quando nenhuma variavel de auth existe', () => {
+    expect(createEnv(raw()).auth).toBeUndefined();
+  });
+
+  it('monta a configuracao com escopo padrao quando as tres existem', () => {
+    const auth = createEnv(raw(completa)).auth;
+
+    expect(auth).toEqual({
+      issuer: 'https://login.exemplo.com',
+      clientId: 'cliente-1',
+      redirectUri: 'https://app.exemplo.com/auth/callback',
+      scope: 'openid profile email',
+    });
+  });
+
+  it('respeita o escopo declarado', () => {
+    expect(createEnv(raw({ ...completa, VITE_AUTH_SCOPE: 'openid pedidos:ler' })).auth?.scope).toBe(
+      'openid pedidos:ler',
+    );
+  });
+
+  it('recusa configuracao parcial em vez de falhar no meio do fluxo', () => {
+    expect(() => createEnv(raw({ VITE_AUTH_ISSUER: completa.VITE_AUTH_ISSUER }))).toThrow(
+      EnvValidationError,
+    );
+    expect(() => createEnv(raw({ VITE_AUTH_CLIENT_ID: 'cliente-1' }))).toThrow(/definidas juntas/);
+  });
+
+  it('recusa emissor que nao e URL absoluta', () => {
+    expect(() => createEnv(raw({ ...completa, VITE_AUTH_ISSUER: 'login.exemplo.com' }))).toThrow(
+      /VITE_AUTH_ISSUER/,
+    );
+  });
+});

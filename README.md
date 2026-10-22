@@ -42,15 +42,39 @@ Indicado para:
 - CRUD com dados locais (no navegador)
 - Demonstrações
 
-## Quando NÃO usar (versão 1)
+## Quando NÃO usar
 
 - Aplicativos móveis ou desktop nativos
-- Backends complexos
-- Microsserviços
-- Sistemas financeiros ou com dados sensíveis
-- Autenticação real de usuários
-- Infraestrutura de produção crítica
-- Qualquer sistema de alta criticidade
+- Backends complexos e microsserviços
+- Qualquer coisa que exija **servidor próprio**: guardar segredo, armazenar
+  senha, manter base própria de usuários. O template não inclui servidor.
+- Sistemas financeiros, de alta criticidade ou com dados sensíveis sob
+  regulação
+
+Autenticação **é** suportada: o template traz o fluxo Authorization Code com
+PKCE contra um provedor de identidade que já existe (Entra ID, Auth0, Keycloak,
+Google), com token apenas em memória. Veja a
+[ADR 0015](docs/decisions/0015-authentication.md). O que exige servidor é
+manter a sua própria base de usuários e senhas.
+
+## Perfis e capacidades
+
+Nem todo projeto quer tudo que o template traz. `.template-state.json` declara
+o **perfil** (quanto rigor) e as **capacidades** (o que o projeto usa):
+
+```bash
+npm run validate -- --list   # mostra perfil, capacidades e o que bloqueia
+```
+
+| Perfil      | Para quê                   | O que bloqueia                     |
+| ----------- | -------------------------- | ---------------------------------- |
+| `prototipo` | explorar, descartar depois | tipos, lint, arquitetura e testes  |
+| `padrao`    | o trabalho normal          | tudo, com cobertura em 80/80/70/80 |
+| `rigoroso`  | produção crítica           | tudo, com cobertura em 85/85/75/90 |
+
+Capacidades ligáveis no setup: `styleguide` (kit da Vitru), `auth`
+(autenticação), `e2e` (fluxo no Chromium), `visualRegression` (comparação
+pixel a pixel do styleguide).
 
 ## Pré-requisitos
 
@@ -216,7 +240,7 @@ As regras que os agentes devem seguir ficam em dois arquivos na raiz:
 - `AGENTS.md` — regras gerais válidas para qualquer agente
 - `CLAUDE.md` — instruções específicas para o Claude Code
 
-Além disso, há skills que guiam tarefas comuns. Veja [docs/agents.md](docs/agents.md) para a lista e para exemplos de como acioná-las.
+Além disso, há skills que guiam tarefas comuns. Veja [docs/skills-guide.md](docs/skills-guide.md) para a lista e para exemplos de como acioná-las.
 
 ## Como criar uma feature
 

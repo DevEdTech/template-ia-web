@@ -1,5 +1,12 @@
 {
   "technicalName": "web-project-template",
   "displayName": "Web Project Template",
-  "templateVersion": "1.0.0"
+  "templateVersion": "1.0.0",
+  "profile": "padrao",
+  "capabilities": {
+    "styleguide": true,
+    "auth": true,
+    "e2e": true,
+    "visualRegression": false
+  }
 }

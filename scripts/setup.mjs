@@ -9,6 +9,9 @@ import { stdin, stdout } from 'node:process';
 import { parseArgs } from 'node:util';
 import { withFileRollback } from './lib/file-transaction.mjs';
 import { LEGACY_TEMPLATE_VERSION } from './lib/template-version.mjs';
+import { DEFAULT_CAPABILITIES, DEFAULT_PROFILE, PROFILES } from './lib/project-config.mjs';
+import { removeStyleguide } from './lib/capabilities/styleguide.mjs';
+import { removeAuth } from './lib/capabilities/auth.mjs';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptDir, '..');
@@ -17,16 +20,31 @@ const defaultState = {
   technicalName: 'web-project-template',
   displayName: 'Web Project Template',
   templateVersion: LEGACY_TEMPLATE_VERSION,
+  profile: DEFAULT_PROFILE,
+  capabilities: { ...DEFAULT_CAPABILITIES },
 };
 const transactionTargets = [
   '.template-state.json',
+  '.env.example',
   'package.json',
   'index.html',
   'README.md',
+  'AGENTS.md',
+  'CLAUDE.md',
   'docs/architecture.md',
+  'docs/styleguide.md',
+  'docs/testing.md',
+  'docs/decisions/0015-authentication.md',
   'src/app/App.tsx',
+  'src/app/components',
   'src/app/routes/index.tsx',
   'src/features',
+  'src/main.tsx',
+  'src/shared/config',
+  'src/shared/ui',
+  'src/styles',
+  'src/vite-env.d.ts',
+  'e2e',
   'tasks.md',
   '.claude/skills',
   '.agents/skills',
@@ -123,14 +141,23 @@ function updateDocumentation(displayName, previousDisplayName, previousTechnical
   }
 }
 
+/**
+ * Literal em aspas simples: o Prettier do projeto usa `singleQuote`, e um
+ * `JSON.stringify` cru deixaria o arquivo reprovado no `format:check` logo
+ * depois do setup.
+ */
+function jsLiteral(value) {
+  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
 function updateApp(displayName) {
   const file = join(projectRoot, 'src', 'app', 'App.tsx');
   const source = readFileSync(file, 'utf8');
   const updated = source.replace(
     /const PROJECT_NAME = ['"][^'"]*['"];/,
-    `const PROJECT_NAME = ${JSON.stringify(displayName)};`,
+    `const PROJECT_NAME = ${jsLiteral(displayName)};`,
   );
-  if (updated === source && !source.includes(`PROJECT_NAME = ${JSON.stringify(displayName)}`)) {
+  if (updated === source && !source.includes(`PROJECT_NAME = ${jsLiteral(displayName)}`)) {
     throw new Error('Constante PROJECT_NAME não encontrada em src/app/App.tsx.');
   }
   writeFileSync(file, updated);
@@ -178,15 +205,34 @@ function plan(config, state) {
   return [
     `package: ${state.technicalName} -> ${config.name}`,
     `nome exibido: ${state.displayName} -> ${config.displayName}`,
+    `perfil: ${state.profile ?? DEFAULT_PROFILE} -> ${config.profile}`,
+    `styleguide: ${config.capabilities.styleguide ? 'manter' : 'remover (base visual local)'}`,
+    `autenticação: ${config.capabilities.auth ? 'manter' : 'remover'}`,
     `demonstração: ${config.removeExample ? 'remover' : 'manter'}`,
     `tasks.md: ${config.doResetTasks ? 'reiniciar' : 'preservar'}`,
     `skills: ${config.doSyncSkills ? 'sincronizar' : 'preservar'}`,
   ];
 }
 
+/**
+ * Uma capacidade removida não volta pelo setup: os arquivos saíram do disco.
+ * Avisar é melhor que fingir que a segunda execução reconstrói o que foi
+ * apagado.
+ */
+function validateCapabilities(previous, requested) {
+  for (const [name, wanted] of Object.entries(requested)) {
+    if (wanted && previous[name] === false) {
+      throw new Error(
+        `A capacidade "${name}" já foi removida deste projeto; recupere os arquivos pelo Git antes de religá-la.`,
+      );
+    }
+  }
+}
+
 function applyChanges(config) {
   validatePreconditions();
   const state = readState();
+  validateCapabilities(state.capabilities ?? DEFAULT_CAPABILITIES, config.capabilities);
   log('\nPlano do setup:');
   for (const item of plan(config, state)) log(`  - ${item}`);
   if (config.dryRun) {
@@ -200,6 +246,10 @@ function applyChanges(config) {
     updateDocumentation(config.displayName, state.displayName, state.technicalName);
     updateApp(config.displayName);
     if (config.removeExample) removeExampleFeatures();
+    // Capacidades antes do estado: se a remoção falhar, a transação restaura
+    // tudo e o arquivo de estado não mente sobre o que existe no disco.
+    if (!config.capabilities.styleguide) removeStyleguide(projectRoot, log);
+    if (!config.capabilities.auth) removeAuth(projectRoot, log);
     if (config.doResetTasks) resetTasks();
     if (config.doSyncSkills) runSyncSkills();
     writeFileSync(
@@ -209,6 +259,8 @@ function applyChanges(config) {
           technicalName: config.name,
           displayName: config.displayName,
           templateVersion: state.templateVersion,
+          profile: config.profile,
+          capabilities: config.capabilities,
         },
         null,
         2,
@@ -218,6 +270,15 @@ function applyChanges(config) {
   log(
     '\nSetup concluído.\n\nPróximos passos:\n  1. Rode `npm run dev` e abra o endereço indicado.\n  2. Explore a página inicial e /styleguide.\n  3. Peça ao agente para usar plan-app com sua ideia.\n  4. Rode `npm run validate` antes de concluir.',
   );
+}
+
+function resolveProfile(requested, current) {
+  const value = requested?.trim();
+  if (!value) return current ?? DEFAULT_PROFILE;
+  if (!PROFILES.includes(value)) {
+    throw new Error(`Perfil desconhecido: "${value}". Use ${PROFILES.join(', ')}.`);
+  }
+  return value;
 }
 
 function isYes(answer, defaultYes) {
@@ -235,6 +296,10 @@ async function main() {
       license: { type: 'string' },
       'repository-url': { type: 'string' },
       'remove-example': { type: 'boolean' },
+      profile: { type: 'string' },
+      'no-styleguide': { type: 'boolean' },
+      'no-auth': { type: 'boolean' },
+      'with-auth': { type: 'boolean' },
       'reset-tasks': { type: 'boolean' },
       'keep-tasks': { type: 'boolean' },
       'no-sync-skills': { type: 'boolean' },
@@ -252,6 +317,15 @@ async function main() {
       license: values.license?.trim() || '',
       repositoryUrl: values['repository-url']?.trim() || '',
       removeExample: values['remove-example'] || false,
+      profile: resolveProfile(values.profile, current.profile),
+      capabilities: {
+        ...DEFAULT_CAPABILITIES,
+        ...(current.capabilities ?? {}),
+        styleguide: !values['no-styleguide'],
+        // A feature vem no template; `--no-auth` a remove. `--with-auth`
+        // existe para deixar a intenção explícita no comando.
+        auth: values['with-auth'] ? true : !values['no-auth'],
+      },
       // Reiniciar é o padrão: um projeto novo não deve herdar o backlog do
       // template. Use --keep-tasks para preservar o conteúdo existente.
       doResetTasks: !values['keep-tasks'],
@@ -261,7 +335,9 @@ async function main() {
     return;
   }
   if (!stdin.isTTY) {
-    log('Use: npm run setup -- --name="meu-app" --display-name="Meu App" [--dry-run]');
+    log(
+      'Use: npm run setup -- --name="meu-app" --display-name="Meu App" [--profile=padrao] [--no-styleguide] [--no-auth] [--dry-run]',
+    );
     return;
   }
   const rl = createInterface({ input: stdin, output: stdout });
@@ -272,6 +348,11 @@ async function main() {
     const description = (await rl.question('Descrição do projeto: ')).trim();
     const organization = (await rl.question('Nome da organização: ')).trim();
     const removeExample = isYes(await rl.question('Remover demonstrações? (s/N): '), false);
+    const keepStyleguide = isYes(await rl.question('Usar o styleguide da Vitru? (S/n): '), true);
+    const keepAuth = isYes(await rl.question('Incluir autenticação (OIDC/PKCE)? (s/N): '), false);
+    const profileAnswer = (
+      await rl.question(`Perfil de rigor [${PROFILES.join('/')}] (${DEFAULT_PROFILE}): `)
+    ).trim();
     const doResetTasks = isYes(await rl.question('Reiniciar tasks.md? (S/n): '), true);
     const doSyncSkills = isYes(await rl.question('Sincronizar skills? (S/n): '), true);
     applyChanges({
@@ -282,6 +363,13 @@ async function main() {
       license: '',
       repositoryUrl: '',
       removeExample,
+      profile: resolveProfile(profileAnswer, current.profile),
+      capabilities: {
+        ...DEFAULT_CAPABILITIES,
+        ...(current.capabilities ?? {}),
+        styleguide: keepStyleguide,
+        auth: keepAuth,
+      },
       doResetTasks,
       doSyncSkills,
       dryRun: false,

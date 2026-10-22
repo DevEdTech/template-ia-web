@@ -14,6 +14,17 @@
 /** Variaveis sem as quais a aplicacao nao deve subir. */
 const REQUIRED_KEYS: readonly string[] = [];
 
+/**
+ * Configuracao do provedor de identidade. Nenhum destes valores e secreto:
+ * o fluxo usado e o Authorization Code com PKCE, feito para cliente publico.
+ */
+export interface AuthEnv {
+  readonly issuer: string;
+  readonly clientId: string;
+  readonly redirectUri: string;
+  readonly scope: string;
+}
+
 export interface Env {
   /** Caminho público do build, incluindo a barra final (ex.: /meu-repo/). */
   readonly baseUrl: string;
@@ -22,6 +33,11 @@ export interface Env {
   readonly isProduction: boolean;
   /** Base da API, quando o projeto usa uma. */
   readonly apiUrl: string | undefined;
+  /**
+   * Provedor de identidade, quando configurado. `undefined` mantem a
+   * aplicacao de pe sem autenticacao — util em desenvolvimento e nos testes.
+   */
+  readonly auth: AuthEnv | undefined;
 }
 
 export class EnvValidationError extends Error {
@@ -57,6 +73,36 @@ function readUrl(raw: ImportMetaEnv, key: string, problems: string[]): string | 
 }
 
 /**
+ * Le a configuracao do provedor de identidade.
+ *
+ * Tudo ou nada: metade dos valores produz um fluxo que falha no meio do
+ * caminho, com o usuario ja no provedor. Sem nenhum valor, o projeto roda sem
+ * autenticacao; com parte deles, a configuracao e invalida.
+ */
+function readAuth(raw: ImportMetaEnv, problems: string[]): AuthEnv | undefined {
+  const issuer = readUrl(raw, 'VITE_AUTH_ISSUER', problems);
+  const clientId = readOptional(raw, 'VITE_AUTH_CLIENT_ID');
+  const redirectUri = readUrl(raw, 'VITE_AUTH_REDIRECT_URI', problems);
+  const declared = [issuer, clientId, redirectUri].filter((value) => value !== undefined);
+
+  if (declared.length === 0) return undefined;
+  if (issuer === undefined || clientId === undefined || redirectUri === undefined) {
+    problems.push(
+      'VITE_AUTH_ISSUER, VITE_AUTH_CLIENT_ID e VITE_AUTH_REDIRECT_URI precisam ser ' +
+        'definidas juntas (ou nenhuma delas, para rodar sem autenticacao).',
+    );
+    return undefined;
+  }
+
+  return {
+    issuer,
+    clientId,
+    redirectUri,
+    scope: readOptional(raw, 'VITE_AUTH_SCOPE') ?? 'openid profile email',
+  };
+}
+
+/**
  * Monta o objeto de configuracao a partir de um `import.meta.env`.
  * Exportado separadamente para permitir teste sem depender do ambiente real.
  *
@@ -72,6 +118,7 @@ export function createEnv(raw: ImportMetaEnv): Env {
   }
 
   const apiUrl = readUrl(raw, 'VITE_API_URL', problems);
+  const auth = readAuth(raw, problems);
 
   if (problems.length > 0) throw new EnvValidationError(problems);
 
@@ -80,6 +127,7 @@ export function createEnv(raw: ImportMetaEnv): Env {
     mode: raw.MODE,
     isProduction: raw.PROD,
     apiUrl,
+    auth,
   };
 }
 

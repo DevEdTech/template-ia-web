@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 // Verifica se o styleguide do template continua sendo respeitado.
 //
-// Executado dentro de `npm run validate`. Por padrão apenas AVISA (sai com
-// código 0), para não bloquear quem está no meio de uma refatoração visual.
-// Use `npm run check:styleguide -- --strict` (ou no CI) para transformar os
-// avisos em falha.
+// Executado dentro de `npm run validate`, que decide pelo perfil do projeto se
+// o achado bloqueia ou só avisa. Aqui a saída é sempre fiel: diferente de zero
+// quando há achado. Use `--warn-only` para o relatório sem derrubar o comando,
+// e desligue a capacidade `styleguide` em `.template-state.json` quando o
+// projeto não usar o kit da Vitru.
 //
 // Regras verificadas:
-//  1. O pacote `@vitru/styleguide` está instalado e expõe os tokens esperados.
+//  0. O projeto declara a capacidade `styleguide` (senão a verificação é
+//     dispensada por completo, sem aviso).
+//  1. O pacote `@vitru/styleguide` está instalado e expõe os tokens do
+//     contrato (REQUIRED_THEME_TOKENS). Tokens de produto específico ficam em
+//     OPTIONAL_THEME_TOKENS e a ausência deles não é achado.
 //  2. `main.tsx` importa o CSS público e `index.html` declara o tema.
 //  3. Nenhum CSS fora de `tokens.css` usa cor literal (hex, rgb, hsl ou nome
 //     de cor CSS): componentes consomem `var(--token)`.
@@ -20,6 +25,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hasCapability } from './lib/project-config.mjs';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const defaultRoot = resolve(scriptDir, '..');
@@ -29,7 +35,10 @@ export const TOKENS_FILE = 'node_modules/@vitru/styleguide/dist/tokens.css';
 export const ICON_LIBRARY = 'lucide-react';
 const LOCAL_DEPENDENCY_PROTOCOL = /^(?:file|link|workspace):/;
 
-/** Tokens de tema obrigatórios: renomeá-los quebra os componentes do template. */
+/**
+ * Contrato de tema: o conjunto mínimo que o kit do template realmente consome.
+ * Renomear qualquer um destes quebra os componentes, então a ausência é erro.
+ */
 export const REQUIRED_THEME_TOKENS = [
   '--ink',
   '--ink-soft',
@@ -37,21 +46,29 @@ export const REQUIRED_THEME_TOKENS = [
   '--paper-2',
   '--line',
   '--accent',
-  '--navy',
-  '--navy-strong',
+  '--on-accent',
   '--danger',
   '--danger-line',
+  '--danger-bg',
   '--success',
   '--field-bg',
   '--field-border',
-  '--danger-bg',
-  '--danger-bg-hover',
-  '--week-today-bg',
-  '--week-today-fill',
-  '--on-accent',
   '--shadow',
   '--backdrop',
+];
+
+/**
+ * Tokens que alguns produtos usam e outros não (agenda, navegação, realces).
+ * Não pertencem ao contrato do template: a ausência é informação, não falha.
+ * Um projeto que precise deles declara em `.template-state.json`.
+ */
+export const OPTIONAL_THEME_TOKENS = [
+  '--navy',
+  '--navy-strong',
+  '--danger-bg-hover',
   '--bar-edge',
+  '--week-today-bg',
+  '--week-today-fill',
   '--event-ferias-bg',
   '--event-ferias-ink',
   '--event-viagem-bg',
@@ -242,24 +259,28 @@ export function checkStyleguide(root = defaultRoot) {
 function main() {
   const rootFlag = process.argv.indexOf('--root');
   const root = rootFlag >= 0 ? resolve(process.argv[rootFlag + 1]) : defaultRoot;
-  const strict = process.argv.includes('--strict');
-  const warnings = checkStyleguide(root);
+  // `--warn-only` serve a quem está no meio de uma refatoração visual e quer o
+  // relatório sem derrubar o comando.
+  const warnOnly = process.argv.includes('--warn-only');
 
-  if (warnings.length === 0) {
+  if (!hasCapability('styleguide', root)) {
+    console.log('Projeto sem a capacidade "styleguide": verificação dispensada.');
+    return;
+  }
+
+  const findings = checkStyleguide(root);
+  if (findings.length === 0) {
     console.log('Verificação do styleguide OK.');
     return;
   }
 
-  const title = strict ? 'Verificação do styleguide FALHOU' : 'Avisos do styleguide';
-  console[strict ? 'error' : 'warn'](`${title}:\n`);
-  for (const warning of warnings) console[strict ? 'error' : 'warn'](`  - ${warning}`);
-  if (strict) {
-    process.exitCode = 1;
-    return;
-  }
-  console.warn(
-    `\n${warnings.length} aviso(s). Regras em docs/styleguide.md. Use --strict para falhar.`,
-  );
+  // Quem decide se isto bloqueia é o perfil, em scripts/validate.mjs. Aqui a
+  // responsabilidade é só relatar com fidelidade e sair diferente de zero.
+  const channel = warnOnly ? 'warn' : 'error';
+  console[channel](`${warnOnly ? 'Avisos do styleguide' : 'Verificação do styleguide FALHOU'}:\n`);
+  for (const finding of findings) console[channel](`  - ${finding}`);
+  console[channel](`\n${findings.length} achado(s). Regras em docs/styleguide.md.`);
+  if (!warnOnly) process.exitCode = 1;
 }
 
 if (resolve(process.argv[1] ?? '') === fileURLToPath(import.meta.url)) main();

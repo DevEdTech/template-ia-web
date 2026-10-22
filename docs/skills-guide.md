@@ -1,4 +1,8 @@
-# Trabalhando com agentes
+# Guia das skills
+
+> Este é o **guia** de como acionar as skills. As **regras** do projeto ficam
+> no `AGENTS.md` da raiz. Antes chamava-se `docs/agents.md`, nome que se
+> confundia com ele.
 
 Este template foi feito para ser usado com agentes de código. Aqui está como orientá-los.
 
@@ -71,7 +75,7 @@ Use `update-agents` quando uma mudança importante altera **como se trabalha** n
 
 > A fronteira entre features mudou e o validate está verde. Use a skill update-agents para atualizar as regras.
 
-Não confunda os dois arquivos: `AGENTS.md` (raiz) guarda as **regras**; este `docs/agents.md` é o **guia** de como acionar as skills, e quem cuida dele é `update-documentation`. Repare também que `npm run check:docs` valida `README.md` e `docs/`, mas não cobre o `AGENTS.md`: os comandos e caminhos citados lá precisam ser conferidos à mão.
+Não confunda os dois arquivos: `AGENTS.md` (raiz) guarda as **regras**; este `docs/skills-guide.md` é o **guia** de como acionar as skills, e quem cuida dele é `update-documentation`. Repare também que `npm run check:docs` valida `README.md` e `docs/`, mas não cobre o `AGENTS.md`: os comandos e caminhos citados lá precisam ser conferidos à mão.
 
 ## Limites de autonomia
 

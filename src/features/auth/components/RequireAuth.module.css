@@ -1,0 +1,22 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-2);
+  color: var(--ink);
+}
+
+.block h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.block p {
+  margin: 0;
+  color: var(--ink-soft);
+}

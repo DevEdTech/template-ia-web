@@ -39,7 +39,7 @@ Copie o prompt da terceira etapa, descreva sua ideia e quem vai usar o produto.
 A skill `plan-app` conduz a descoberta e aguarda aprovação antes de implementar.
 Se já existe um produto definido em `docs/prd.md`, use `plan-feature` para
 planejar a próxima funcionalidade e `implement-feature` após aprovar o plano.
-Veja [agents.md](agents.md) e [development-process.md](development-process.md).
+Veja [agents.md](skills-guide.md) e [development-process.md](development-process.md).
 
 Substitua o conteúdo de `src/features/home` pela página inicial do seu produto.
 A composição de páginas e exemplos fica em `src/app/routes/index.tsx`.
