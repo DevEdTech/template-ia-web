@@ -3,6 +3,7 @@ import { StyleguidePage } from '@vitru/styleguide/showcase';
 import { App } from '@/app/App';
 import { NotFound, RouteErrorFallback } from '@/app/components/RouteErrorFallback';
 import { HomePage } from '@/features/home';
+import { NoteList } from '@/features/notes';
 
 /**
  * Definicao das rotas, separada do router para permitir montar a mesma
@@ -17,7 +18,7 @@ export const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <HomePage example={<NoteList />} />,
       },
       {
         // Referência viva fornecida pelo pacote compartilhado.

@@ -2,6 +2,30 @@
 
 Template de projeto front-end em React + TypeScript + Vite, pensado para pessoas que constroem interfaces com a ajuda de agentes de código. Vem com organização de pastas, padrões de qualidade e instruções para agentes já prontos.
 
+## Comece por aqui
+
+Depois de criar seu repositório pelo botão **Use this template**, abra a pasta
+no terminal. Com Node 22 ativo (`nvm use`), execute:
+
+```bash
+npm install --global npm@10.6.0
+npm install
+npm run setup
+npm run dev
+```
+
+O setup pergunta o nome e a descrição do projeto. Mantenha a demonstração na
+primeira execução se quiser explorar o exemplo. Abra o endereço informado pelo
+Vite: a página inicial traz três etapas, comandos copiáveis, um prompt para o
+agente e uma lista de notas para experimentar. Abra `/styleguide` para conhecer
+o kit de interface.
+
+Depois de explorar, descreva sua ideia ao agente usando `plan-app`. Antes de
+concluir uma alteração, rode `npm run validate`.
+
+Veja o [guia de primeiros passos](docs/onboarding.md) para o caminho completo,
+a remoção do exemplo e a solução de problemas comuns.
+
 ## Objetivo
 
 Dar um ponto de partida seguro e organizado para criar aplicações web simples. Você descreve o que quer, o agente implementa seguindo as regras deste template, e você valida com um único comando.

@@ -142,3 +142,12 @@ Detalhes em [testing.md](testing.md).
 ## Evolução incremental
 
 O template começa simples de propósito. Adicione estrutura, bibliotecas ou camadas apenas quando um problema real aparecer, e registre a mudança em um ADR (`docs/decisions/`).
+
+## Página de onboarding
+
+A feature `home` orienta os primeiros passos e recebe a demonstração como
+conteúdo opcional. A rota compõe `HomePage` e a API pública de `notes`; a página
+não importa a demonstração. Assim `setup --remove-example` pode remover apenas
+as notas e sua composição sem quebrar imports nem substituir um layout
+personalizado. As rotas participam do rollback do setup. A orientação permanece
+acessível mesmo sem a demonstração. Veja [onboarding.md](onboarding.md).

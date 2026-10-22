@@ -18,24 +18,10 @@
   flex: none;
 }
 
-.header h1 {
+.projectName {
   margin: 0;
   font-size: var(--text-2xl);
   color: var(--navy);
-}
-
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0;
-  color: var(--ink-soft);
-}
-
-/* `icon` e uma classe global de global.css: dentro de um CSS Module ela
- * precisa de :global(), senao o nome seria hasheado e nunca casaria. */
-.status :global(.icon) {
-  color: var(--success);
 }
 
 .nav {
@@ -56,4 +42,29 @@
 
 .nav a:hover {
   text-decoration: underline;
+}
+
+.nav a[aria-current='page'] {
+  font-weight: var(--weight-bold);
+  text-decoration: underline;
+  text-underline-offset: var(--space-1);
+}
+.skipLink {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  padding: var(--space-3);
+  background: var(--paper);
+  transform: translateY(-200%);
+}
+.skipLink:focus {
+  transform: translateY(0);
+}
+@media (max-width: 480px) {
+  .app {
+    padding: var(--space-5) var(--space-4);
+  }
+  .projectName {
+    font-size: var(--text-xl);
+  }
 }

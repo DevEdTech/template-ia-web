@@ -111,7 +111,9 @@ A composição da aplicação tem smoke test em `src/app/tests/`: a rota raiz mo
 O setup também é comportamento público do template. Seus testes executam dry-run, personalização, repetição idempotente e rollback em pastas temporárias. A persistência testa migração, backup de dados inválidos, conflitos de revisão e sincronização entre abas. O smoke test serve `dist/` em uma porta efêmera e acessa o HTML e seus assets como um navegador faria.
 
 O smoke E2E complementa essas redes executando o React no Chromium: adiciona e
-remove uma nota usando nomes acessíveis e confirma a rota de fallback. Ele fica
+remove uma nota usando nomes acessíveis e confirma a rota de fallback. Após `setup --remove-example`, o cenário de notas é pulado explicitamente;
+o fluxo de onboarding, o styleguide e a rota de fallback continuam testados.
+Ele fica
 em um gate separado de `npm run validate` para que a validação local não baixe
 binários de navegador implicitamente.
 
@@ -128,3 +130,12 @@ binários de navegador implicitamente.
 2. Rode em modo contínuo (`npm run test:watch`) e ajuste até passar.
 3. Se um teste falha após uma mudança de comportamento intencional, atualize o teste para o novo comportamento esperado.
 4. Se a falha for inesperada, corrija o código, não o teste.
+
+## Onboarding
+
+`src/features/home/tests/HomePage.test.tsx` cobre orientação, cópia de comandos,
+prompt expansível, falha de permissão na área de transferência e a página sem
+a demonstração. O E2E de onboarding confere navegação, ausência de rolagem
+horizontal no celular e acesso ao styleguide. Os testes black-box do setup
+protegem a remoção das referências nas rotas, a preservação de composições
+personalizadas e o rollback quando uma etapa posterior falha.
