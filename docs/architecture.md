@@ -151,3 +151,8 @@ não importa a demonstração. Assim `setup --remove-example` pode remover apena
 as notas e sua composição sem quebrar imports nem substituir um layout
 personalizado. As rotas participam do rollback do setup. A orientação permanece
 acessível mesmo sem a demonstração. Veja [onboarding.md](onboarding.md).
+
+O header compartilhado ocupa a largura disponível. O limite `--layout-max`
+fica no conteúdo das páginas comuns, preservando a largura da página inicial.
+Na rota `/styleguide`, o conteúdo usa toda a largura disponível e o limite
+interno do showcase é removido por um estilo restrito a essa rota.

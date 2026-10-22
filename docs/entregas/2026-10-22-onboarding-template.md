@@ -69,3 +69,16 @@ do cabeçalho compartilhado; o contrato de tokens e fontes continua validado.
 5. Em uma cópia do projeto, execute o setup com `--remove-example`, usando
    seus nomes e `--keep-tasks` se quiser preservar o backlog. Rode o build e
    confira que o guia e o styleguide permanecem disponíveis.
+
+## Incremento em 2026-10-22: larguras das páginas
+
+- Header compartilhado ampliado para toda a largura da janela.
+- Página inicial preserva o limite de 720px (`--layout-max`) e seus recuos.
+- Styleguide sem limite de largura, inclusive no conteúdo interno do showcase.
+- Referência visual do styleguide atualizada após revisão da mudança.
+- `npm run validate`: passou, incluindo 37 testes Vitest, 49 testes de scripts,
+  build e smoke HTTP.
+- E2E no Chromium: 5 testes passaram.
+- Conferência no Chromium em 390, 1440 e 1920px: header igual à largura da
+  janela; conteúdo inicial limitado a 720px; styleguide com `max-width: none`;
+  nenhuma rolagem horizontal nas duas rotas.
