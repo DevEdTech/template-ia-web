@@ -75,7 +75,12 @@ test('remove a demonstração e deixa uma composição sem imports quebrados', (
     assert.doesNotMatch(app, /features\//);
     assert.equal(existsSync(join(root, 'src/features/notes')), false);
     assert.equal(readFileSync(customFeature, 'utf8'), 'export const customFeature = true;\n');
-    assert.match(app, /pronto para sua primeira feature/);
+    const routes = readFileSync(join(root, 'src/app/routes/index.tsx'), 'utf8');
+    const home = readFileSync(join(root, 'src/features/home/components/HomePage.tsx'), 'utf8');
+    assert.doesNotMatch(routes, /NoteList|features\/notes/);
+    assert.doesNotMatch(home, /import.*features\/notes/);
+    assert.match(routes, /<HomePage\s*\/>/);
+    assert.match(app, /NavLink/);
     assert.match(readFileSync(join(root, 'tasks.md'), 'utf8'), /## A fazer/);
 
     runSetup(root, '--name=clean-app', '--remove-example', '--no-sync-skills');
@@ -192,6 +197,52 @@ test('restaura a demonstração quando uma etapa posterior falha', () => {
     assert.notEqual(result.status, 0);
     assert.equal(existsSync(notes), true);
     assert.equal(readFileSync(customFeature, 'utf8'), 'export const customFeature = true;\n');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('restaura as rotas quando uma etapa após remover as notas falha', () => {
+  const root = copyFixture();
+  try {
+    const routesFile = join(root, 'src/app/routes/index.tsx');
+    const before = readFileSync(routesFile, 'utf8');
+    const result = spawnSync(
+      process.execPath,
+      [join(root, 'scripts/setup.mjs'), '--name=rollback-app', '--remove-example'],
+      { cwd: root, encoding: 'utf8' },
+    );
+    assert.notEqual(result.status, 0);
+    assert.equal(readFileSync(routesFile, 'utf8'), before);
+    assert.equal(existsSync(join(root, 'src/features/notes')), true);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('preserva composições personalizadas e explica como remover suas referências', () => {
+  const root = copyFixture();
+  try {
+    const routesFile = join(root, 'src/app/routes/index.tsx');
+    const before = readFileSync(routesFile, 'utf8').replace(
+      '<NoteList />',
+      '<NoteList key="custom" />',
+    );
+    writeFileSync(routesFile, before);
+    const result = spawnSync(
+      process.execPath,
+      [
+        join(root, 'scripts/setup.mjs'),
+        '--name=custom-app',
+        '--remove-example',
+        '--no-sync-skills',
+      ],
+      { cwd: root, encoding: 'utf8' },
+    );
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /composição das notas foi personalizada/);
+    assert.equal(readFileSync(routesFile, 'utf8'), before);
+    assert.equal(existsSync(join(root, 'src/features/notes')), true);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

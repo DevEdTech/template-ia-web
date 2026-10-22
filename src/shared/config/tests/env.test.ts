@@ -13,6 +13,11 @@ describe('createEnv', () => {
     expect(env.isProduction).toBe(true);
   });
 
+  it('expõe a base pública para builds em subdiretórios', () => {
+    expect(createEnv(raw({ BASE_URL: '/template-ia-web/' })).baseUrl).toBe('/template-ia-web/');
+    expect(createEnv(raw()).baseUrl).toBe('/');
+  });
+
   it('deixa apiUrl indefinida quando a variavel nao existe', () => {
     expect(createEnv(raw()).apiUrl).toBeUndefined();
   });

@@ -15,6 +15,8 @@
 const REQUIRED_KEYS: readonly string[] = [];
 
 export interface Env {
+  /** Caminho público do build, incluindo a barra final (ex.: /meu-repo/). */
+  readonly baseUrl: string;
   /** Modo do Vite: `development`, `production` ou um modo customizado. */
   readonly mode: string;
   readonly isProduction: boolean;
@@ -74,6 +76,7 @@ export function createEnv(raw: ImportMetaEnv): Env {
   if (problems.length > 0) throw new EnvValidationError(problems);
 
   return {
+    baseUrl: raw.BASE_URL,
     mode: raw.MODE,
     isProduction: raw.PROD,
     apiUrl,

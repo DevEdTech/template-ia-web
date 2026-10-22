@@ -25,6 +25,7 @@ const transactionTargets = [
   'README.md',
   'docs/architecture.md',
   'src/app/App.tsx',
+  'src/app/routes/index.tsx',
   'src/features',
   'tasks.md',
   '.claude/skills',
@@ -122,48 +123,8 @@ function updateDocumentation(displayName, previousDisplayName, previousTechnical
   }
 }
 
-function updateApp(displayName, removeExample) {
+function updateApp(displayName) {
   const file = join(projectRoot, 'src', 'app', 'App.tsx');
-  if (removeExample) {
-    writeFileSync(
-      file,
-      `import { CircleCheck, Home, Palette } from 'lucide-react';
-import { Link, Outlet } from 'react-router';
-import styles from './App.module.css';
-
-const PROJECT_NAME = ${JSON.stringify(displayName)};
-
-export function App() {
-  return (
-    <main className={styles.app}>
-      <header className={styles.header}>
-        <div className={styles.brand}>
-          <img className={styles.mark} src="/favicon.svg" alt="" width="28" height="28" />
-          <h1>{PROJECT_NAME}</h1>
-        </div>
-        <p className={styles.status}>
-          <CircleCheck className="icon" aria-hidden="true" />O projeto está pronto para sua primeira feature.
-        </p>
-        <nav className={styles.nav} aria-label="Navegação principal">
-          <Link to="/">
-            <Home className="icon icon-sm" aria-hidden="true" />
-            Início
-          </Link>
-          <Link to="/styleguide">
-            <Palette className="icon icon-sm" aria-hidden="true" />
-            Styleguide
-          </Link>
-        </nav>
-      </header>
-
-      <Outlet />
-    </main>
-  );
-}
-`,
-    );
-    return;
-  }
   const source = readFileSync(file, 'utf8');
   const updated = source.replace(
     /const PROJECT_NAME = ['"][^'"]*['"];/,
@@ -176,6 +137,19 @@ export function App() {
 }
 
 function removeExampleFeatures() {
+  // A demonstração é composta na rota, não dentro da página de onboarding.
+  const routesFile = join(projectRoot, 'src/app/routes/index.tsx');
+  if (existsSync(routesFile)) {
+    const routes = readFileSync(routesFile, 'utf8')
+      .replace(/^import \{ NoteList \} from ['"]@\/features\/notes['"];\r?\n/m, '')
+      .replace(' example={<NoteList />}', '');
+    if (routes.includes('NoteList') || routes.includes('@/features/notes')) {
+      throw new Error(
+        'A composição das notas foi personalizada. Remova suas referências nas rotas antes de executar --remove-example.',
+      );
+    }
+    writeFileSync(routesFile, routes);
+  }
   const features = join(projectRoot, 'src', 'features');
   if (!existsSync(features)) return;
   for (const example of exampleFeatures) {
@@ -224,7 +198,7 @@ function applyChanges(config) {
     updatePackageJson(config);
     updateIndexHtml(config.displayName);
     updateDocumentation(config.displayName, state.displayName, state.technicalName);
-    updateApp(config.displayName, config.removeExample);
+    updateApp(config.displayName);
     if (config.removeExample) removeExampleFeatures();
     if (config.doResetTasks) resetTasks();
     if (config.doSyncSkills) runSyncSkills();
@@ -241,7 +215,9 @@ function applyChanges(config) {
       )}\n`,
     );
   });
-  log('\nSetup concluído. Rode `npm run validate`.');
+  log(
+    '\nSetup concluído.\n\nPróximos passos:\n  1. Rode `npm run dev` e abra o endereço indicado.\n  2. Explore a página inicial e /styleguide.\n  3. Peça ao agente para usar plan-app com sua ideia.\n  4. Rode `npm run validate` antes de concluir.',
+  );
 }
 
 function isYes(answer, defaultYes) {

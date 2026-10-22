@@ -142,3 +142,25 @@ Detalhes em [testing.md](testing.md).
 ## Evolução incremental
 
 O template começa simples de propósito. Adicione estrutura, bibliotecas ou camadas apenas quando um problema real aparecer, e registre a mudança em um ADR (`docs/decisions/`).
+
+## Página de onboarding
+
+A feature `home` orienta os primeiros passos e recebe a demonstração como
+conteúdo opcional. A rota compõe `HomePage` e a API pública de `notes`; a página
+não importa a demonstração. Assim `setup --remove-example` pode remover apenas
+as notas e sua composição sem quebrar imports nem substituir um layout
+personalizado. As rotas participam do rollback do setup. A orientação permanece
+acessível mesmo sem a demonstração. Veja [onboarding.md](onboarding.md).
+
+O header compartilhado ocupa a largura disponível. O limite `--layout-max`
+fica no conteúdo das páginas comuns, preservando a largura da página inicial.
+Na rota `/styleguide`, o conteúdo usa toda a largura disponível e o limite
+interno do showcase é removido por um estilo restrito a essa rota.
+
+## Base de publicação
+
+A configuração de ambiente expõe `baseUrl` a partir de `BASE_URL` do Vite.
+O router usa essa base como `basename` e a marca do layout usa a mesma base
+para o favicon. `build:pages` fornece a base ao Vite e gera entradas estáticas
+para as rotas públicas; o build local padrão continua na raiz. O contrato e o
+workflow estão descritos em [deployment.md](deployment.md).

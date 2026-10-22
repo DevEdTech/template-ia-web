@@ -3,6 +3,8 @@ import { StyleguidePage } from '@vitru/styleguide/showcase';
 import { App } from '@/app/App';
 import { NotFound, RouteErrorFallback } from '@/app/components/RouteErrorFallback';
 import { HomePage } from '@/features/home';
+import { NoteList } from '@/features/notes';
+import { env } from '@/shared/config/env';
 
 /**
  * Definicao das rotas, separada do router para permitir montar a mesma
@@ -17,7 +19,7 @@ export const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <HomePage example={<NoteList />} />,
       },
       {
         // Referência viva fornecida pelo pacote compartilhado.
@@ -33,4 +35,4 @@ export const routes: RouteObject[] = [
   },
 ];
 
-export const router = createBrowserRouter(routes);
+export const router = createBrowserRouter(routes, { basename: env.baseUrl });

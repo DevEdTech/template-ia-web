@@ -22,6 +22,21 @@ describe('composicao da aplicacao', () => {
     expect(screen.getByRole('main')).toBeInTheDocument();
   });
 
+  it('preserva navegação e página inicial quando publicado em um subdiretório', async () => {
+    const router = createMemoryRouter(routes, {
+      basename: '/template-ia-web/',
+      initialEntries: ['/template-ia-web/'],
+    });
+    render(<RouterProvider router={router} />);
+    expect(
+      await screen.findByRole('heading', { name: 'Seu projeto começa aqui' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Styleguide' })).toHaveAttribute(
+      'href',
+      '/template-ia-web/styleguide',
+    );
+  });
+
   it('mostra a tela de nao encontrado para um endereco desconhecido', async () => {
     renderAt('/rota-que-nao-existe');
 
