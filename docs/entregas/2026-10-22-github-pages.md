@@ -64,3 +64,11 @@ repositório e no pull request de integração.
 2. Navegue para o styleguide e recarregue a página.
 3. Abra diretamente `https://devedtech.github.io/template-ia-web/styleguide/`.
 4. Confira o workflow `GitHub Pages` após um push na master.
+
+## Auditoria antes da integração
+
+O check remoto de auditoria identificou uma vulnerabilidade alta preexistente
+no Vite. O lockfile foi atualizado para Vite 8.3.5, dentro da faixa semver já
+permitida. Após a atualização, `npm run validate`, os 5 E2E e o build do Pages
+passaram novamente. `npm audit --audit-level=high` passou; permaneceram três
+avisos moderados da cadeia Vitest, abaixo do limite definido pelo projeto.
