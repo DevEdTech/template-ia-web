@@ -37,7 +37,7 @@
     "prepare": "husky && npm run sync:skills"
   },
   "dependencies": {
-    "@vitru/styleguide": "^0.1.0",
+    "@vitru/styleguide": "^0.2.1",
     "lucide-react": "^1.55.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

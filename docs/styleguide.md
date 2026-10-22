@@ -38,7 +38,10 @@ não use `file:`, `link:` ou `workspace:` no template distribuído.
 ## Tema e tokens
 
 O tema padrão é `vitru`, aplicado por `data-theme="vitru"` no `<html>`. O pacote
-também fornece a paleta para `:root` sem atributo.
+também fornece a paleta para `:root` sem atributo. Desde a 0.2, o pacote traz os
+temas `light` (o mesmo `vitru`) e `dark`, trocados por `data-theme`, e o
+`ThemeSwitch`/`useTheme` para oferecer a troca. O template segue no `vitru`: o
+seletor da página `/styleguide` vale só para ela e não muda o tema do app.
 
 Principais grupos:
 
@@ -73,8 +76,16 @@ sistema.
 ## Kit público
 
 O contrato atual inclui `PageHeader`, `Card`, `Button`, `Input`, `Textarea`,
-`Select`, `Table`, `Alert`, `Badge`, `Dialog`, `LoadingState`, `EmptyState`,
-`ErrorState` e `ErrorBoundary`.
+`Select`, `Table`, `Alert`, `Badge`, `Dialog`, `ConfirmDialog`, `LoadingState`,
+`EmptyState`, `ErrorState` e `ErrorBoundary`; para painéis e listas,
+`SectionHeading`, `IconBadge`, `Meta`/`MetaLine`, `ListCard` e `ProgressRing`;
+para barras de filtro, `SearchInput` e `FilterChip`; e ainda `Tooltip`,
+`ShortcutLabel`, `ThinkingAnimation`, `ThemeSwitch`, `VitruLogo` e `VitruMark`.
+
+Desde a 0.2, o `Button` tem 32px por padrão (`size="sm"`), com `xs` (28px) e
+`md` (40px). O `Select` usa lista própria, com busca opcional (`searchable`), e o
+`onChange` recebe o valor escolhido, não o evento. A página `/styleguide` mostra
+cada um em uso.
 
 Uma ação primária por tela; ações destrutivas pedem confirmação. Alertas e
 etiquetas precisam transmitir significado por texto, não apenas por cor.
