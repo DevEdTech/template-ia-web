@@ -72,3 +72,11 @@ no Vite. O lockfile foi atualizado para Vite 8.3.5, dentro da faixa semver já
 permitida. Após a atualização, `npm run validate`, os 5 E2E e o build do Pages
 passaram novamente. `npm audit --audit-level=high` passou; permaneceram três
 avisos moderados da cadeia Vitest, abaixo do limite definido pelo projeto.
+
+## Normalização da base recebida do GitHub
+
+A verificação pública após o primeiro deploy identificou que o `base_path`
+fornecido pelo GitHub não termina em barra. A entrada HTML e as rotas abriam,
+mas a URL do favicon da marca concatenava o nome sem separador. O script de
+build e o contrato `env.baseUrl` passam a garantir a barra final. O teste de
+configuração cobre tanto `/template-ia-web` quanto `/template-ia-web/`.

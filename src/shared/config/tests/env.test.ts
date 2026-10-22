@@ -15,6 +15,7 @@ describe('createEnv', () => {
 
   it('expõe a base pública para builds em subdiretórios', () => {
     expect(createEnv(raw({ BASE_URL: '/template-ia-web/' })).baseUrl).toBe('/template-ia-web/');
+    expect(createEnv(raw({ BASE_URL: '/template-ia-web' })).baseUrl).toBe('/template-ia-web/');
     expect(createEnv(raw()).baseUrl).toBe('/');
   });
 
