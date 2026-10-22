@@ -112,6 +112,19 @@ npm run dev
 
 O Vite mostra no terminal o endereço local (algo como `http://localhost:5173`).
 
+## Site público no GitHub Pages
+
+A demonstração deste repositório é publicada em
+[devedtech.github.io/template-ia-web](https://devedtech.github.io/template-ia-web/).
+A página inicial apresenta o onboarding; o [styleguide](https://devedtech.github.io/template-ia-web/styleguide/)
+mostra o kit Vitru.
+
+O workflow `.github/workflows/pages.yml` valida e publica `dist/` após pushes
+na `master`. A base é obtida da configuração do Pages, sem fixar o nome do
+repositório no código. Se você criar outro projeto a partir do template,
+configure **Settings → Pages → Source → GitHub Actions** no novo repositório.
+Veja [como publicar e testar](docs/deployment.md).
+
 ## Validação
 
 Antes de considerar qualquer alteração pronta, rode:
@@ -146,6 +159,7 @@ completos e continua sendo a fonte da verdade para integração.
 | ----------------------------------------------- | ------------------------------------------------------------------- |
 | `npm run dev`                                   | Sobe o servidor de desenvolvimento com recarga automática           |
 | `npm run build`                                 | Gera a versão de produção                                           |
+| `npm run build:pages`                           | Gera o site com entradas estáticas para GitHub Pages                |
 | `npm run lint`                                  | Verifica problemas de código com ESLint                             |
 | `npm run check:architecture`                    | Impede imports que atravessam as fronteiras das features            |
 | `npm run check:docs`                            | Valida links, comandos e referências da documentação                |

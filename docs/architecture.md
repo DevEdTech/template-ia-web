@@ -156,3 +156,11 @@ O header compartilhado ocupa a largura disponível. O limite `--layout-max`
 fica no conteúdo das páginas comuns, preservando a largura da página inicial.
 Na rota `/styleguide`, o conteúdo usa toda a largura disponível e o limite
 interno do showcase é removido por um estilo restrito a essa rota.
+
+## Base de publicação
+
+A configuração de ambiente expõe `baseUrl` a partir de `BASE_URL` do Vite.
+O router usa essa base como `basename` e a marca do layout usa a mesma base
+para o favicon. `build:pages` fornece a base ao Vite e gera entradas estáticas
+para as rotas públicas; o build local padrão continua na raiz. O contrato e o
+workflow estão descritos em [deployment.md](deployment.md).

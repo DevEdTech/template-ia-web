@@ -34,7 +34,8 @@
     "check:skills": "node scripts/check-skills.mjs",
     "check:styleguide": "node scripts/check-styleguide.mjs",
     "validate": "npm run check:skills && npm run check:architecture && npm run check:docs && npm run check:styleguide && npm run format:check && npm run lint && npm run test && npm run build",
-    "prepare": "husky && npm run sync:skills"
+    "prepare": "husky && npm run sync:skills",
+    "build:pages": "npm run typecheck && node scripts/build-pages.mjs"
   },
   "dependencies": {
     "@vitru/styleguide": "^0.2.1",

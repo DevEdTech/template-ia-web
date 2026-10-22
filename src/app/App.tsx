@@ -6,6 +6,7 @@
 // o `ErrorBoundary` de `@vitru/styleguide`.
 import { Home, Palette } from 'lucide-react';
 import { NavLink, Outlet, useMatch } from 'react-router';
+import { env } from '@/shared/config/env';
 import styles from './App.module.css';
 
 const PROJECT_NAME = 'Web Project Template';
@@ -21,7 +22,13 @@ export function App() {
       <header className={styles.header}>
         <div className={styles.brand}>
           {/* Marca decorativa: o nome do projeto ao lado ja identifica a pagina. */}
-          <img className={styles.mark} src="/favicon.svg" alt="" width="28" height="28" />
+          <img
+            className={styles.mark}
+            src={`${env.baseUrl}favicon.svg`}
+            alt=""
+            width="28"
+            height="28"
+          />
           <h1 className={styles.projectName}>{PROJECT_NAME}</h1>
         </div>
         <nav className={styles.nav} aria-label="Navegação principal">
