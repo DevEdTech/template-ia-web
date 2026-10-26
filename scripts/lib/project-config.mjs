@@ -136,9 +136,22 @@ export const SUITES = {
   },
 };
 
-/** Suítes que o `validate` não roda, mas que o projeto conhece. */
+/**
+ * Suítes que o `validate` não roda, mas que o CI cobra.
+ *
+ * Elas ficam de fora por dependerem de rede ou de binário de navegador: o
+ * gate local não deve baixar nada implicitamente. Aparecem em `--list` porque
+ * `validate` verde e CI vermelho é a pior combinação possível — quem lê a
+ * lista precisa saber o que ainda falta.
+ */
 export const EXTERNAL_SUITES = {
-  'test:e2e': { label: 'E2E (Chromium)', requires: 'e2e' },
+  'test:e2e': {
+    label: 'E2E (Chromium) — baixa o navegador; `npx playwright install chromium`',
+    requires: 'e2e',
+  },
+  audit: {
+    label: 'npm audit --audit-level=high — depende de rede',
+  },
 };
 
 function readState(root) {

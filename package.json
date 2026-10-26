@@ -37,7 +37,8 @@
     "prepare": "husky && npm run sync:skills",
     "build:pages": "npm run typecheck && node scripts/build-pages.mjs",
     "validate:quick": "node scripts/validate.mjs --quick",
-    "validate:changed": "node scripts/validate.mjs --changed"
+    "validate:changed": "node scripts/validate.mjs --changed",
+    "audit": "npm audit --audit-level=high"
   },
   "dependencies": {
     "@vitru/styleguide": "^0.2.1",
