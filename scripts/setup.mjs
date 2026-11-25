@@ -206,7 +206,7 @@ function plan(config, state) {
     `package: ${state.technicalName} -> ${config.name}`,
     `nome exibido: ${state.displayName} -> ${config.displayName}`,
     `perfil: ${state.profile ?? DEFAULT_PROFILE} -> ${config.profile}`,
-    `styleguide: ${config.capabilities.styleguide ? 'manter' : 'remover (base visual local)'}`,
+    `identidade visual: ${config.capabilities.styleguide ? 'styleguide da Vitru (manter)' : 'própria (remover o kit e criar base visual local)'}`,
     `autenticação: ${config.capabilities.auth ? 'manter' : 'remover'}`,
     `demonstração: ${config.removeExample ? 'remover' : 'manter'}`,
     `tasks.md: ${config.doResetTasks ? 'reiniciar' : 'preservar'}`,
@@ -233,6 +233,11 @@ function applyChanges(config) {
   validatePreconditions();
   const state = readState();
   validateCapabilities(state.capabilities ?? DEFAULT_CAPABILITIES, config.capabilities);
+  if (config.identityNotice && config.capabilities.styleguide) {
+    log(
+      'Identidade visual: styleguide da Vitru (padrão). Para usar identidade própria, repita com --identity=propria; para confirmar o kit, use --identity=vitru.',
+    );
+  }
   log('\nPlano do setup:');
   for (const item of plan(config, state)) log(`  - ${item}`);
   if (config.dryRun) {
@@ -267,8 +272,11 @@ function applyChanges(config) {
       )}\n`,
     );
   });
+  const explore = config.capabilities.styleguide
+    ? 'Explore a página inicial e /styleguide.'
+    : 'Explore a página inicial e ajuste os tokens em src/styles/tokens.css.';
   log(
-    '\nSetup concluído.\n\nPróximos passos:\n  1. Rode `npm run dev` e abra o endereço indicado.\n  2. Explore a página inicial e /styleguide.\n  3. Peça ao agente para usar plan-app com sua ideia.\n  4. Rode `npm run validate` antes de concluir.',
+    `\nSetup concluído.\n\nPróximos passos:\n  1. Rode \`npm run dev\` e abra o endereço indicado.\n  2. ${explore}\n  3. Peça ao agente para usar plan-app com sua ideia.\n  4. Rode \`npm run validate\` antes de concluir.`,
   );
 }
 
@@ -286,6 +294,54 @@ function isYes(answer, defaultYes) {
   return normalized ? ['s', 'sim', 'y', 'yes'].includes(normalized) : defaultYes;
 }
 
+const IDENTITIES = ['vitru', 'propria'];
+
+/**
+ * Identidade visual escolhida pelas flags. O styleguide da Vitru é uma opção,
+ * não uma imposição: `--identity=propria` (ou `--no-styleguide`) entrega a base
+ * local; `--identity=vitru` (ou `--styleguide`) mantém o kit.
+ *
+ * Sem nenhuma flag o kit é mantido e `explicit` fica falso, para o setup
+ * avisar que a escolha existe em vez de decidir em silêncio.
+ * @returns {{ styleguide: boolean, explicit: boolean }}
+ */
+function resolveIdentity(values) {
+  const requested = values.identity?.trim().toLowerCase();
+  if (requested !== undefined && !IDENTITIES.includes(requested)) {
+    throw new Error(`Identidade desconhecida: "${values.identity}". Use ${IDENTITIES.join(', ')}.`);
+  }
+  const choices = new Set();
+  if (requested) choices.add(requested);
+  if (values.styleguide) choices.add('vitru');
+  if (values['no-styleguide']) choices.add('propria');
+  if (choices.size > 1) {
+    throw new Error(
+      'Flags de identidade visual conflitantes: use apenas uma entre --identity, --styleguide e --no-styleguide.',
+    );
+  }
+  if (choices.size === 0) return { styleguide: true, explicit: false };
+  return { styleguide: choices.has('vitru'), explicit: true };
+}
+
+/** Traduz a resposta da pergunta interativa; vazio vale o padrão (Vitru). */
+function parseIdentityAnswer(answer) {
+  const normalized = answer.trim().toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '');
+  if (['', '1', 'vitru'].includes(normalized)) return true;
+  if (['2', 'propria', 'proprio'].includes(normalized)) return false;
+  return null;
+}
+
+async function askIdentity(rl) {
+  log(
+    '\nIdentidade visual:\n  1) Styleguide da Vitru: kit de componentes, tokens e rota /styleguide\n  2) Identidade própria: tokens e primitivos locais, sem o kit',
+  );
+  for (;;) {
+    const keepStyleguide = parseIdentityAnswer(await rl.question('Escolha [1/2] (1): '));
+    if (keepStyleguide !== null) return keepStyleguide;
+    log('Resposta inválida. Digite 1 ou 2.');
+  }
+}
+
 async function main() {
   const { values } = parseArgs({
     options: {
@@ -297,6 +353,8 @@ async function main() {
       'repository-url': { type: 'string' },
       'remove-example': { type: 'boolean' },
       profile: { type: 'string' },
+      identity: { type: 'string' },
+      styleguide: { type: 'boolean' },
       'no-styleguide': { type: 'boolean' },
       'no-auth': { type: 'boolean' },
       'with-auth': { type: 'boolean' },
@@ -308,6 +366,7 @@ async function main() {
   });
   const current = readState();
   if (Object.keys(values).length > 0) {
+    const identity = resolveIdentity(values);
     const rawName = values.name?.trim() || current.technicalName;
     applyChanges({
       name: slugifyPackageName(rawName),
@@ -321,7 +380,7 @@ async function main() {
       capabilities: {
         ...DEFAULT_CAPABILITIES,
         ...(current.capabilities ?? {}),
-        styleguide: !values['no-styleguide'],
+        styleguide: identity.styleguide,
         // A feature vem no template; `--no-auth` a remove. `--with-auth`
         // existe para deixar a intenção explícita no comando.
         auth: values['with-auth'] ? true : !values['no-auth'],
@@ -331,12 +390,13 @@ async function main() {
       doResetTasks: !values['keep-tasks'],
       doSyncSkills: !values['no-sync-skills'],
       dryRun: values['dry-run'] || false,
+      identityNotice: !identity.explicit,
     });
     return;
   }
   if (!stdin.isTTY) {
     log(
-      'Use: npm run setup -- --name="meu-app" --display-name="Meu App" [--profile=padrao] [--no-styleguide] [--no-auth] [--dry-run]',
+      'Use: npm run setup -- --name="meu-app" --display-name="Meu App" [--identity=vitru|propria] [--profile=padrao] [--no-auth] [--dry-run]\nAgente: pergunte ao usuário se ele quer o styleguide da Vitru ou uma identidade própria antes de rodar o setup.',
     );
     return;
   }
@@ -348,7 +408,7 @@ async function main() {
     const description = (await rl.question('Descrição do projeto: ')).trim();
     const organization = (await rl.question('Nome da organização: ')).trim();
     const removeExample = isYes(await rl.question('Remover demonstrações? (s/N): '), false);
-    const keepStyleguide = isYes(await rl.question('Usar o styleguide da Vitru? (S/n): '), true);
+    const keepStyleguide = await askIdentity(rl);
     const keepAuth = isYes(await rl.question('Incluir autenticação (OIDC/PKCE)? (s/N): '), false);
     const profileAnswer = (
       await rl.question(`Perfil de rigor [${PROFILES.join('/')}] (${DEFAULT_PROFILE}): `)

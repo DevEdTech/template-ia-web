@@ -16,8 +16,12 @@ npm run setup
 npm run dev
 ```
 
-O setup pergunta o nome exibido, o identificador técnico e a descrição. Para
-explorar a base antes de começar, mantenha as demonstrações. Abra o endereço
+O setup pergunta o nome exibido, o identificador técnico e a descrição. Ele
+pergunta também a identidade visual: o **styleguide da Vitru** (kit de
+componentes, tokens e a rota `/styleguide`) ou uma **identidade própria**
+(tokens e primitivos locais, sem o kit). Em modo não interativo, use
+`--identity=vitru` ou `--identity=propria`; sem a flag o kit é mantido e o
+setup avisa. Para explorar a base antes de começar, mantenha as demonstrações. Abra o endereço
 que o Vite mostrar no terminal; ele pode usar outra porta se a padrão estiver ocupada.
 Não é necessário configurar uma API nem criar `.env.local` para o exemplo funcionar.
 
@@ -31,7 +35,9 @@ selecione o texto e copie manualmente.
 
 No exemplo de notas, adicione um título e recarregue a página. A nota permanece
 no mesmo navegador. Não há conta, backend ou sincronização entre dispositivos.
-A rota `/styleguide` mostra os componentes e os tokens da Vitru.
+Se você manteve o styleguide, a rota `/styleguide` mostra os componentes e os
+tokens da Vitru; com identidade própria, os tokens ficam em
+`src/styles/tokens.css`.
 
 ## 3. Passe da ideia para a primeira funcionalidade
 
@@ -73,11 +79,11 @@ O fluxo de entrega está em [development-process.md](development-process.md).
 
 ## Quando algo não funcionar
 
-| Situação                                 | O que fazer                                                                             |
-| ---------------------------------------- | --------------------------------------------------------------------------------------- |
-| npm informa versão incompatível          | Confira `node --version` e `npm --version`; ative Node 24 LTS e npm 10.6.0.             |
-| O setup só mostra um comando de uso      | Em um agente sem terminal interativo, passe `--name` e `--display-name` explicitamente. |
-| A página não abre                        | Use o endereço exato que aparece após `npm run dev` e mantenha o terminal aberto.       |
-| O botão Copiar falha                     | Selecione o texto visível e copie manualmente.                                          |
-| As notas não aparecem em outro navegador | O exemplo usa armazenamento local; cada navegador mantém seus próprios dados.           |
-| A validação falha                        | Leia a primeira falha e peça ao agente para corrigir a causa; depois execute novamente. |
+| Situação                                 | O que fazer                                                                                                                      |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| npm informa versão incompatível          | Confira `node --version` e `npm --version`; ative Node 24 LTS e npm 10.6.0.                                                      |
+| O setup só mostra um comando de uso      | Em um agente sem terminal interativo, pergunte ao usuário a identidade visual e passe `--name`, `--display-name` e `--identity`. |
+| A página não abre                        | Use o endereço exato que aparece após `npm run dev` e mantenha o terminal aberto.                                                |
+| O botão Copiar falha                     | Selecione o texto visível e copie manualmente.                                                                                   |
+| As notas não aparecem em outro navegador | O exemplo usa armazenamento local; cada navegador mantém seus próprios dados.                                                    |
+| A validação falha                        | Leia a primeira falha e peça ao agente para corrigir a causa; depois execute novamente.                                          |

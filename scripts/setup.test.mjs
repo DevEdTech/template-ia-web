@@ -331,6 +331,90 @@ test(
   },
 );
 
+function runSetupRaw(root, ...args) {
+  return spawnSync(process.execPath, [join(root, 'scripts', 'setup.mjs'), ...args], {
+    cwd: root,
+    encoding: 'utf8',
+  });
+}
+
+test(
+  '--identity=propria equivale a --no-styleguide e --identity=vitru mantém o kit',
+  { skip: semCapacidade('styleguide') },
+  () => {
+    const own = copyFixture();
+    const kit = copyFixture();
+    try {
+      const ownRun = runSetupRaw(own, '--name=app', '--identity=propria', '--no-sync-skills');
+      assert.equal(ownRun.status, 0, ownRun.stderr);
+      assert.ok(existsSync(join(own, 'src/styles/tokens.css')));
+      assert.equal(
+        JSON.parse(readFileSync(join(own, '.template-state.json'), 'utf8')).capabilities.styleguide,
+        false,
+      );
+      assert.doesNotMatch(ownRun.stdout, /\(padrão\)/);
+      assert.match(ownRun.stdout, /identidade visual: própria/);
+      assert.doesNotMatch(ownRun.stdout, /Explore a página inicial e \/styleguide/);
+
+      const kitRun = runSetupRaw(kit, '--name=app', '--identity=vitru', '--no-sync-skills');
+      assert.equal(kitRun.status, 0, kitRun.stderr);
+      assert.ok(!existsSync(join(kit, 'src/styles/tokens.css')));
+      assert.equal(
+        JSON.parse(readFileSync(join(kit, '.template-state.json'), 'utf8')).capabilities.styleguide,
+        true,
+      );
+      assert.doesNotMatch(kitRun.stdout, /\(padrão\)/);
+      assert.match(kitRun.stdout, /Explore a página inicial e \/styleguide/);
+    } finally {
+      rmSync(own, { recursive: true, force: true });
+      rmSync(kit, { recursive: true, force: true });
+    }
+  },
+);
+
+test(
+  'avisa que a identidade visual é uma escolha quando nenhuma flag a define',
+  { skip: semCapacidade('styleguide') },
+  () => {
+    const root = copyFixture();
+    try {
+      const result = runSetupRaw(root, '--name=app', '--no-sync-skills');
+      assert.equal(result.status, 0, result.stderr);
+      assert.match(result.stdout, /styleguide da Vitru \(padrão\)/);
+      assert.match(result.stdout, /--identity=propria/);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  },
+);
+
+test('rejeita identidade desconhecida e flags de identidade conflitantes', () => {
+  const root = copyFixture();
+  try {
+    const unknown = runSetupRaw(root, '--name=app', '--identity=neon', '--no-sync-skills');
+    assert.equal(unknown.status, 1);
+    assert.match(unknown.stderr, /Identidade desconhecida/);
+
+    for (const flags of [
+      ['--identity=propria', '--styleguide'],
+      ['--identity=vitru', '--no-styleguide'],
+      ['--styleguide', '--no-styleguide'],
+    ]) {
+      const result = runSetupRaw(root, '--name=app', ...flags, '--no-sync-skills');
+      assert.equal(result.status, 1, flags.join(' '));
+      assert.match(result.stderr, /conflitantes/, flags.join(' '));
+    }
+
+    // Nada foi alterado pelas execuções recusadas.
+    assert.equal(
+      JSON.parse(readFileSync(join(root, '.template-state.json'), 'utf8')).capabilities.styleguide,
+      true,
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test(
   'remove a autenticação sem deixar rota nem variável de ambiente órfã',
   { skip: semCapacidade('auth') },

@@ -14,6 +14,9 @@ npm run validate -- --list
 - **Capacidades**: o que o projeto usa. Uma capacidade desligada não é
   verificada e suas regras não se aplicam — `styleguide: false` significa que
   as regras do kit da Vitru não valem neste repositório.
+- **Identidade visual**: o styleguide da Vitru é opcional. O setup oferece o
+  kit ou uma identidade própria (`npm run setup -- --identity=vitru|propria`);
+  ao inicializar um projeto, pergunte ao usuário qual prefere.
 
 Uma regra abaixo que mencione capacidade desligada não se aplica. Na dúvida,
 `--list` é a fonte da verdade, não este texto.
@@ -24,7 +27,8 @@ Uma regra abaixo que mencione capacidade desligada não se aplica. Na dúvida,
 2. docs/architecture.md
 3. docs/development-process.md
 4. docs/testing.md
-5. docs/styleguide.md (antes de qualquer trabalho de interface)
+5. docs/styleguide.md (antes de qualquer trabalho de interface; descreve o kit
+   da Vitru ou a base visual própria do projeto)
 
 ## Processo
 

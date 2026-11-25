@@ -14,11 +14,12 @@ npm run setup
 npm run dev
 ```
 
-O setup pergunta o nome e a descrição do projeto. Mantenha a demonstração na
+O setup pergunta o nome e a descrição do projeto e se você quer usar o
+styleguide da Vitru ou uma identidade própria. Mantenha a demonstração na
 primeira execução se quiser explorar o exemplo. Abra o endereço informado pelo
 Vite: a página inicial traz três etapas, comandos copiáveis, um prompt para o
-agente e uma lista de notas para experimentar. Abra `/styleguide` para conhecer
-o kit de interface.
+agente e uma lista de notas para experimentar. Se manteve o styleguide, abra
+`/styleguide` para conhecer o kit de interface.
 
 Depois de explorar, descreva sua ideia ao agente usando `plan-app`. Antes de
 concluir uma alteração, rode `npm run validate`.
@@ -96,6 +97,8 @@ npm run setup
 
 O `npm run setup` separa o identificador técnico do nome exibido, personaliza descrição, organização, licença e repositório, pode remover somente a demonstração canônica `notes` sem tocar em outras features e sincroniza as skills dos agentes. Ele também reinicia o `tasks.md` para que o projeto novo não herde o backlog do template — use `--keep-tasks` se quiser preservá-lo. Antes de aplicar, use `npm run setup -- --name="meu-app" --dry-run`; execuções repetidas com os mesmos valores são idempotentes e uma falha restaura o estado anterior.
 
+A identidade visual é uma escolha, não uma imposição: `--identity=vitru` mantém o kit `@vitru/styleguide` e `--identity=propria` o remove e deixa uma base visual local (tokens em `src/styles/tokens.css`, primitivos em `src/shared/ui`). Sem a flag, o setup mantém o kit e avisa que a opção existe; no modo interativo ele pergunta. Uma capacidade removida não volta pelo setup.
+
 ## Prompts Iniciais (Copie, Preencha e Cole no Agente)
 
 Escolha o cenário que se encaixa no seu momento e cole no seu agente de IA.
@@ -104,7 +107,7 @@ Escolha o cenário que se encaixa no seu momento e cole no seu agente de IA.
 
 ```text
 Estou começando um projeto novo. Faça o seguinte:
-1. Rode `npm install` e depois `npm run setup -- --name="[meu-app]" --display-name="[Meu App]" --description="[descreva aqui]" --remove-example`.
+1. Pergunte-me se quero usar o styleguide da Vitru ou uma identidade própria. Depois rode `npm install` e `npm run setup -- --name="[meu-app]" --display-name="[Meu App]" --description="[descreva aqui]" --remove-example --identity=[vitru ou propria]`.
 2. Depois, use a skill plan-app para conduzir uma entrevista curta comigo e definirmos juntos o escopo do produto.
 3. Por fim, use a skill update-readme para reescrever este README descrevendo o projeto, não o template.
 ```
@@ -224,14 +227,16 @@ Detalhes em [docs/architecture.md](docs/architecture.md).
 
 ## Styleguide
 
-O template consome `@vitru/styleguide`, pacote que concentra tokens, tema
-`vitru`, Archivo, componentes e a referência visual. TheMix permanece local ao
-projeto consumidor em `public/fonts`, sem ser redistribuída pelo pacote. Rode
+O styleguide da Vitru é opcional. O template o traz por padrão: consome
+`@vitru/styleguide`, pacote que concentra tokens, tema `vitru`, Archivo,
+componentes e a referência visual. TheMix permanece local ao projeto
+consumidor em `public/fonts`, sem ser redistribuída pelo pacote. Rode
 `npm run dev` e abra `/styleguide` para ver a referência viva.
 
-Essas regras continuam valendo depois do `npm run setup`. Leia
-[docs/styleguide.md](docs/styleguide.md) antes de criar telas; `npm run check:styleguide`
-avisa quando algo sai do padrão.
+Quem prefere identidade própria roda `npm run setup -- --identity=propria` e
+fica com uma base visual local. As regras de [docs/styleguide.md](docs/styleguide.md)
+valem para a identidade que o projeto escolheu; com o kit mantido,
+`npm run check:styleguide` avisa quando algo sai do padrão.
 
 ## Como usar agentes
 

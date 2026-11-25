@@ -4,6 +4,11 @@ A base visual deste template vem do pacote `@vitru/styleguide`. A referência
 viva continua disponível em `/styleguide` e é renderizada pelo subpath
 `@vitru/styleguide/showcase`.
 
+O styleguide é **opcional**. Quem prefere identidade própria roda
+`npm run setup -- --identity=propria`: o kit sai, entra uma base visual local e
+este documento é reescrito para descrevê-la. Tudo abaixo vale só enquanto a
+capacidade `styleguide` estiver ligada (`npm run validate -- --list`).
+
 ## Instalação e imports
 
 O pacote está em `dependencies`. O CSS público é importado uma única vez por

@@ -591,7 +591,10 @@ export function removeStyleguide(root, log = () => {}) {
       source,
       `Em interface: use os tokens de \`${PACKAGE}/tokens.css\` (nunca cor
 literal), ícones de \`lucide-react\` e o kit de \`${PACKAGE}\`. O
-styleguide continua valendo depois da inicialização do repositório.`,
+styleguide da Vitru é opcional: vale enquanto a capacidade \`styleguide\` estiver
+ligada (\`npm run validate -- --list\`). Antes de rodar \`npm run setup\` pela
+primeira vez, pergunte ao usuário se ele quer o styleguide da Vitru ou uma
+identidade própria e passe \`--identity=vitru\` ou \`--identity=propria\`.`,
       `Em interface: use os tokens de \`src/styles/tokens.css\` (nunca cor
 literal), ícones de \`lucide-react\` e os primitivos de \`src/shared/ui\`.
 Este projeto não usa o kit \`${PACKAGE}\`.`,
